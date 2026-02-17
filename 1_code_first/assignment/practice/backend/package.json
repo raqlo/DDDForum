@@ -1,14 +1,17 @@
 {
   "name": "backend",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "start": "bun run src/index.ts",
+    "dev": "bun run --watch src/index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/bun": "latest",
+    "@types/express": "^5.0.6",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
     "jiti": "^2.6.1",
@@ -16,5 +19,9 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "hono": "^4.11.9"
   }
 }
