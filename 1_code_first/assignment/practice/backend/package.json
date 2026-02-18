@@ -6,7 +6,11 @@
   "scripts": {
     "lint": "eslint .",
     "start": "bun run src/index.ts",
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "db:up": "docker compose up -d",
+    "db:migrate": "bun --bun run prisma migrate dev",
+    "db:push": "bun --bun run prisma db push",
+    "db:generate": "bun --bun run prisma generate"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
