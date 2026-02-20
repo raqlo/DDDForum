@@ -1,6 +1,5 @@
 services:
   postgres:
-    domainname: essentialist-postgres
     image: postgres:latest
     container_name: essentialist-postgres
     environment:
