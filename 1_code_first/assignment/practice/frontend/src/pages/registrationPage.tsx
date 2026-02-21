@@ -1,42 +1,61 @@
-import { TextField, Button, Flex, Box } from '@radix-ui/themes';
+import {RegistrationForm} from "../components/registratonForm";
+import {useUser} from "../contexts/userContext";
+import {useState} from "react";
+import {z} from "zod";
 
 function RegistrationPage() {
+    const { setUser } = useUser();
+    const handleSubmitRegistrationForm = async (input: RegistrationInput) => {
+        // Logic
+        console.log(input);
+        // Validate the form
+        const validationResult = validateForm(input)
+        // If the form is invalid
+        if(validationResult.errorMessage) {
+            // Show an error toast (for invalid input)
+            console.log(validationResult.errorMessage);
+            return
+        }
+
+        // If the form is valid, start isLoading
+        // Make the API call
+    }
     return <div className="flex justify-center items-center h-screen">
-        <RegistrationForm></RegistrationForm>
+        <h1>Create an account</h1>
+        <RegistrationForm
+            onSubmit={(input: RegistrationInput) =>
+                handleSubmitRegistrationForm(input)
+            }
+        />
     </div>
 }
 
+const registrationInput = z.object({
+    email: z.email(),
+    username: z.string().min(3),
+    firstName: z.string(),
+    lastName: z.string(),
+    password: z.string().min(8)
+})
 
-function RegistrationForm() {
-    return (
-        <Box maxWidth="400px" width="100%">
-            <form>
-                <Flex direction="column" gap="4">
-                    <TextField.Root
-                        type="email"
-                        placeholder="Email"
-                    />
+export type RegistrationInput = z.infer<typeof registrationInput>
 
-                    <TextField.Root
-                        type="text"
-                        placeholder="First Name"
-                    />
 
-                    <TextField.Root
-                        type="text"
-                        placeholder="Last Name"
-                    />
+type ValidationResult = {
+    success: boolean;
+    errorMessage?: string;
+}
 
-                    <TextField.Root
-                        type="password"
-                        placeholder="Password"
-                    />
-
-                    <Button type="submit">Register</Button>
-                </Flex>
-            </form>
-        </Box>
-    )
+function validateForm (input: RegistrationInput): ValidationResult {
+    const validationResult = registrationInput.safeParse(input)
+    if (!validationResult.success) {
+        return {
+            success: false,
+            errorMessage: validationResult.error.message
+        }
+    } else {
+        return {success: true}
+    }
 }
 
 export {RegistrationPage}
