@@ -1,7 +1,9 @@
 import './App.css'
+import "@radix-ui/themes/styles.css";
 import { BrowserRouter } from "react-router-dom";
 import { Route, Routes } from "react-router-dom";
 import { MainPage } from "./pages/mainPage";
+import {RegistrationPage} from "./pages/registrationPage";
 
 function App() {
     return (
@@ -9,6 +11,7 @@ function App() {
             <meta name="color-scheme" content="light only"></meta>
             <Routes>
                 <Route path="/" element={<MainPage />} />
+                <Route path="/signup" element={<RegistrationPage />} />
             </Routes>
         </BrowserRouter>
     );
