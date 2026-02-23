@@ -1,37 +1,38 @@
 import { Link } from "react-router-dom";
-import { Flex, Box, Button, Text } from "@radix-ui/themes";
 
 const Logo = () => (
-    <Box>
-        <Link to={"/"}><Text  size="8" weight="bold">DDD</Text></Link>
-        <Text size="2" color="gray">Where awesome domain driven designers are made</Text>
-    </Box>
+    <div className={"flex items-center gap-3"}>
+        <Link to={"/"}>
+            <span className="text-4xl font-bold">DDD</span>
+        </Link>
+        <p className="text-sm text-gray-500">Where awesome domain driven designers are made</p>
+    </div>
 );
 
 const HeaderActionButton = ({ user }: { user: any }) => (
-    <Flex gap="3" align="center">
+    <div className="flex gap-3 items-center">
         {user ? (
-            <Flex gap="2" align="center">
-                <Text>{user.username}</Text>
-                <Button variant="ghost" size="2">
+            <div className="flex gap-2 items-center">
+                <span>{user.username}</span>
+                <button className="btn btn-ghost btn-sm">
                     Logout
-                </Button>
-            </Flex>
+                </button>
+            </div>
         ) : (
             <>
                 <Link to="/login">
-                    <Button variant="soft" size="2">
+                    <button className="btn btn-outline btn-sm">
                         Login
-                    </Button>
+                    </button>
                 </Link>
                 <Link to="/signup">
-                    <Button size="2">
+                    <button className="btn btn-primary btn-sm">
                         Signup
-                    </Button>
+                    </button>
                 </Link>
             </>
         )}
-    </Flex>
+    </div>
 );
 
 interface HeaderProps {
@@ -41,13 +42,15 @@ interface HeaderProps {
 
 export const Header = ({ showAuth = true, user = null }: HeaderProps) => {
     return (
-        <Box asChild>
-            <header id="header">
-                <Flex justify="between" align="center" p="4">
-                    <Logo />
-                    {showAuth && <HeaderActionButton user={user} />}
-                </Flex>
-            </header>
-        </Box>
+        <header id="header" className="navbar bg-base-100 shadow-sm">
+            <div className="flex-1">
+                <Logo />
+            </div>
+            {showAuth && (
+                <div className="flex-none">
+                    <HeaderActionButton user={user} />
+                </div>
+            )}
+        </header>
     );
 };

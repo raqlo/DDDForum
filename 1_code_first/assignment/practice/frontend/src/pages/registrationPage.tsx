@@ -2,7 +2,6 @@ import {RegistrationForm} from "../components/registratonForm";
 import {useUser} from "../contexts/userContext";
 import {useState} from "react";
 import {z} from "zod";
-import { Box, Flex, Heading } from "@radix-ui/themes";
 import { Header } from "../components/header";
 
 function RegistrationPage() {
@@ -23,23 +22,17 @@ function RegistrationPage() {
         // Make the API call
     }
     return (
-        <Box>
+        <div>
             <Header showAuth={false} />
-            <Flex
-                direction="column"
-                align="center"
-                justify="center"
-                gap="4"
-                p="8"
-            >
-                <Heading size="6">Create an account</Heading>
+            <div className="flex flex-col items-center justify-center gap-4 p-8">
+                <h2 className="text-3xl font-bold">Create an account</h2>
                 <RegistrationForm
                     onSubmit={(input: RegistrationInput) =>
                         handleSubmitRegistrationForm(input)
                     }
                 />
-            </Flex>
-        </Box>
+            </div>
+        </div>
     )
 }
 

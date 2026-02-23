@@ -1,4 +1,3 @@
-import {Box, Button, Flex, TextField} from "@radix-ui/themes"
 import {type SubmitEvent, useState} from "react";
 import type {RegistrationInput} from "../pages/registrationPage";
 
@@ -8,11 +7,11 @@ interface RegistrationFormProps {
 }
 
 export const RegistrationForm = (props: RegistrationFormProps) => {
-    const [email, setEmail] = useState('email');
-    const [username, setUsername] = useState('username');
-    const [firstName, setFirstName] = useState('firstName');
-    const [lastName, setLastName] = useState('lastName');
-    const [password, setPassword] = useState('password');
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleSubmit = (ev: SubmitEvent<HTMLFormElement>) => {
         ev.preventDefault();
@@ -22,42 +21,85 @@ export const RegistrationForm = (props: RegistrationFormProps) => {
     }
 
     return (
-        <Box maxWidth="400px" width="100%">
-            <form onSubmit={(ev) => handleSubmit(ev)}>
-                <Flex direction="column" gap="4">
-                    <TextField.Root
+        <div className="w-full max-w-md">
+            <form onSubmit={(ev) => handleSubmit(ev)} className="space-y-4">
+                <div className="form-control">
+                    <label className="label">
+                        <span className="label-text">Email</span>
+                    </label>
+                    <input
                         type="email"
                         placeholder="Email"
+                        className="input input-bordered w-full"
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
-                    <TextField.Root
+                </div>
+
+                <div className="form-control">
+                    <label className="label">
+                        <span className="label-text">Username</span>
+                    </label>
+                    <input
                         type="text"
                         placeholder="Username"
+                        className="input input-bordered w-full"
+                        value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
+                        minLength={3}
                     />
+                </div>
 
-                    <TextField.Root
+                <div className="form-control">
+                    <label className="label">
+                        <span className="label-text">First Name</span>
+                    </label>
+                    <input
                         type="text"
                         placeholder="First Name"
+                        className="input input-bordered w-full"
+                        value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
+                        required
                     />
+                </div>
 
-                    <TextField.Root
+                <div className="form-control">
+                    <label className="label">
+                        <span className="label-text">Last Name</span>
+                    </label>
+                    <input
                         type="text"
                         placeholder="Last Name"
+                        className="input input-bordered w-full"
+                        value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
+                        required
                     />
+                </div>
 
-                    <TextField.Root
+                <div className="form-control">
+                    <label className="label">
+                        <span className="label-text">Password</span>
+                    </label>
+                    <input
                         type="password"
                         placeholder="Password"
+                        className="input input-bordered w-full"
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
+                        minLength={8}
                     />
+                </div>
 
-                    <Button type="submit">Register</Button>
-                </Flex>
+                <button type="submit" className="btn btn-primary w-full">
+                    Register
+                </button>
             </form>
-        </Box>
+        </div>
     )
 }
 

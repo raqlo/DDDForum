@@ -1,5 +1,3 @@
-import { Box, Card, Flex, Text, Heading } from "@radix-ui/themes";
-
 export type Post = {
     id: string;
     title: string;
@@ -10,29 +8,23 @@ export type Post = {
 
 export const PostsList = ({posts}: { posts: Post[] }) => {
     return (
-        <Box>
-            <Heading size="6" mb="4">Posts List</Heading>
-            <Flex direction="column" gap="3">
+        <div className="w-full">
+            <h2 className="text-2xl font-bold mb-4 mt-6">Posts List</h2>
+            <div className="flex flex-col gap-3">
                 {posts.map(post => (
-                    <Card key={post.id}>
-                        <Flex direction="column" gap="2">
-                            <Heading size="4">{post.title}</Heading>
-                            <Flex gap="4" align="center">
-                                <Text size="2" color="gray">
-                                    By {post.author}
-                                </Text>
-                                <Text size="2" color="gray">
-                                    {post.date}
-                                </Text>
-                                <Text size="2" color="gray">
-                                    {post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}
-                                </Text>
-                            </Flex>
-                        </Flex>
-                    </Card>
+                    <div key={post.id} className="card bg-base-100 shadow-md">
+                        <div className="card-body">
+                            <h3 className="card-title">{post.title}</h3>
+                            <div className="flex gap-4 items-center text-sm text-gray-500">
+                                <span>By {post.author}</span>
+                                <span>{post.date}</span>
+                                <span>{post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}</span>
+                            </div>
+                        </div>
+                    </div>
                 ))}
-            </Flex>
-        </Box>
+            </div>
+        </div>
     )
 }
 
