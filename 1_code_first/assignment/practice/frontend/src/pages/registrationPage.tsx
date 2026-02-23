@@ -5,6 +5,7 @@ import {z} from "zod";
 import { Header } from "../components/header";
 import {toast, ToastContainer} from "react-toastify";
 import {LoadingSpinner} from "../components/loadingSpinner";
+import {userServices} from "../services/users";
 
 function RegistrationPage() {
     const { setUser } = useUser();
@@ -28,11 +29,15 @@ function RegistrationPage() {
             });
             return
         }
+        // If the form is valid, start isLoading
         setIsLoading(true);
 
-        // If the form is valid, start isLoading
 
         // Make the API call
+        const res = await userServices.registerUser({user: input});
+
+        setUser(res.data)
+
     }
     return (
         <div>

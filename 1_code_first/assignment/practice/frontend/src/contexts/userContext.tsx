@@ -2,9 +2,9 @@ import React, {createContext, type ReactNode, useContext, useState} from "react"
 
 export interface UserData {
     username: string;
+    email: string;
     firstName: string;
     lastName: string;
-    password: string;
 }
 
 const UserContext = createContext<{
