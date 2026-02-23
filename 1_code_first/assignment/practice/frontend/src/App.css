@@ -6,6 +6,10 @@
   text-align: center;
 }
 
+.app-logo {
+  font-weight: bold;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

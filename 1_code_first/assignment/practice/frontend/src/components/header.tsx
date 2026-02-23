@@ -1,45 +1,48 @@
 import { Link } from "react-router-dom";
+import { Flex, Box, Button, Text } from "@radix-ui/themes";
 
 const Logo = () => (
-    <div id="app-logo">
-Logo    </div>
-);
-const TitleAndSubmission = () => (
-    <div id="title-container">
-        <h1>Domain-Driven Designers</h1>
-        <h3>Where awesome domain driven designers are made</h3>
-    </div>
+    <Box>
+        <Text size="8" weight="bold">DDD</Text>
+        <Text size="2" color="gray">Where awesome domain driven designers are made</Text>
+    </Box>
 );
 
 const HeaderActionButton = ({ user }: { user: any }) => (
-    <div id="header-action-button">
+    <Flex gap="3" align="center">
         {user ? (
-            <div>
-                <div>{user.username}</div>
-                <u>
-                    <div>logout</div>
-                </u>
-            </div>
+            <Flex gap="2" align="center">
+                <Text>{user.username}</Text>
+                <Button variant="ghost" size="2">
+                    Logout
+                </Button>
+            </Flex>
         ) : (
-            <Link to="/signup">Signup</Link>
+            <>
+                <Link to="/login">
+                    <Button variant="soft" size="2">
+                        Login
+                    </Button>
+                </Link>
+                <Link to="/signup">
+                    <Button size="2">
+                        Signup
+                    </Button>
+                </Link>
+            </>
         )}
-    </div>
+    </Flex>
 );
-
-const shouldShowActionButton = (pathName: string) => {
-    return pathName !== "/signup";
-};
 
 export const Header = () => {
     return (
-        <header id="header" className="flex align-center">
-            <Logo />
-            <TitleAndSubmission />
-            {shouldShowActionButton(location.pathname) ? (
-                <HeaderActionButton user={null} />
-            ) : (
-                ""
-            )}
-        </header>
+        <Box asChild>
+            <header id="header">
+                <Flex justify="between" align="center" p="4">
+                    <Logo />
+                    <HeaderActionButton user={null} />
+                </Flex>
+            </header>
+        </Box>
     );
 };
