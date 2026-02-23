@@ -30,7 +30,7 @@ export const RegistrationForm = (props: RegistrationFormProps) => {
                     <input
                         type="email"
                         placeholder="Email"
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full validator"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required

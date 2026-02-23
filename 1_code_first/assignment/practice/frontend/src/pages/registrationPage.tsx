@@ -3,22 +3,35 @@ import {useUser} from "../contexts/userContext";
 import {useState} from "react";
 import {z} from "zod";
 import { Header } from "../components/header";
+import {toast, ToastContainer} from "react-toastify";
+import {LoadingSpinner} from "../components/loadingSpinner";
 
 function RegistrationPage() {
     const { setUser } = useUser();
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSubmitRegistrationForm = async (input: RegistrationInput) => {
-        // Logic
-        console.log(input);
         // Validate the form
         const validationResult = validateForm(input)
         // If the form is invalid
         if(validationResult.errorMessage) {
             // Show an error toast (for invalid input)
-            console.log(validationResult.errorMessage);
+            toast.error('There was an error with your registration. Please try again.', {
+                position: "top-left",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
             return
         }
+        setIsLoading(true);
 
         // If the form is valid, start isLoading
+
         // Make the API call
     }
     return (
@@ -32,6 +45,8 @@ function RegistrationPage() {
                     }
                 />
             </div>
+            <ToastContainer />
+            {isLoading && <LoadingSpinner size={"sm"} />}
         </div>
     )
 }
