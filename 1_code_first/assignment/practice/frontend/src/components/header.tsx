@@ -3,7 +3,7 @@ import { Flex, Box, Button, Text } from "@radix-ui/themes";
 
 const Logo = () => (
     <Box>
-        <Text size="8" weight="bold">DDD</Text>
+        <Link to={"/"}><Text  size="8" weight="bold">DDD</Text></Link>
         <Text size="2" color="gray">Where awesome domain driven designers are made</Text>
     </Box>
 );
@@ -34,13 +34,18 @@ const HeaderActionButton = ({ user }: { user: any }) => (
     </Flex>
 );
 
-export const Header = () => {
+interface HeaderProps {
+    showAuth?: boolean;
+    user?: any;
+}
+
+export const Header = ({ showAuth = true, user = null }: HeaderProps) => {
     return (
         <Box asChild>
             <header id="header">
                 <Flex justify="between" align="center" p="4">
                     <Logo />
-                    <HeaderActionButton user={null} />
+                    {showAuth && <HeaderActionButton user={user} />}
                 </Flex>
             </header>
         </Box>

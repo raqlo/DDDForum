@@ -2,6 +2,8 @@ import {RegistrationForm} from "../components/registratonForm";
 import {useUser} from "../contexts/userContext";
 import {useState} from "react";
 import {z} from "zod";
+import { Box, Flex, Heading } from "@radix-ui/themes";
+import { Header } from "../components/header";
 
 function RegistrationPage() {
     const { setUser } = useUser();
@@ -20,14 +22,25 @@ function RegistrationPage() {
         // If the form is valid, start isLoading
         // Make the API call
     }
-    return <div className="flex justify-center items-center h-screen">
-        <h1>Create an account</h1>
-        <RegistrationForm
-            onSubmit={(input: RegistrationInput) =>
-                handleSubmitRegistrationForm(input)
-            }
-        />
-    </div>
+    return (
+        <Box>
+            <Header showAuth={false} />
+            <Flex
+                direction="column"
+                align="center"
+                justify="center"
+                gap="4"
+                p="8"
+            >
+                <Heading size="6">Create an account</Heading>
+                <RegistrationForm
+                    onSubmit={(input: RegistrationInput) =>
+                        handleSubmitRegistrationForm(input)
+                    }
+                />
+            </Flex>
+        </Box>
+    )
 }
 
 const registrationInput = z.object({

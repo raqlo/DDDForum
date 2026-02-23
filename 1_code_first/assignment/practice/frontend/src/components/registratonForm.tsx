@@ -30,7 +30,6 @@ export const RegistrationForm = (props: RegistrationFormProps) => {
                         placeholder="Email"
                         onChange={(e) => setEmail(e.target.value)}
                     />
- `
                     <TextField.Root
                         type="text"
                         placeholder="Username"
