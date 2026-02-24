@@ -3,7 +3,7 @@ import {mockPosts, PostsList} from "../components/postList";
 
 export const MainPage = () => {
     return (
-        <Layout>
+        <Layout showAuth={true}>
             <PostsList
                 posts={mockPosts}
             />

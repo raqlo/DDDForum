@@ -1,7 +1,7 @@
 import './App.css'
 import "@radix-ui/themes/styles.css";
-import {BrowserRouter} from "react-router-dom";
-import {Route, Routes} from "react-router-dom";
+import {BrowserRouter} from "react-router";
+import {Route, Routes} from "react-router";
 import {MainPage} from "./pages/mainPage";
 import {RegistrationPage} from "./pages/registrationPage";
 import {UserProvider} from "./contexts/userContext";

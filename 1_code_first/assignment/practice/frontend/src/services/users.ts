@@ -6,8 +6,9 @@ type RegisterUserInput = {
     user: RegistrationInput;
 }
 
+
 const userServices = {
-    registerUser: (params: RegisterUserInput) => apiHandler<UserData>('/users', {method: 'POST', data: params.user}),
+    registerUser: (params: RegisterUserInput) => apiHandler<UserData, string>('/users/new', {method: 'POST', data: params.user}),
 }
 
 export { userServices}

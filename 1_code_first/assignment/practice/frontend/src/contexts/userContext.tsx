@@ -3,7 +3,7 @@ import React, {createContext, type ReactNode, useContext, useState} from "react"
 export interface UserData {
     username: string;
     email: string;
-    firstName: string;
+    name: string;
     lastName: string;
 }
 

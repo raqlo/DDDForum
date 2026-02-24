@@ -9,14 +9,14 @@ interface RegistrationFormProps {
 export const RegistrationForm = (props: RegistrationFormProps) => {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
-    const [firstName, setFirstName] = useState('');
+    const [name, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = (ev: SubmitEvent<HTMLFormElement>) => {
         ev.preventDefault();
         props.onSubmit({
-            email, username, firstName, lastName, password
+            email, username, name, lastName, password
         })
     }
 
@@ -60,7 +60,7 @@ export const RegistrationForm = (props: RegistrationFormProps) => {
                         type="text"
                         placeholder="First Name"
                         className="input input-bordered w-full"
-                        value={firstName}
+                        value={name}
                         onChange={(e) => setFirstName(e.target.value)}
                         required
                     />

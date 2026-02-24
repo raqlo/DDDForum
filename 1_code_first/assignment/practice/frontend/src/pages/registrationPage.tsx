@@ -2,20 +2,24 @@ import {RegistrationForm} from "../components/registratonForm";
 import {useUser} from "../contexts/userContext";
 import {useState} from "react";
 import {z} from "zod";
-import { Header } from "../components/header";
 import {toast, ToastContainer} from "react-toastify";
 import {LoadingSpinner} from "../components/loadingSpinner";
 import {userServices} from "../services/users";
+import {useNavigate} from "react-router"
+import {Layout} from "../components/layout";
+import {isAxiosError} from "axios";
 
 function RegistrationPage() {
-    const { setUser } = useUser();
+    const {setUser} = useUser();
     const [isLoading, setIsLoading] = useState(false);
+    let navigate = useNavigate();
+
 
     const handleSubmitRegistrationForm = async (input: RegistrationInput) => {
         // Validate the form
         const validationResult = validateForm(input)
         // If the form is invalid
-        if(validationResult.errorMessage) {
+        if (validationResult.errorMessage) {
             // Show an error toast (for invalid input)
             toast.error('There was an error with your registration. Please try again.', {
                 position: "top-left",
@@ -27,21 +31,38 @@ function RegistrationPage() {
                 progress: undefined,
                 theme: "light",
             });
+            setIsLoading(false);
             return
         }
         // If the form is valid, start isLoading
         setIsLoading(true);
 
-
         // Make the API call
-        const res = await userServices.registerUser({user: input});
+        try {
+            const res = await userServices.registerUser({user: input});
+            setUser(res.data.data)
 
-        setUser(res.data)
-
+        } catch (error) {
+            if (isAxiosError(error)) {
+                debugger;
+                toast.error(error.response?.data.error, {
+                    position: "top-left",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
+            setIsLoading(false);
+            return;
+        }
+        navigate("/")
     }
     return (
-        <div>
-            <Header showAuth={false} />
+        <Layout showAuth={false}>
             <div className="flex flex-col items-center justify-center gap-4 p-8">
                 <h2 className="text-3xl font-bold">Create an account</h2>
                 <RegistrationForm
@@ -50,16 +71,16 @@ function RegistrationPage() {
                     }
                 />
             </div>
-            <ToastContainer />
-            {isLoading && <LoadingSpinner size={"sm"} />}
-        </div>
+            <ToastContainer/>
+            {isLoading && <LoadingSpinner size={"sm"}/>}
+        </Layout>
     )
 }
 
 const registrationInput = z.object({
     email: z.email(),
     username: z.string().min(3),
-    firstName: z.string(),
+    name: z.string(),
     lastName: z.string(),
     password: z.string().min(8)
 })
@@ -72,7 +93,7 @@ type ValidationResult = {
     errorMessage?: string;
 }
 
-function validateForm (input: RegistrationInput): ValidationResult {
+function validateForm(input: RegistrationInput): ValidationResult {
     const validationResult = registrationInput.safeParse(input)
     if (!validationResult.success) {
         return {

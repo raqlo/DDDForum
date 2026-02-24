@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import type {UserData} from "../contexts/userContext";
 
 const Logo = () => (
     <div className={"flex items-center gap-3"}>
@@ -9,8 +10,8 @@ const Logo = () => (
     </div>
 );
 
-const HeaderActionButton = ({ user }: { user: any }) => (
-    <div className="flex gap-3 items-center">
+const HeaderActionButton = ({ user }: { user: UserData }) => {
+    return <div className="flex gap-3 items-center">
         {user ? (
             <div className="flex gap-2 items-center">
                 <span>{user.username}</span>
@@ -33,7 +34,7 @@ const HeaderActionButton = ({ user }: { user: any }) => (
             </>
         )}
     </div>
-);
+};
 
 interface HeaderProps {
     showAuth?: boolean;
