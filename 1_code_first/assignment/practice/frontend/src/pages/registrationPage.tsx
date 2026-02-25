@@ -45,7 +45,7 @@ function RegistrationPage() {
         } catch (error) {
             if (isAxiosError(error)) {
                 debugger;
-                toast.error(error.response?.data.error, {
+                toast.error(validationErrorMap(error.response?.data.error), {
                     position: "top-left",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -103,6 +103,17 @@ function validateForm(input: RegistrationInput): ValidationResult {
     } else {
         return {success: true}
     }
+}
+
+const registrationErrors: Record<string, string> = {
+    ValidationError: "Some fields are invalid. Please check the form for errors.",
+    InvalidEmail: "Email is invalid",
+    UsernameAlreadyTaken: "Username is already taken. Please choose another one.",
+    EmailAlreadyInUse: "Email is already in use. Please login with your existing account."
+}
+
+function validationErrorMap(error: string): string {
+    return registrationErrors[error] ?? "An unknown error occurred. Please try again later."
 }
 
 export {RegistrationPage}
