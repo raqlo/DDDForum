@@ -18,6 +18,8 @@ export const UserController = {
             if (!email || !username || !name || !lastName || !password)
                 return fail(c, 'ValidationError', 400)
 
+            if(email.split('@').length !== 2) return fail(c, 'InvalidEmail', 400)
+
             if (await UserModel.getUserByUsername(username))
                 return fail(c, 'UsernameAlreadyTaken', 409)
 
