@@ -1,10 +1,44 @@
-export type Post = {
-    id: string;
+interface User {
+    id: number;
+    email: string;
+    name: string | null;
+    lastName: string | null;
+    username: string;
+    password: string;
+}
+
+interface Member {
+    id: number;
+    userId: number;
+    user: User;
+}
+
+interface Vote {
+    id: number;
+    postId: number;
+    memberId: number;
+    voteType: string; // 'Upvote' or 'Downvote'
+}
+
+interface Comment {
+    id: number;
+    postId: number;
+    text: string;
+    memberId: number;
+    parentCommentId: number | null;
+}
+
+export interface Post {
+    id: number;
+    memberId: number;
+    postType: string;
     title: string;
-    author: string;
-    date: string;
-    commentCount: number;
-};
+    content: string;
+    dateCreated: string; // ISO date string
+    votes: Vote[];
+    memberPostedBy: Member;
+    comments: Comment[];
+}
 
 export const PostsList = ({posts}: { posts: Post[] }) => {
     return (
@@ -16,9 +50,9 @@ export const PostsList = ({posts}: { posts: Post[] }) => {
                         <div className="card-body">
                             <h3 className="card-title">{post.title}</h3>
                             <div className="flex gap-4 items-center text-sm text-gray-500">
-                                <span>By {post.author}</span>
-                                <span>{post.date}</span>
-                                <span>{post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}</span>
+                                <span>By {post.memberPostedBy.user.username}</span>
+                                <span>{post.dateCreated}</span>
+                                <span>{post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}</span>
                             </div>
                         </div>
                     </div>
@@ -27,42 +61,3 @@ export const PostsList = ({posts}: { posts: Post[] }) => {
         </div>
     )
 }
-
-// Mock data with 5 posts
-export const mockPosts: Post[] = [
-    {
-        id: "1",
-        title: "Introduction to Domain-Driven Design",
-        author: "Eric Evans",
-        date: "2024-01-15",
-        commentCount: 12
-    },
-    {
-        id: "2",
-        title: "Understanding Bounded Contexts",
-        author: "Vaughn Vernon",
-        date: "2024-01-18",
-        commentCount: 8
-    },
-    {
-        id: "3",
-        title: "Implementing Aggregates in TypeScript",
-        author: "Martin Fowler",
-        date: "2024-01-20",
-        commentCount: 15
-    },
-    {
-        id: "4",
-        title: "Event Sourcing Best Practices",
-        author: "Greg Young",
-        date: "2024-01-22",
-        commentCount: 23
-    },
-    {
-        id: "5",
-        title: "CQRS Pattern Explained",
-        author: "Udi Dahan",
-        date: "2024-01-25",
-        commentCount: 19
-    }
-];

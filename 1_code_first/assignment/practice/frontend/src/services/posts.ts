@@ -1,7 +1,8 @@
 import {apiHandler} from "./apiHandler";
+import type {Post} from "../components/postList";
 
 const postServices = {
-    getPosts: () => apiHandler('/posts')
+    getPosts: () => apiHandler<Post[], string>('/posts')
 }
 
 export { postServices}
