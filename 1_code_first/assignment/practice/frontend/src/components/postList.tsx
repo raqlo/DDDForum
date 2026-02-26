@@ -48,7 +48,10 @@ export const PostsList = ({posts}: { posts: Post[] }) => {
                 {posts.map(post => (
                     <div key={post.id} className="card bg-base-100 shadow-md">
                         <div className="card-body">
-                            <h3 className="card-title">{post.title}</h3>
+                            <div className={"flex gap-2 items-center"}>
+                                <div className="badge badge-primary">{post.votes.length}</div>
+                                <h3 className="card-title">{post.title}</h3>
+                            </div>
                             <div className="flex gap-4 items-center text-sm text-gray-500">
                                 <span>By {post.memberPostedBy.user.username}</span>
                                 <span>{post.dateCreated}</span>
