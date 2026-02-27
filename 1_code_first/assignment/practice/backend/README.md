@@ -40,7 +40,7 @@ Start the PostgreSQL database using Docker Compose:
 bun run db:up
 ```
 
-This will start a PostgreSQL container on port `5433`.
+This will start a PostgreSQL container on port `5433`. We are using this port in case the default port `5432` is already in use by postgres insalled locally on your machine.
 
 ### 4. Run Database Migrations
 
