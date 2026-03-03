@@ -10,4 +10,8 @@ describe("fizzbuzz", () => {
         const res = fizzbuzz(3)
         expect(res).toBe("fizz");
     })
+    it("outputs 'buzz' if the input number is 5", () => {
+        const res = fizzbuzz(5)
+        expect(res).toBe("buzz");
+    })
 });
