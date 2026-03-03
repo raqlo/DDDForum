@@ -5,5 +5,9 @@ describe("fizzbuzz", () => {
     it("always returns a string", () => {
         const res = fizzbuzz("string");
         expect(typeof res).toBe("string");
+    });
+    it("outputs 'fizz' if the input number is 3", () => {
+        const res = fizzbuzz(3)
+        expect(res).toBe("fizz");
     })
 });
