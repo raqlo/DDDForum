@@ -43,7 +43,6 @@ describe("fizzbuzz", () => {
         expect(res).toContain("error")
     })
     it("should throw an error if input is '15'", () => {
-        // @ts-ignore @ts-expect-error testing message if input is not a number
         const res = fizzbuzz("15")
         expect(res).toContain("error")
     })
