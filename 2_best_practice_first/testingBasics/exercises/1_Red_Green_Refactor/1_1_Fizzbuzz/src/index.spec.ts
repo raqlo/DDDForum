@@ -30,4 +30,8 @@ describe("fizzbuzz", () => {
         const res = fizzbuzz(42)
         expect(res).toBe("fizz");
     })
+    it("should return 'FizzBuzz' if the input number is 45", () => {
+        const res = fizzbuzz(45)
+        expect(res).toBe("FizzBuzz");
+    })
 });
