@@ -34,4 +34,8 @@ describe("fizzbuzz", () => {
         const res = fizzbuzz(45)
         expect(res).toBe("FizzBuzz");
     })
+    it('should show an error message if input is 102', () => {
+        const res = fizzbuzz(102)
+        expect(res).toContain("error")
+    });
 });
