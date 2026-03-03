@@ -38,4 +38,8 @@ describe("fizzbuzz", () => {
         const res = fizzbuzz(102)
         expect(res).toContain("error")
     });
+    it("should throw an error if input is -12", () => {
+        const res = fizzbuzz(-12)
+        expect(res).toContain("error")
+    })
 });
