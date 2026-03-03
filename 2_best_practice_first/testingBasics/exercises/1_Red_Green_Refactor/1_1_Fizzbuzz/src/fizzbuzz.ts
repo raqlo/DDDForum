@@ -8,5 +8,5 @@ export function fizzbuzz(input: number): string {
     if(input % 3 === 0) {
         return 'fizz'
     }
-    return ""
+    return input.toString()
 }
