@@ -1,3 +1,6 @@
-export function fizzbuzz(str: string): string {
+export function fizzbuzz(input: number): string {
+    if(input === 3) {
+        return 'fizz'
+    }
     return ""
 }
