@@ -14,7 +14,7 @@ export function fizzbuzz(input: any): string {
     if(input % 15 === 0) {
         return 'FizzBuzz'
     }
-    if(input === 5) {
+    if(input % 5 === 0) {
         return 'buzz'
     }
     if(input % 3 === 0) {
