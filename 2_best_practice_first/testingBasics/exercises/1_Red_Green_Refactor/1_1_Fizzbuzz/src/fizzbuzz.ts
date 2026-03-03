@@ -3,6 +3,10 @@ export function fizzbuzz(input: number): string {
         return 'error: input must be less than 100'
     }
 
+    if(input <= 0) {
+        return 'error: input must be greater than 0'
+    }
+
     if(input % 15 === 0) {
         return 'FizzBuzz'
     }
