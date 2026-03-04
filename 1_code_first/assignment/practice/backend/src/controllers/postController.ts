@@ -10,7 +10,8 @@ const fail = (c: Context, error: string, status: 400 | 404 | 409 | 500) =>
 
 export const PostController = {
     async getPosts(c: Context) {
-        const postList = await PostModel.getPostList()
+        const sort = c.req.query('sort')
+        const postList = await PostModel.getPostList(sort)
         return ok<Post[]>(c, postList)
     }
 }
