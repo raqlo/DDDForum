@@ -59,7 +59,19 @@ function RegistrationPage() {
             setIsLoading(false);
             return;
         }
-        navigate("/")
+        toast.success("Registration successful!", {
+            position: "top-left",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        })
+        setTimeout(() => {
+            navigate("/")
+        }, 3000)
     }
     return (
         <Layout showAuth={false}>
@@ -82,7 +94,6 @@ const registrationInput = z.object({
     username: z.string().min(3),
     name: z.string(),
     lastName: z.string(),
-    password: z.string().min(8)
 })
 
 export type RegistrationInput = z.infer<typeof registrationInput>

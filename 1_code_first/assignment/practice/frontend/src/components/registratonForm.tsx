@@ -11,12 +11,11 @@ export const RegistrationForm = (props: RegistrationFormProps) => {
     const [username, setUsername] = useState('');
     const [name, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [password, setPassword] = useState('');
 
     const handleSubmit = (ev: SubmitEvent<HTMLFormElement>) => {
         ev.preventDefault();
         props.onSubmit({
-            email, username, name, lastName, password
+            email, username, name, lastName
         })
     }
 
@@ -79,22 +78,6 @@ export const RegistrationForm = (props: RegistrationFormProps) => {
                         required
                     />
                 </div>
-
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Password</span>
-                    </label>
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="input input-bordered w-full"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        minLength={8}
-                    />
-                </div>
-
                 <button type="submit" className="btn btn-primary w-full">
                     Register
                 </button>
