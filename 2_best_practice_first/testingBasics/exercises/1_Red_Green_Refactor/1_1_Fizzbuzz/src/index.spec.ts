@@ -1,35 +1,48 @@
 import { describe, expect, it } from "bun:test";
 import {fizzbuzz} from "./fizzbuzz";
 
+const fizzTestCases = [
+    3, 9, 6
+];
+const buzzTestCases = [
+    5, 10, 20
+]
+const fizzBuzzTestCases = [
+    15, 30, 45
+]
+
 describe("fizzbuzz", () => {
     it("should always return a string", () => {
         const res = fizzbuzz(2);
         expect(typeof res).toBe("string");
     });
-    it("should output 'fizz' if the input number is 3", () => {
-        const res = fizzbuzz(3)
-        expect(res).toBe("fizz");
+
+    describe("should return 'fizz' if the input number is divisible by 3", () => {
+        it.each(fizzTestCases)("should output 'fizz' if the input number is %p", (num) => {
+            const res = fizzbuzz(num);
+            expect(res).toBe('fizz');
+        });
     })
-    it("should output 'buzz' if the input number is 5", () => {
-        const res = fizzbuzz(5)
-        expect(res).toBe("buzz");
+
+    describe("should return 'buzz' if the input number is divisible by 5", () => {
+        it.each(buzzTestCases)("should output 'buzz' if the input number is %p", (num) => {
+            const res = fizzbuzz(num);
+            expect(res).toBe('buzz');
+        });
     })
-    it('should output "FizzBuzz" if the input number is 15', () => {
-        const res = fizzbuzz(15)
-        expect(res).toBe("FizzBuzz");
-    });
-    it("should output 'fizz' if the input number is 9", () => {
-        const res = fizzbuzz(9)
-        expect(res).toBe("fizz");
+
+    describe("should return 'FizzBuzz' if the input number is divisible by 15", () => {
+        it.each(fizzBuzzTestCases)("should output 'FizzBuzz' if the input number is %p", (num) => {
+            const res = fizzbuzz(num);
+            expect(res).toBe('FizzBuzz');
+        });
     })
+
     it("should return '43' if the input number is 43", () => {
         const res = fizzbuzz(43)
         expect(res).toBe("43");
     })
-    it("should return 'Fizz' if the input number is 42", () => {
-        const res = fizzbuzz(42)
-        expect(res).toBe("fizz");
-    })
+
     it("should return 'FizzBuzz' if the input number is 45", () => {
         const res = fizzbuzz(45)
         expect(res).toBe("FizzBuzz");
