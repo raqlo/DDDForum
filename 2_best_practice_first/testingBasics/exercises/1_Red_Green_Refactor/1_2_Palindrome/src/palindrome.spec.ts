@@ -4,7 +4,10 @@ import {palindromeChecker} from "./index";
 const truePalindromeCases = [
     'mom',
     'Mom',
-    '1Never Odd or Even1'
+    '1Never Odd or Even1',
+    'Was It A Rat I Saw',
+    'Never Odd or Even',
+    'xMomx'
 ]
 
 describe('PalindromeChecker', () => {
