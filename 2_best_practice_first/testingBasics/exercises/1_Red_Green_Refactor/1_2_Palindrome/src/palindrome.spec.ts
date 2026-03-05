@@ -10,4 +10,8 @@ describe('PalindromeChecker', () => {
         const res = palindromeChecker('Never Odd or Even1');
         expect(res).toBeFalse()
     })
+    it('should return true if "1Never Odd or Even1"', () => {
+        const res = palindromeChecker('1Never Odd or Even1');
+        expect(res).toBeTrue()
+    })
 });
