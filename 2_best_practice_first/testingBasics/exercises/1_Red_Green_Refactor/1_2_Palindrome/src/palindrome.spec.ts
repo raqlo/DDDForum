@@ -10,8 +10,12 @@ describe('PalindromeChecker', () => {
         const res = palindromeChecker('Never Odd or Even1');
         expect(res).toBeFalse()
     })
-    it('should return true if "1Never Odd or Even1"', () => {
+    it('should return true if input is "1Never Odd or Even1"', () => {
         const res = palindromeChecker('1Never Odd or Even1');
         expect(res).toBeTrue()
     })
+    it('should return true if input is "MoM"', () => {
+        const res = palindromeChecker('MoM');
+        expect(res).toBeTrue()
+    });
 });
