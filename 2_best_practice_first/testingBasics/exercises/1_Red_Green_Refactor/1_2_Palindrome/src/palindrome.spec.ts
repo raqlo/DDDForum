@@ -27,7 +27,7 @@ describe('PalindromeChecker', () => {
 
     it("should throw an error if input is empty", () => {
         const res = () => palindromeChecker('');
-        expect(res).toThrow(Error);
+        expect(res).toThrow(/Input must not be empty/);
     })
 
     it('should throw an error if input is not a string', () => {

@@ -4,7 +4,7 @@ export function palindromeChecker(str: unknown): boolean {
     }
 
     if(str.length <= 1) {
-        throw new Error('Input must be at least 2 characters long')
+        throw new Error('Input must not be empty')
     }
 
     const normalStr = str.replaceAll(' ', '').toLowerCase();
