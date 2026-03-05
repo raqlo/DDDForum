@@ -1,5 +1,3 @@
-
-
-export function palindromeChecker(str: string) {
-
+export function palindromeChecker(str: string): boolean {
+    return true
 }
