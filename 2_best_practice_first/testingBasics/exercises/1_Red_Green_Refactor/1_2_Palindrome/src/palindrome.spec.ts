@@ -29,4 +29,11 @@ describe('PalindromeChecker', () => {
         const res = () => palindromeChecker('');
         expect(res).toThrow(Error);
     })
+
+    it('should throw an error if input is not a string', () => {
+        // @ts-ignore @ts-expect-error handle input validation
+        const res = () => palindromeChecker(2);
+        console.log(res)
+        expect(res).toThrow(/Invalid input/);
+    })
 });
