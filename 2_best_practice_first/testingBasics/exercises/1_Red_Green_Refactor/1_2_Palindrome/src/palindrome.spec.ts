@@ -25,4 +25,8 @@ describe('PalindromeChecker', () => {
         const res = palindromeChecker('Momx');
     })
 
+    it("should throw an error if input is empty", () => {
+        const res = palindromeChecker('');
+        expect(res).toThrow();
+    })
 });
