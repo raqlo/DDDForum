@@ -21,4 +21,8 @@ describe('PalindromeChecker', () => {
         expect(res).toBeFalse()
     })
 
+    it("should return false if input is 'Momx'", () => {
+        const res = palindromeChecker('Momx');
+    })
+
 });
