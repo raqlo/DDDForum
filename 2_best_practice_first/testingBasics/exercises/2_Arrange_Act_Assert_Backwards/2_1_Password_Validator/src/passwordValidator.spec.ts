@@ -26,4 +26,9 @@ describe('passwordValidator', () => {
         expect(res.isValid).toBeFalse();
         expect(res.errors).toHaveLength(3)
     });
+    it('should count 2 errors if password "password123456789" is used', () => {
+        const res = passwordValidator("password123456789");
+        expect(res.isValid).toBeFalse();
+        expect(res.errors).toHaveLength(2)
+    });
 });
