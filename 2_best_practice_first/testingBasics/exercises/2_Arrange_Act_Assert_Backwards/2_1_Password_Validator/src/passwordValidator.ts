@@ -16,6 +16,9 @@ export function passwordValidator(password: string): PasswordValidatorResponse {
     if(!containsNumber) {
         errors.push('missingNumber')
     }
+    if (!/[A-Z]/.test(password)) {
+        errors.push('missingUppercase')
+    }
 
     return {isValid: errors.length === 0, errors}
 }

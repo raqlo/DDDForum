@@ -5,6 +5,7 @@ const invalidPasswords: [PasswordErrorType, string][]= [
     ['invalidLength', 'P4ss'],
     ['invalidLength', 'This1sAVeryLongPassword'],
     ['missingNumber', 'Password'],
+    ['missingUppercase', 'password'],
 ]
 
 describe('passwordValidator', () => {
