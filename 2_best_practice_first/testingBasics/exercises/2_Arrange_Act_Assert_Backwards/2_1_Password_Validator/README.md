@@ -28,3 +28,17 @@ Write a function (or a stateless class) for validating passwords. Passwords must
         * "paas" // 3 errors
         * "password123" // 2 errors
         * "PASSWORD" // 2 errors 
+
+
+## Get started
+To install dependencies:
+
+```bash
+bun install
+```
+
+To test:
+
+```bash
+bun test:dev
+```
