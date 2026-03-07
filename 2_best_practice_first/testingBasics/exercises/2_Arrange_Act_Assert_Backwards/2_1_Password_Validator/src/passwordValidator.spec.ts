@@ -20,6 +20,17 @@ describe('passwordValidator', () => {
         expect(res.isValid).toBeTrue();
         expect(res.errors).toHaveLength(0)
     });
+    it('should mark password "123Password!" as valid', () => {
+        const password = "123Password!";
+        const res = passwordValidator(password);
+        expect(res.isValid).toBeTrue();
+        expect(res.errors).toHaveLength(0)
+    })
+    it('should mark password "Passw0rd!" as valid', () => {
+        const password = "Passw0rd!";
+        const res = passwordValidator(password);
+        expect(res.isValid).toBeTrue();
+    })
 
     it.each(invalidPasswords)("should mark password %p with %p error type", (error, password) => {
         const res = passwordValidator(password);
