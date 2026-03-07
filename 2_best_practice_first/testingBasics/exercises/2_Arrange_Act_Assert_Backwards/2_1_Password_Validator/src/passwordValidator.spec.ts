@@ -1,5 +1,11 @@
 import {describe, it, expect} from "bun:test"
-import {passwordValidator} from "./passwordValidator";
+import {type PasswordErrorType, passwordValidator,} from "./passwordValidator";
+
+const invalidPasswords: [PasswordErrorType, string][]= [
+    ['invalidLength', 'P4ss'],
+    ['invalidLength', 'This1sAVeryLongPassword'],
+    ['missingNumber', 'Password'],
+]
 
 describe('passwordValidator', () => {
     it('should mark password "Passw0rd" as valid', () => {
@@ -8,20 +14,10 @@ describe('passwordValidator', () => {
         expect(res.isValid).toBeTrue();
         expect(res.errors).toHaveLength(0)
     });
-    it('should mark password "P4ss" as invalid', () => {
-        const password = "P4ss";
+
+    it.each(invalidPasswords)("should mark password %p with %p error type", (error, password) => {
         const res = passwordValidator(password);
         expect(res.isValid).toBeFalse();
-        expect(res.errors).toContain('invalidLength')
-    });
-    it('should mark password "P4ssw0rd" as invalid', () => {
-        const password = "This1sAVeryLongPassword";
-        const res = passwordValidator(password);
-    });
-    it('should mark password "Password" as invalid', () => {
-        const password = "Password";
-        const res = passwordValidator(password);
-        expect(res.isValid).toBeFalse();
-        expect(res.errors).toContain('missingNumber')
+        expect(res.errors).toContain(error)
     })
 });
