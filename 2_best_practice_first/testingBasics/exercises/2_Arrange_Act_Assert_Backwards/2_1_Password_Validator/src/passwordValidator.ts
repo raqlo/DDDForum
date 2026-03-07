@@ -4,3 +4,7 @@ type PasswordValidatorResponse = {
 }
 
 type PasswordErrorType = 'invalidLength' | 'missingUppercase' | 'missingNumber'
+
+export function passwordValidator(password: string): PasswordValidatorResponse {
+    return {isValid: true, errors: []}
+}
