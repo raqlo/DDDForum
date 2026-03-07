@@ -1,11 +1,16 @@
 import {describe, it, expect} from "bun:test"
 import {type PasswordErrorType, passwordValidator,} from "./passwordValidator";
 
-const invalidPasswords: [PasswordErrorType, string][]= [
+const invalidPasswords: [PasswordErrorType, string][] = [
     ['invalidLength', 'P4ss'],
     ['invalidLength', 'This1sAVeryLongPassword'],
     ['missingNumber', 'Password'],
     ['missingUppercase', 'password'],
+]
+const errorCountToInvalidPasswords: [number, string][] = [
+    [3, 'paas'],
+    [2, 'password123456789'],
+    [2, 'PASS'],
 ]
 
 describe('passwordValidator', () => {
@@ -21,19 +26,10 @@ describe('passwordValidator', () => {
         expect(res.isValid).toBeFalse();
         expect(res.errors).toContain(error)
     })
-    it('should count 3 errors if password "paas" is used', () => {
-        const res = passwordValidator("paas");
+
+    it.each(errorCountToInvalidPasswords)("should count %p errors if password %p is used", (errorCount, password) => {
+        const res = passwordValidator(password);
         expect(res.isValid).toBeFalse();
-        expect(res.errors).toHaveLength(3)
-    });
-    it('should count 2 errors if password "password123456789" is used', () => {
-        const res = passwordValidator("password123456789");
-        expect(res.isValid).toBeFalse();
-        expect(res.errors).toHaveLength(2)
-    });
-    it('should count 2 error if password "PASSWORD" is used', () => {
-        const res = passwordValidator("PASS");
-        expect(res.isValid).toBeFalse();
-        expect(res.errors).toHaveLength(2)
-    });
+        expect(res.errors).toHaveLength(errorCount)
+    })
 });
