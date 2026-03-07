@@ -1,6 +1,12 @@
 import {describe, it, expect} from "bun:test"
 import {type PasswordErrorType, passwordValidator,} from "./passwordValidator";
 
+const validPasswords: string[] = [
+    'Passw0rd',
+    '123Password!',
+    'Passw0rd!',
+]
+
 const invalidPasswords: [PasswordErrorType, string][] = [
     ['invalidLength', 'P4ss'],
     ['invalidLength', 'This1sAVeryLongPassword'],
@@ -14,22 +20,10 @@ const errorCountToInvalidPasswords: [number, string][] = [
 ]
 
 describe('passwordValidator', () => {
-    it('should mark password "Passw0rd" as valid', () => {
-        const password = "Passw0rd";
+    it.each(validPasswords)("should mark password %p as valid", (password) => {
         const res = passwordValidator(password);
         expect(res.isValid).toBeTrue();
         expect(res.errors).toHaveLength(0)
-    });
-    it('should mark password "123Password!" as valid', () => {
-        const password = "123Password!";
-        const res = passwordValidator(password);
-        expect(res.isValid).toBeTrue();
-        expect(res.errors).toHaveLength(0)
-    })
-    it('should mark password "Passw0rd!" as valid', () => {
-        const password = "Passw0rd!";
-        const res = passwordValidator(password);
-        expect(res.isValid).toBeTrue();
     })
 
     it.each(invalidPasswords)("should mark password %p with %p error type", (error, password) => {
