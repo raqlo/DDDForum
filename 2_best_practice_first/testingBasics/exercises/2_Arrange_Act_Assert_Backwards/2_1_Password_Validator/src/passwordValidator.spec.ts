@@ -14,4 +14,8 @@ describe('passwordValidator', () => {
         expect(res.isValid).toBeFalse();
         expect(res.errors).toContain('invalidLength')
     });
+    it('should mark password "P4ssw0rd" as invalid', () => {
+        const password = "This1sAVeryLongPassword";
+        const res = passwordValidator(password);
+    })
 });
