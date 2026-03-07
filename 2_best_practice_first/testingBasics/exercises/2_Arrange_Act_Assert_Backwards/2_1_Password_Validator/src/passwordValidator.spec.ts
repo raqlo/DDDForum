@@ -17,5 +17,11 @@ describe('passwordValidator', () => {
     it('should mark password "P4ssw0rd" as invalid', () => {
         const password = "This1sAVeryLongPassword";
         const res = passwordValidator(password);
+    });
+    it('should mark password "Password" as invalid', () => {
+        const password = "Password";
+        const res = passwordValidator(password);
+        expect(res.isValid).toBeFalse();
+        expect(res.errors).toContain('missingNumber')
     })
 });
