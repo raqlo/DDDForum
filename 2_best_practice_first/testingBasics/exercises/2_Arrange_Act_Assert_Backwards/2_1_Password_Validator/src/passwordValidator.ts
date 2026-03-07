@@ -8,6 +8,7 @@ export type PasswordErrorType = 'invalidLength' | 'missingUppercase' | 'missingN
 export function passwordValidator(password: string): PasswordValidatorResponse {
     const isLengthValid = password.length >= 5 && password.length <= 15;
     const containsNumber = /\d/.test(password);
+    const containsUppercase = /[A-Z]/.test(password);
 
     const errors = [] as PasswordErrorType[];
     if(!isLengthValid) {
@@ -16,7 +17,7 @@ export function passwordValidator(password: string): PasswordValidatorResponse {
     if(!containsNumber) {
         errors.push('missingNumber')
     }
-    if (!/[A-Z]/.test(password)) {
+    if (!containsUppercase) {
         errors.push('missingUppercase')
     }
 
