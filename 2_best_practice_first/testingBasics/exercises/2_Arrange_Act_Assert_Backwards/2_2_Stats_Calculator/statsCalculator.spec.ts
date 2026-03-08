@@ -9,6 +9,7 @@ describe('Stats Calculator', () => {
             ['maximum', 53],
             ['minimum', -8],
             ['average', 18.67],
+            ['elementsCount', 6],
         ]
 
         it.each(results)("should know the %s value is %p", (type, expected) => {
@@ -23,6 +24,7 @@ describe('Stats Calculator', () => {
             ['maximum', 100],
             ['minimum', -16],
             ['average', 24.89],
+            ['elementsCount', 9],
         ]
 
         it.each(results)("should know the %s value is %p", (type, expected) => {
@@ -36,6 +38,7 @@ describe('Stats Calculator', () => {
             ['maximum', 5],
             ['minimum', 5],
             ['average', 5],
+            ['elementsCount', 3],
         ]
 
         it.each(results)("should know the %s value is %p", (type, expected) => {
