@@ -1,4 +1,4 @@
-type StatsCalculatorResponse = {
+export type StatsCalculatorResponse = {
     average: number;
     minimum: number;
     maximum: number;
