@@ -28,10 +28,13 @@ export function statsCalculator(array: number[]): StatsCalculatorResponse {
             if(element < minimum) {
                 minimum = element;
             }
+            if(element > maximum) {
+                maximum = element;
+            }
         }
     })
 
     average = sum / elementsCount;
 
-    return {average, minimum, maximum: 0, elementsCount: 0}
+    return {average, minimum, maximum, elementsCount: 0}
 }
