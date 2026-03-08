@@ -7,7 +7,8 @@ describe('Stats Calculator', () => {
         const sequence = [2, 4, 21, -8, 53, 40];
         const results: [keyof StatsCalculatorResponse, number][] = [
             ['maximum', 53],
-            ['minimum', -8]
+            ['minimum', -8],
+            ['average', 18.67],
         ]
 
         it.each(results)("should know the %s value is %p", (type, expected) => {
@@ -20,7 +21,8 @@ describe('Stats Calculator', () => {
         const sequence = [100, 2, -3, -16, 1, 60, 81, 2, -3];
         const results: [keyof StatsCalculatorResponse, number][] = [
             ['maximum', 100],
-            ['minimum', -16]
+            ['minimum', -16],
+            ['average', 24.89],
         ]
 
         it.each(results)("should know the %s value is %p", (type, expected) => {
@@ -32,7 +34,8 @@ describe('Stats Calculator', () => {
         const sequence = [5, 5, 5];
         const results: [keyof StatsCalculatorResponse, number][] = [
             ['maximum', 5],
-            ['minimum', 5]
+            ['minimum', 5],
+            ['average', 5],
         ]
 
         it.each(results)("should know the %s value is %p", (type, expected) => {

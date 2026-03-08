@@ -24,6 +24,7 @@ export function statsCalculator(array: number[]): StatsCalculatorResponse {
             average = element;
             minimum = element;
             maximum = element;
+            sum = element;
         } else {
             if(element < minimum) {
                 minimum = element;
@@ -31,10 +32,11 @@ export function statsCalculator(array: number[]): StatsCalculatorResponse {
             if(element > maximum) {
                 maximum = element;
             }
+            sum = sum + element;
         }
     })
 
-    average = sum / elementsCount;
+    average = parseFloat((sum / elementsCount).toFixed(2))
 
-    return {average, minimum, maximum, elementsCount: 0}
+    return {average, minimum, maximum, elementsCount}
 }
