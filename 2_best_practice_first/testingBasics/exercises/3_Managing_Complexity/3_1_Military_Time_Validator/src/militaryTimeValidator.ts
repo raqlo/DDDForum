@@ -14,7 +14,7 @@ export function militaryTimeValidator(timeRange: string): boolean {
     const startTimeUnit = convertTimeToUnits(startTime);
     const endTimeUnit = convertTimeToUnits(endTime);
 
-    if(!isValid24Time(startTime) && !isValid24Time(endTime)) {
+    if(!isValid24Time(startTime) || !isValid24Time(endTime)) {
         return false;
     }
     if(startTimeUnit.hour === endTimeUnit.hour && startTimeUnit.minute === endTimeUnit.minute) {
