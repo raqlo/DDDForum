@@ -19,4 +19,9 @@ describe('Military Time Validator', () => {
         const res = militaryTimeValidator(range);
         expect(res).toBeFalse();
     })
+    it("should know that 22:00 - 01:12 is not a valid time range", () => {
+        const range = "22:00 - 01:12";
+        const res = militaryTimeValidator(range);
+        expect(res).toBeFalse();
+    })
 });

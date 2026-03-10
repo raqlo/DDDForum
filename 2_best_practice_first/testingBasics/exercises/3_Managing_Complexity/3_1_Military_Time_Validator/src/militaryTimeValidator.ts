@@ -12,5 +12,9 @@ export function militaryTimeValidator(timeRange: string): boolean {
     if(startTimeUnit[0] === endTimeUnit[0] && startTimeUnit[1] === endTimeUnit[1]) {
         return false;
     }
+    // @ts-ignore
+    if(startTimeUnit[0] > endTimeUnit[0] || (startTimeUnit[0] === endTimeUnit[0] && startTimeUnit[1] > endTimeUnit[1])) {
+        return false;
+    }
     return true;
 }
