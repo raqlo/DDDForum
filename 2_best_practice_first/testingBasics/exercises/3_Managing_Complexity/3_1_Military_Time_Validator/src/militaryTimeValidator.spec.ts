@@ -24,4 +24,9 @@ describe('Military Time Validator', () => {
         const res = militaryTimeValidator(range);
         expect(res).toBeFalse();
     })
+    it("should know that 12:23 is not a valid time range", () => {
+        const range = "12:23";
+        const res = militaryTimeValidator(range);
+        expect(res).toBeFalse();
+    })
 });
