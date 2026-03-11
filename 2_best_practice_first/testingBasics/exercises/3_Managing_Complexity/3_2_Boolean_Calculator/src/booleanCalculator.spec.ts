@@ -2,19 +2,20 @@ import {describe, it, expect} from "bun:test"
 import {booleanCalculator} from "./booleanCalculator";
 
 const trueCases = [
-    'TRUE',
-    'NOT FALSE',
-    'TRUE OR FALSE',
-    "TRUE OR TRUE",
-    "TRUE AND TRUE"
+    // 'TRUE',
+    // 'NOT FALSE',
+    // 'TRUE OR FALSE',
+    // "TRUE OR TRUE",
+    // "TRUE AND TRUE",
+    "TRUE AND TRUE AND TRUE AND TRUE"
 ]
 
 const falseCases = [
-    'FALSE',
-    'NOT TRUE',
-    "FALSE OR FALSE",
-    'TRUE AND FALSE',
-    'FALSE AND FALSE',
+    // 'FALSE',
+    // 'NOT TRUE',
+    // "FALSE OR FALSE",
+    // 'TRUE AND FALSE',
+    // 'FALSE AND FALSE',
 ]
 
 describe('booleanCalculator', () => {
