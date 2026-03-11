@@ -11,5 +11,9 @@ export function booleanCalculator(input: string): boolean {
         return !parseBoolean(tokens[1]);
     }
 
+    if (tokens[1] === 'OR') {
+        return parseBoolean(tokens[0]) || parseBoolean(tokens[2]);
+    }
+
     return parseBoolean(input);
 }

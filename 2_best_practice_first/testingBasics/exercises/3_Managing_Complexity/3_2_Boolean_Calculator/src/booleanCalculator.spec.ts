@@ -22,4 +22,9 @@ describe('booleanCalculator', () => {
         const res = booleanCalculator(input);
         expect(res).toBeFalse();
     })
+    it("should return true if input is TRUE OR FALSE", () => {
+        const input = 'TRUE OR FALSE';
+        const res = booleanCalculator(input);
+        expect(res).toBeTrue();
+    })
 })
