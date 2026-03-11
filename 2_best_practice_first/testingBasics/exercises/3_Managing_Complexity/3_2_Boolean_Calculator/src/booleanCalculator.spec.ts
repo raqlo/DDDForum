@@ -1,40 +1,27 @@
 import {describe, it, expect} from "bun:test"
 import {booleanCalculator} from "./booleanCalculator";
 
+const trueCases = [
+    'TRUE',
+    'NOT FALSE',
+    'TRUE OR FALSE',
+]
+
+const falseCases = [
+    'FALSE',
+    'NOT TRUE',
+    'TRUE AND FALSE',
+    'FALSE AND FALSE',
+]
+
 describe('booleanCalculator', () => {
-    it('should result true if input is TRUE', () => {
-        const input = 'TRUE';
-        const res = booleanCalculator(input);
-        expect(res).toBeTrue();
-    });
-    it('should return false if input is FALSE', () => {
-        const input = 'FALSE';
-        const res = booleanCalculator(input);
-        expect(res).toBeFalse();
-    });
-    it("should return true if input is 'NOT FALSE'", () => {
-        const input = 'NOT FALSE';
+    it.each(trueCases)("should return true if input is %p", (input) => {
         const res = booleanCalculator(input);
         expect(res).toBeTrue();
     })
-    it("should return false if input is 'NOT TRUE'", () => {
-        const input = 'NOT TRUE';
+
+    it.each(falseCases)("should return false if input is %p", (input) => {
         const res = booleanCalculator(input);
         expect(res).toBeFalse();
     })
-    it("should return true if input is TRUE OR FALSE", () => {
-        const input = 'TRUE OR FALSE';
-        const res = booleanCalculator(input);
-        expect(res).toBeTrue();
-    })
-    it('should return false if input is TRUE AND FALSE', () => {
-        const input = 'TRUE AND FALSE';
-        const res = booleanCalculator(input);
-        expect(res).toBeFalse();
-    });
-    it('should return false if input is FALSE AND FALSE', () => {
-        const input = 'FALSE AND FALSE';
-        const res = booleanCalculator(input);
-        expect(res).toBeFalse();
-    });
 })
