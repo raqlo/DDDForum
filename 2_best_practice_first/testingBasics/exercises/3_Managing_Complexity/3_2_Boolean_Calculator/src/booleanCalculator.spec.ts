@@ -12,4 +12,9 @@ describe('booleanCalculator', () => {
         const res = booleanCalculator(input);
         expect(res).toBeFalse();
     });
+    it("should return true if input is 'NOT FALSE'", () => {
+        const input = 'NOT FALSE';
+        const res = booleanCalculator(input);
+        expect(res).toBeTrue();
+    })
 })
