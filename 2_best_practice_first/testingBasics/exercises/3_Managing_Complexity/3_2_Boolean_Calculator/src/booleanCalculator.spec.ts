@@ -7,4 +7,9 @@ describe('booleanCalculator', () => {
         const res = booleanCalculator(input);
         expect(res).toBeTrue();
     });
+    it('should return false if input is FALSE', () => {
+        const input = 'FALSE';
+        const res = booleanCalculator(input);
+        expect(res).toBeFalse();
+    });
 })

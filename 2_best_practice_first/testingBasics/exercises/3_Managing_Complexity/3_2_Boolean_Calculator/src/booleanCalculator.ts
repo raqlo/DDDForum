@@ -1,3 +1,3 @@
 export function booleanCalculator(input: string): boolean {
-    return true;
+    return input === 'TRUE';
 }
