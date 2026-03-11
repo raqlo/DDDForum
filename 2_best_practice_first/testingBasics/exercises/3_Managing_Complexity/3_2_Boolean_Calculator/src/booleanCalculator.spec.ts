@@ -5,11 +5,14 @@ const trueCases = [
     'TRUE',
     'NOT FALSE',
     'TRUE OR FALSE',
+    "TRUE OR TRUE",
+    "TRUE AND TRUE"
 ]
 
 const falseCases = [
     'FALSE',
     'NOT TRUE',
+    "FALSE OR FALSE",
     'TRUE AND FALSE',
     'FALSE AND FALSE',
 ]
