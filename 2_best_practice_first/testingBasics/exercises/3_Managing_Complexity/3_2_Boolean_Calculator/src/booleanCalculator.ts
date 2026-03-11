@@ -1,13 +1,15 @@
+const parseBoolean = (input: string) => input === 'TRUE';
+
 export function booleanCalculator(input: string): boolean {
     const tokens = input.split(' ');
 
     if (tokens.length === 1) {
-        return tokens[0] === 'TRUE';
+        return parseBoolean(tokens[0]);
     }
 
     if (tokens[0] === 'NOT') {
-        return !(tokens[1] === 'TRUE');
+        return !parseBoolean(tokens[1]);
     }
 
-    return input === 'TRUE';
+    return parseBoolean(input);
 }
