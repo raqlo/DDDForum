@@ -27,4 +27,14 @@ describe('booleanCalculator', () => {
         const res = booleanCalculator(input);
         expect(res).toBeTrue();
     })
+    it('should return false if input is TRUE AND FALSE', () => {
+        const input = 'TRUE AND FALSE';
+        const res = booleanCalculator(input);
+        expect(res).toBeFalse();
+    });
+    it('should return false if input is FALSE AND FALSE', () => {
+        const input = 'FALSE AND FALSE';
+        const res = booleanCalculator(input);
+        expect(res).toBeFalse();
+    });
 })
