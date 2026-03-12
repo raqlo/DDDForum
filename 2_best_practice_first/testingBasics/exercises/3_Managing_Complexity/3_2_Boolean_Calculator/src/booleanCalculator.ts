@@ -7,7 +7,7 @@ const notOperator = (a: boolean) => !a;
 export function booleanCalculator(input: string): boolean {
     const tokens = input.split(' ');
 
-    if (tokens.length > 1 && tokens.length < 3) {
+    if (tokens.length > 1 && tokens.length <= 3) {
         if (tokens[0] === 'NOT') {
             return notOperator(parseBoolean(tokens[1]));
         }
@@ -22,22 +22,40 @@ export function booleanCalculator(input: string): boolean {
     }
 
     if(tokens.length > 3) {
-        let i = 0;
-        while (i < tokens.length) {
-            if (tokens[i] === 'AND') {
-                const result = andOperator(
-                    parseBoolean(tokens[i - 1]),
-                    parseBoolean(tokens[i + 1])
-                );
-                console.log(tokens);
-                tokens.splice(i - 1, 3, parseBooleanToString(result));
-                i = 0;
-            } else {
-                i++;
+        if(tokens.some(token => token === 'OR')) {
+            let i = 0;
+            while (i < tokens.length) {
+                if (tokens[i] === 'OR') {
+                    const result = orOperator(
+                        parseBoolean(tokens[i - 1]),
+                        parseBoolean(tokens[i + 1])
+                    );
+                    tokens.splice(i - 1, 3, parseBooleanToString(result));
+                    i = 0;
+                } else {
+                    i++;
+                }
             }
+
         }
 
-        return parseBoolean(tokens.join(' '));
+        if(tokens.some(token => token === 'AND')) {
+            let i = 0;
+            while (i < tokens.length) {
+                if (tokens[i] === 'AND') {
+                    const result = andOperator(
+                        parseBoolean(tokens[i - 1]),
+                        parseBoolean(tokens[i + 1])
+                    );
+                    tokens.splice(i - 1, 3, parseBooleanToString(result));
+                    i = 0;
+                } else {
+                    i++;
+                }
+            }
+
+        }
+            return parseBoolean(tokens.join(' '));
     }
 
     return parseBoolean(input);
