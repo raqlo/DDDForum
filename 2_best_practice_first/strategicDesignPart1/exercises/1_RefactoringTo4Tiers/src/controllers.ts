@@ -5,7 +5,7 @@ import {
     AssignStudentToClassDTO,
     CreateAssignmentDTO,
     CreateClassDTO,
-    CreateStudentDTO
+    CreateStudentDTO, SubmitStudentAssignmentDTO
 } from "./views";
 
 const Errors = {
@@ -178,11 +178,7 @@ export async function AssignStudentToAssignmentController(req: Request, res: Res
 
 export async function SubmitStudentAssignmentController(req: Request, res: Response) {
     try {
-        if (isMissingKeys(req.body, ['id'])) {
-            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
-        }
-
-        const {id} = req.body;
+        const {id} = SubmitStudentAssignmentDTO.fromRequest(req.body);
 
         // check if student assignment exists
         const studentAssignment = await prisma.studentAssignment.findUnique({
