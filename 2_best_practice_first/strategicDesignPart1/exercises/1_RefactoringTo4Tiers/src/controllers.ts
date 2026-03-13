@@ -5,7 +5,7 @@ import {
     AssignStudentToClassDTO,
     CreateAssignmentDTO,
     CreateClassDTO,
-    CreateStudentDTO, SubmitStudentAssignmentDTO
+    CreateStudentDTO, GradeStudentAssignmentDTO, SubmitStudentAssignmentDTO
 } from "./views";
 
 const Errors = {
@@ -208,12 +208,7 @@ export async function SubmitStudentAssignmentController(req: Request, res: Respo
 
 export async function GradeStudentAssignmentController(req: Request, res: Response) {
     try {
-
-        if (isMissingKeys(req.body, ['id', 'grade'])) {
-            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
-        }
-
-        const {id, grade} = req.body;
+        const {id, grade} = GradeStudentAssignmentDTO.fromRequest(req.body);
 
         // validate grade
         if (!['A', 'B', 'C', 'D'].includes(grade)) {

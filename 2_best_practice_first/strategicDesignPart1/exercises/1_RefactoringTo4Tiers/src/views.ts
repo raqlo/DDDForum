@@ -1,6 +1,6 @@
 import {
     AssignStudentToClassController,
-    CreateAssignmentController,
+    CreateAssignmentController, GradeStudentAssignmentController,
     SubmitStudentAssignmentController
 } from "./controllers";
 
@@ -117,5 +117,23 @@ export class SubmitStudentAssignmentDTO {
         const { id } = body as SubmitStudentAssignmentDTO;
 
         return new SubmitStudentAssignmentDTO(id);
+    }
+}
+
+export class GradeStudentAssignmentDTO {
+    constructor(public id: string, public grade: string) {}
+
+    static fromRequest(body: unknown) {
+        const requiredKeys = ['id', 'grade'];
+        const isRequestInvalid =
+            !body || typeof body !== "object" || isMissingKeys(body, requiredKeys);
+
+        if (isRequestInvalid) {
+            throw new Error('missing required keys in request body:');
+        }
+
+        const { id, grade } = body as GradeStudentAssignmentDTO;
+
+        return new GradeStudentAssignmentDTO(id, grade);
     }
 }
