@@ -7,7 +7,8 @@ import {
     AssignStudentToClassController,
     CreateAssignmentController,
     CreateClassController,
-    CreateStudentController, GradeStudentAssignmentController, SubmitStudentAssignmentController
+    CreateStudentController,
+    GetStudentListController, GradeStudentAssignmentController, SubmitStudentAssignmentController
 } from "./controllers";
 const cors = require('cors');
 const app = express();
@@ -70,23 +71,7 @@ app.post('/student-assignments/grade', GradeStudentAssignmentController);
 
 
 // GET all students
-app.get('/students', async (req: Request, res: Response) => {
-    try {
-        const students = await prisma.student.findMany({
-            include: {
-                classes: true,
-                assignments: true,
-                reportCards: true
-            }, 
-            orderBy: {
-                name: 'asc'
-            }
-        });
-        res.status(200).json({ error: undefined, data: parseForResponse(students), success: true });
-    } catch (error) {
-        res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
-    }
-});
+app.get('/students', GetStudentListController);
 
 // GET a student by id
 app.get('/students/:id', async (req: Request, res: Response) => {
