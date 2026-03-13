@@ -22,3 +22,21 @@ export class AssignStudentDTO {
         return new AssignStudentDTO(studentId, assignmentId);
     }
 }
+
+export class CreateStudentDTO {
+    constructor(public name: string) {}
+
+    static fromRequest(body: unknown) {
+        const requiredKeys = ["name"];
+        const isRequestInvalid =
+            !body || typeof body !== "object" || isMissingKeys(body, requiredKeys);
+
+        if (isRequestInvalid) {
+            throw new Error('missing required keys in request body:');
+        }
+
+        const { name } = body as CreateStudentDTO;
+
+        return new CreateStudentDTO(name);
+    }
+}

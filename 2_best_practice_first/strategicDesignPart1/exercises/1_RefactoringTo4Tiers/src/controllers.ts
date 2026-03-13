@@ -1,6 +1,6 @@
 import {prisma} from "./database";
 import {Request, Response} from 'express';
-import {AssignStudentDTO} from "./views";
+import {AssignStudentDTO, CreateStudentDTO} from "./views";
 
 const Errors = {
     ValidationError: 'ValidationError',
@@ -32,11 +32,8 @@ function isUUID(id: string) {
 
 export async function CreateStudentController(req: Request, res: Response) {
     try {
-        if (isMissingKeys(req.body, ['name'])) {
-            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
-        }
 
-        const {name} = req.body;
+        const {name} = CreateStudentDTO.fromRequest(req.body);
 
         const student = await prisma.student.create({
             data: {
@@ -277,7 +274,7 @@ export async function GetStudentListController(req: Request, res: Response) {
     }
 }
 
-export async function GetStudentByIdController(req: Request, res: Response)  {
+export async function GetStudentByIdController(req: Request, res: Response) {
     try {
         const {id} = req.params;
         if (!isUUID(id)) {
