@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { prisma } from './database';
 import { Student, Class, Assignment, StudentAssignment } from '@prisma/client';
 import { error } from 'console';
-import {CreateStudentController} from "./controllers";
+import {CreateClassController, CreateStudentController} from "./controllers";
 const cors = require('cors');
 const app = express();
 app.use(express.json());
@@ -40,25 +40,7 @@ function isUUID (id: string) {
 app.post('/students', CreateStudentController)
 
 // POST class created
-app.post('/classes', async (req: Request, res: Response) => {
-    try {
-        if (isMissingKeys(req.body, ['name'])) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-        }
-    
-        const { name } = req.body;
-    
-        const cls = await prisma.class.create({
-            data: {
-                name
-            }
-        });
-    
-        res.status(201).json({ error: undefined, data: parseForResponse(cls), success: true });
-    } catch (error) {
-        res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
-    }
-});
+app.post('/classes', CreateClassController);
 
 // POST student assigned to class
 app.post('/class-enrollments', async (req: Request, res: Response) => {
