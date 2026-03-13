@@ -332,3 +332,37 @@ export async function GetAssignmentById(req: Request, res: Response) {
         res.status(500).json({error: Errors.ServerError, data: undefined, success: false});
     }
 }
+
+export async function GetAssignmentListByClassController(req: Request, res: Response) {
+    try {
+        const {id} = req.params;
+        if (!isUUID(id)) {
+            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
+        }
+
+        // check if class exists
+        const cls = await prisma.class.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if (!cls) {
+            return res.status(404).json({error: Errors.ClassNotFound, data: undefined, success: false});
+        }
+
+        const assignments = await prisma.assignment.findMany({
+            where: {
+                classId: id
+            },
+            include: {
+                class: true,
+                studentTasks: true
+            }
+        });
+
+        res.status(200).json({error: undefined, data: parseForResponse(assignments), success: true});
+    } catch (error) {
+        res.status(500).json({error: Errors.ServerError, data: undefined, success: false});
+    }
+}
