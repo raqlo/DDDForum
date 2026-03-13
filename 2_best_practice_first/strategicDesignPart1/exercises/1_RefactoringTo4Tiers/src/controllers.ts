@@ -1,6 +1,6 @@
 import {prisma} from "./database";
 import {Request, Response} from 'express';
-import {AssignStudentDTO, CreateClassDTO, CreateStudentDTO} from "./views";
+import {AssignStudentDTO, AssignStudentToClassDTO, CreateClassDTO, CreateStudentDTO} from "./views";
 
 const Errors = {
     ValidationError: 'ValidationError',
@@ -49,8 +49,6 @@ export async function CreateStudentController(req: Request, res: Response) {
 
 export async function CreateClassController(req: Request, res: Response) {
     try {
-
-
         const {name} = CreateClassDTO.fromRequest(req.body);
 
         const cls = await prisma.class.create({
@@ -67,11 +65,7 @@ export async function CreateClassController(req: Request, res: Response) {
 
 export async function AssignStudentToClassController(req: Request, res: Response) {
     try {
-        if (isMissingKeys(req.body, ['studentId', 'classId'])) {
-            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
-        }
-
-        const {studentId, classId} = req.body;
+        const {studentId, classId} = AssignStudentToClassDTO.fromRequest(req.body);
 
         // check if student exists
         const student = await prisma.student.findUnique({
