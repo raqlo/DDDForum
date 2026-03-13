@@ -1,5 +1,6 @@
 import {prisma} from "./database";
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
+import {AssignStudentDTO} from "./views";
 
 const Errors = {
     ValidationError: 'ValidationError',
@@ -12,7 +13,7 @@ const Errors = {
 }
 
 
-function isMissingKeys (data: any, keysToCheckFor: string[]) {
+function isMissingKeys(data: any, keysToCheckFor: string[]) {
     for (let key of keysToCheckFor) {
         if (data[key] === undefined) return true;
     }
@@ -23,7 +24,7 @@ function parseForResponse(data: unknown) {
     return JSON.parse(JSON.stringify(data));
 }
 
-function isUUID (id: string) {
+function isUUID(id: string) {
     return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
 }
 
@@ -147,11 +148,7 @@ export async function CreateAssignmentController(req: Request, res: Response) {
 
 export async function AssignStudentToAssignmentController(req: Request, res: Response) {
     try {
-        if (isMissingKeys(req.body, ['studentId', 'assignmentId'])) {
-            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
-        }
-
-        const {studentId, assignmentId, grade} = req.body;
+        const {studentId, assignmentId} = AssignStudentDTO.fromRequest(req.body);
 
         // check if student exists
         const student = await prisma.student.findUnique({
