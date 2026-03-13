@@ -40,3 +40,21 @@ export class CreateStudentDTO {
         return new CreateStudentDTO(name);
     }
 }
+
+export class CreateClassDTO {
+    constructor(public name: string) {}
+
+    static fromRequest(body: unknown) {
+        const requiredKeys = ["name"];
+        const isRequestInvalid =
+            !body || typeof body !== "object" || isMissingKeys(body, requiredKeys);
+
+        if (isRequestInvalid) {
+            throw new Error('missing required keys in request body:');
+        }
+
+        const { name } = body as CreateClassDTO;
+
+        return new CreateClassDTO(name);
+    }
+}
