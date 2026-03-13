@@ -1,5 +1,5 @@
 import {prisma} from "./database";
-import express, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 const Errors = {
     ValidationError: 'ValidationError',
@@ -280,7 +280,7 @@ export async function GetStudentListController(req: Request, res: Response) {
     }
 }
 
-export async function GetStudentById(req: Response, res: Response)  {
+export async function GetStudentByIdController(req: Request, res: Response)  {
     try {
         const {id} = req.params;
         if (!isUUID(id)) {
@@ -307,7 +307,7 @@ export async function GetStudentById(req: Response, res: Response)  {
     }
 }
 
-export async function GetAssignmentById(req: Request, res: Response) {
+export async function GetAssignmentByIdController(req: Request, res: Response) {
     try {
         const {id} = req.params;
         if (!isUUID(id)) {

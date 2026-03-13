@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { prisma } from './database';
 import { Student, Class, Assignment, StudentAssignment } from '@prisma/client';
 import { error } from 'console';
@@ -7,8 +7,8 @@ import {
     AssignStudentToClassController,
     CreateAssignmentController,
     CreateClassController,
-    CreateStudentController, GetAssignmentById, GetAssignmentListByClassController,
-    GetAssignmentsSubmittedByStudentsController, GetStudentById,
+    CreateStudentController, GetAssignmentByIdController, GetAssignmentListByClassController,
+    GetAssignmentsSubmittedByStudentsController, GetStudentByIdController,
     GetStudentListController,
     GetStudentsGradesListController, GradeStudentAssignmentController, SubmitStudentAssignmentController
 } from "./controllers";
@@ -16,32 +16,6 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-const Errors = {
-    ValidationError: 'ValidationError',
-    StudentNotFound: 'StudentNotFound',
-    ClassNotFound: 'ClassNotFound',
-    AssignmentNotFound: 'AssignmentNotFound',
-    ServerError: 'ServerError',
-    ClientError: 'ClientError',
-    StudentAlreadyEnrolled: 'StudentAlreadyEnrolled'
-  }
-
-
-function isMissingKeys (data: any, keysToCheckFor: string[]) {
-    for (let key of keysToCheckFor) {
-      if (data[key] === undefined) return true;
-    }
-    return false;
-}
-
-function parseForResponse(data: unknown) {
-    return JSON.parse(JSON.stringify(data));
-}
-
-function isUUID (id: string) {
-    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
-}
 
 // API Endpoints
 
@@ -77,11 +51,11 @@ app.get('/students', GetStudentListController);
 
 
 // GET a student by id
-app.get('/students/:id', GetStudentById);
+app.get('/students/:id', GetStudentByIdController);
 
 
 // GET assignment by id
-app.get('/assignments/:id', GetAssignmentById);
+app.get('/assignments/:id', GetAssignmentByIdController);
 
 
 // GET all assignments for class
