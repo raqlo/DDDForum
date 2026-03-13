@@ -1,4 +1,4 @@
-import {AssignStudentToClassController} from "./controllers";
+import {AssignStudentToClassController, CreateAssignmentController} from "./controllers";
 
 function isMissingKeys (data: any, keysToCheckFor: string[]) {
     for (let key of keysToCheckFor) {
@@ -76,5 +76,24 @@ export class AssignStudentToClassDTO {
         const { studentId, classId } = body as AssignStudentToClassDTO;
 
         return new AssignStudentToClassDTO(studentId, classId);
+    }
+}
+
+
+export class CreateAssignmentDTO {
+    constructor(public classId: string, public title: string) {}
+
+    static fromRequest(body: unknown) {
+        const requiredKeys = ['classId', 'title'];
+        const isRequestInvalid =
+            !body || typeof body !== "object" || isMissingKeys(body, requiredKeys);
+
+        if (isRequestInvalid) {
+            throw new Error('missing required keys in request body:');
+        }
+
+        const { title, classId } = body as CreateAssignmentDTO;
+
+        return new CreateAssignmentDTO(title, classId);
     }
 }

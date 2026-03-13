@@ -1,6 +1,12 @@
 import {prisma} from "./database";
 import {Request, Response} from 'express';
-import {AssignStudentDTO, AssignStudentToClassDTO, CreateClassDTO, CreateStudentDTO} from "./views";
+import {
+    AssignStudentDTO,
+    AssignStudentToClassDTO,
+    CreateAssignmentDTO,
+    CreateClassDTO,
+    CreateStudentDTO
+} from "./views";
 
 const Errors = {
     ValidationError: 'ValidationError',
@@ -116,11 +122,7 @@ export async function AssignStudentToClassController(req: Request, res: Response
 
 export async function CreateAssignmentController(req: Request, res: Response) {
     try {
-        if (isMissingKeys(req.body, ['classId', 'title'])) {
-            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
-        }
-
-        const {classId, title} = req.body;
+        const {classId, title} = CreateAssignmentDTO.fromRequest(req.body);
 
         const assignment = await prisma.assignment.create({
             data: {
