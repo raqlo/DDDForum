@@ -69,7 +69,7 @@ export async function CreateClassController(req: Request, res: Response) {
     }
 }
 
-export async function AssignStudentToClass(req: Request, res: Response) {
+export async function AssignStudentToClassController(req: Request, res: Response) {
     try {
         if (isMissingKeys(req.body, ['studentId', 'classId'])) {
             return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
@@ -123,3 +123,25 @@ export async function AssignStudentToClass(req: Request, res: Response) {
         res.status(500).json({error: Errors.ServerError, data: undefined, success: false});
     }
 }
+
+export async function CreateAssignmentController(req, res) {
+    try {
+        if (isMissingKeys(req.body, ['classId', 'title'])) {
+            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false});
+        }
+
+        const {classId, title} = req.body;
+
+        const assignment = await prisma.assignment.create({
+            data: {
+                classId,
+                title
+            }
+        });
+
+        res.status(201).json({error: undefined, data: parseForResponse(assignment), success: true});
+    } catch (error) {
+        res.status(500).json({error: Errors.ServerError, data: undefined, success: false});
+    }
+}
+

@@ -2,7 +2,12 @@ import express, { Request, Response } from 'express';
 import { prisma } from './database';
 import { Student, Class, Assignment, StudentAssignment } from '@prisma/client';
 import { error } from 'console';
-import {AssignStudentToClass, CreateClassController, CreateStudentController} from "./controllers";
+import {
+    AssignStudentToClassController,
+    CreateAssignmentController,
+    CreateClassController,
+    CreateStudentController
+} from "./controllers";
 const cors = require('cors');
 const app = express();
 app.use(express.json());
@@ -44,29 +49,11 @@ app.post('/classes', CreateClassController);
 
 
 // POST student assigned to class
-app.post('/class-enrollments', AssignStudentToClass);
+app.post('/class-enrollments', AssignStudentToClassController);
+
 
 // POST assignment created
-app.post('/assignments', async (req: Request, res: Response) => {
-    try {
-        if (isMissingKeys(req.body, ['classId', 'title'])) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-        }
-    
-        const { classId, title } = req.body;
-    
-        const assignment = await prisma.assignment.create({
-            data: {
-                classId,
-                title
-            }
-        });
-    
-        res.status(201).json({ error: undefined, data: parseForResponse(assignment), success: true });
-    } catch (error) {
-        res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
-    }
-});
+app.post('/assignments', CreateAssignmentController);
 
 
 // POST student assigned to assignment
