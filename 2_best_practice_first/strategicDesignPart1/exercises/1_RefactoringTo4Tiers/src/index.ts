@@ -7,7 +7,7 @@ import {
     AssignStudentToClassController,
     CreateAssignmentController,
     CreateClassController,
-    CreateStudentController, GetStudentById,
+    CreateStudentController, GetAssignmentById, GetStudentById,
     GetStudentListController, GradeStudentAssignmentController, SubmitStudentAssignmentController
 } from "./controllers";
 const cors = require('cors');
@@ -77,32 +77,9 @@ app.get('/students', GetStudentListController);
 // GET a student by id
 app.get('/students/:id', GetStudentById);
 
+
 // GET assignment by id
-app.get('/assignments/:id', async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        if(!isUUID(id)) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-        }
-        const assignment = await prisma.assignment.findUnique({
-            include: {
-                class: true,
-                studentTasks: true
-            },
-            where: {
-                id
-            }
-        });
-    
-        if (!assignment) {
-            return res.status(404).json({ error: Errors.AssignmentNotFound, data: undefined, success: false });
-        }
-    
-        res.status(200).json({ error: undefined, data: parseForResponse(assignment), success: true });
-    } catch (error) {
-        res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
-    }
-});
+app.get('/assignments/:id', GetAssignmentById);
 
 // GET all assignments for class
 app.get('/classes/:id/assignments', async (req: Request, res: Response) => {
