@@ -1,7 +1,32 @@
-import {Request, Response} from "express";
+import express, {Request, Response} from "express";
 import {AssignStudentToClassDTO, CreateClassDTO} from "../views";
 import {prisma} from "../database";
 import {Errors, isUUID, parseForResponse} from "../controllers";
+import {ErrorHandler} from "../shared/errors/errorHandler";
+
+class ClassesController {
+    private router: express.Router;
+
+    constructor(private errorHandler: ErrorHandler) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler()
+    }
+
+    private setupRoutes() {
+        this.router.post("/", this.createClass);
+        this.router.post("/:id/students", this.assignStudentToClass);
+        this.router.get("/:id/assignments", this.getAssignmentListByClass);
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler);
+    }
+
+    private createClass = CreateClassController;
+    private assignStudentToClass = AssignStudentToClassController;
+    private getAssignmentListByClass = GetAssignmentListByClassController;
+}
 
 export async function CreateClassController(req: Request, res: Response) {
     try {
