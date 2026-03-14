@@ -1,51 +1,22 @@
-import {prisma} from "../database";
+import {Database} from "../database";
 
 export class StudentsService {
-    constructor() {
+    constructor(private db: Database) {
     }
 
     async createStudent(name: string) {
-        return prisma.student.create({data: {name}});
+        return await this.db.students.save(name);
     };
 
     async getStudentList() {
-        return prisma.student.findMany({
-            include: {
-                classes: true,
-                assignments: true,
-                reportCards: true
-            },
-            orderBy: {
-                name: 'asc'
-            }
-        });
+        return await this.db.students.getAll()
     };
 
     async getStudentById(id: string) {
-        return prisma.student.findUnique({
-            where: {
-                id
-            },
-            include: {
-                classes: true,
-                assignments: true,
-                reportCards: true
-            }
-        });
+        return await this.db.students.getById(id)
     }
 
     async getStudentGrades(id: string) {
-        return prisma.studentAssignment.findMany({
-            where: {
-                studentId: id,
-                status: 'submitted',
-                grade: {
-                    not: null
-                }
-            },
-            include: {
-                assignment: true
-            },
-        });
+        return await this.db.students.getGrades(id)
     }
 }
