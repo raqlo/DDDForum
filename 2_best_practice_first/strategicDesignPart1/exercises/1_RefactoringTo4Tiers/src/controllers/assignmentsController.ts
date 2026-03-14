@@ -1,7 +1,40 @@
-import {Request, Response} from "express";
+import express, {Request, Response} from "express";
 import {AssignStudentDTO, CreateAssignmentDTO, GradeStudentAssignmentDTO, SubmitStudentAssignmentDTO} from "../views";
 import {prisma} from "../database";
 import {Errors, isUUID, parseForResponse} from "../controllers";
+import {ErrorHandler} from "../shared/errors/errorHandler";
+
+class AssignmentsController {
+    private router: express.Router;
+
+    constructor(
+        private errorHandler: ErrorHandler
+    ) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler();
+    }
+
+    private setupRoutes() {
+        this.router.post("/", this.createAssignment);
+        this.router.post("/:id/students", this.assignStudentToAssignment);
+        this.router.post("/:id/submit", this.submitStudentAssignment);
+        this.router.post("/:id/grade", this.gradeStudentAssignment);
+        this.router.get("/:id", this.getAssignmentById);
+        this.router.get("/:id/students", this.getAssignmentsSubmittedByStudents);
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler);
+    }
+
+    private createAssignment = CreateAssignmentController;
+    private assignStudentToAssignment = AssignStudentToAssignmentController;
+    private submitStudentAssignment = SubmitStudentAssignmentController;
+    private gradeStudentAssignment = GradeStudentAssignmentController;
+    private getAssignmentById = GetAssignmentByIdController;
+    private getAssignmentsSubmittedByStudents = GetAssignmentsSubmittedByStudentsController;
+}
 
 export async function CreateAssignmentController(req: Request, res: Response) {
     try {
