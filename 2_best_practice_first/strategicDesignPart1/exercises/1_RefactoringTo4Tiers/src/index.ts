@@ -3,15 +3,21 @@ import { prisma } from './database';
 import { Student, Class, Assignment, StudentAssignment } from '@prisma/client';
 import { error } from 'console';
 import {
-    AssignStudentToAssignmentController,
-    AssignStudentToClassController,
-    CreateAssignmentController,
-    CreateClassController,
-    CreateStudentController, GetAssignmentByIdController, GetAssignmentListByClassController,
-    GetAssignmentsSubmittedByStudentsController, GetStudentByIdController,
+    CreateStudentController,
+    GetStudentByIdController,
     GetStudentListController,
-    GetStudentsGradesListController, GradeStudentAssignmentController, SubmitStudentAssignmentController
-} from "./controllers";
+    GetStudentsGradesListController
+} from "./controllers/studentsController";
+import {
+    AssignStudentToClassController,
+    CreateClassController,
+    GetAssignmentListByClassController
+} from "./controllers/classesController";
+import {
+    AssignStudentToAssignmentController, CreateAssignmentController,
+    GetAssignmentByIdController,
+    GetAssignmentsSubmittedByStudentsController, GradeStudentAssignmentController, SubmitStudentAssignmentController
+} from "./controllers/assignmentsController";
 const cors = require('cors');
 const app = express();
 app.use(express.json());

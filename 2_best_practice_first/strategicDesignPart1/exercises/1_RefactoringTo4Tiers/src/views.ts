@@ -1,8 +1,3 @@
-import {
-    AssignStudentToClassController,
-    CreateAssignmentController, GradeStudentAssignmentController,
-    SubmitStudentAssignmentController
-} from "./controllers";
 
 function isMissingKeys (data: any, keysToCheckFor: string[]) {
     for (let key of keysToCheckFor) {
