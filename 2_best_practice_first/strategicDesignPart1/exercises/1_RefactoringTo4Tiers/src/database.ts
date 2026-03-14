@@ -1,6 +1,7 @@
 import {PrismaClient} from '@prisma/client';
 import {buildStudentPersistence} from "./persistance/studentPersistance";
 import {buildClassPersistence} from "./persistance/classPersistence";
+import {buildAssignmentPersistence} from "./persistance/assignmentPersistence";
 
 const prisma = new PrismaClient();
 
@@ -20,13 +21,26 @@ interface ClassPersistence {
     getById(id: string): any;
 }
 
+interface AssignmentPersistence {
+    save(classId: string, title: string): any;
+    getById(id: string): any;
+    getWithClass(id: string): any;
+    getListOfStudentAssignments(studentId: string): any;
+    saveStudentAssignment(studentId: string, assignmentId: string): any;
+    getStudentAssignmentById(id: string): any;
+    updateStudentAssignment(id: string): any;
+    updateStudentAssignmentGrade(id: string, grade: string): any;
+}
+
 export class Database {
     public students: StudentPersistence;
-    public classes: ClassPersistence
+    public classes: ClassPersistence;
+    public assignments: AssignmentPersistence;
 
     constructor(private prisma: PrismaClient) {
         this.students = buildStudentPersistence(this.prisma);
         this.classes = buildClassPersistence(this.prisma);
+        this.assignments = buildAssignmentPersistence(this.prisma)
     }
 }
 
