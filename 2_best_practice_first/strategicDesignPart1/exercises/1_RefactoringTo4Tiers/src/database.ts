@@ -3,9 +3,6 @@ import {buildStudentPersistence} from "./persistance/studentPersistance";
 import {buildClassPersistence} from "./persistance/classPersistence";
 import {buildAssignmentPersistence} from "./persistance/assignmentPersistence";
 
-const prisma = new PrismaClient();
-
-export {prisma}
 
 interface StudentPersistence {
     save(name: string): any;

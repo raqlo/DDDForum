@@ -1,4 +1,4 @@
-import {Database, prisma} from "../database";
+import {Database} from "../database";
 
 export class AssignmentsService {
     constructor(private db: Database) {

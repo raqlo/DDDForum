@@ -1,10 +1,11 @@
 import express, {Request, Response} from 'express';
 import {
-    AssignStudentToClassController,
+    AssignStudentToClassController, ClassesController,
     CreateClassController,
     GetAssignmentListByClassController
 } from "./controllers/classesController";
 import {
+    AssignmentsController,
     AssignStudentToAssignmentController,
     CreateAssignmentController,
     GetAssignmentByIdController,
@@ -15,7 +16,12 @@ import {
 import {CreateStudentDTO} from "./views";
 import {StudentsService} from "./services/studentServices";
 import {Errors, isUUID, parseForResponse} from "./controllers";
-import {prisma} from "./database";
+import {Database} from "./database";
+import {PrismaClient} from "@prisma/client";
+import {ClassesService} from "./services/classesService";
+import {AssignmentsService} from "./services/assignmentsService";
+import {errorHandler} from "./shared/errors/errorHandler";
+import {StudentsController} from "./controllers/studentsController";
 
 const cors = require('cors');
 const app = express();
@@ -23,6 +29,24 @@ app.use(express.json());
 app.use(cors());
 
 // API Endpoints
+
+const prisma = new PrismaClient();
+
+const db = new Database(prisma);
+
+const studentsService = new StudentsService(db);
+const classesService = new ClassesService(db);
+const assignmentsService = new AssignmentsService(db);
+
+const studentsController = new StudentsController(
+    studentsService,
+    errorHandler
+);
+const classesController = new ClassesController(classesService, errorHandler);
+const assignmentsController = new AssignmentsController(
+    assignmentsService,
+    errorHandler
+);
 
 // POST student created
 app.post('/students', async function (req: Request, res: Response) {

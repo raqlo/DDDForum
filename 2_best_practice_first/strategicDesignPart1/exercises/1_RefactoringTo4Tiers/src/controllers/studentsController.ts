@@ -6,7 +6,7 @@ import {ErrorHandler} from "../shared/errors/errorHandler";
 import {StudentsService} from "../services/studentServices";
 
 
-class StudentsController {
+export class StudentsController {
     private router: express.Router;
 
     constructor(

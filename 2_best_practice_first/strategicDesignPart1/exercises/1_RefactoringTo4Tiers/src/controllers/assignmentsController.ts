@@ -5,7 +5,7 @@ import {ErrorHandler} from "../shared/errors/errorHandler";
 import {AssignmentsService} from "../services/assignmentsService";
 import {StudentsService} from "../services/studentServices";
 
-class AssignmentsController {
+export class AssignmentsController {
     private router: express.Router;
 
     constructor(

@@ -1,6 +1,6 @@
 import {Database} from "../database";
 
-export class ClassesServices {
+export class ClassesService {
     constructor(private db: Database) {
     }
 

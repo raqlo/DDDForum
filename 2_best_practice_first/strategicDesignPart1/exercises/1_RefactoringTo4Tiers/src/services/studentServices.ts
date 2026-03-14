@@ -1,10 +1,12 @@
 import {Database} from "../database";
+import {CreateStudentDTO} from "../views";
 
 export class StudentsService {
     constructor(private db: Database) {
     }
 
-    async createStudent(name: string) {
+    async createStudent(dto: CreateStudentDTO) {
+        const {name} = dto;
         return await this.db.students.save(name);
     };
 

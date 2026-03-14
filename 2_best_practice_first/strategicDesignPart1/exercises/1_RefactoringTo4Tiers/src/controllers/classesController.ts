@@ -3,12 +3,12 @@ import {AssignStudentToClassDTO, CreateClassDTO} from "../views";
 import {prisma} from "../database";
 import {Errors, isUUID, parseForResponse} from "../controllers";
 import {ErrorHandler} from "../shared/errors/errorHandler";
-import {ClassesServices} from "../services/classesServices";
+import {ClassesService} from "../services/classesService";
 
 export class ClassesController {
     private router: express.Router;
 
-    constructor(private classesService: ClassesServices, private errorHandler: ErrorHandler) {
+    constructor(private classesService: ClassesService, private errorHandler: ErrorHandler) {
         this.router = express.Router();
         this.setupRoutes();
         this.setupErrorHandler()
