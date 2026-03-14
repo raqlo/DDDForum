@@ -1,7 +1,37 @@
-import {Request, Response} from "express";
+import express, {Request, Response} from "express";
 import {CreateStudentDTO} from "../views";
 import {prisma} from "../database";
 import {Errors, isUUID, parseForResponse} from "../controllers";
+import {ErrorHandler} from "../shared/errors/errorHandler";
+
+
+class StudentsController {
+    private router: express.Router;
+
+    constructor(
+        private errorHandler: ErrorHandler
+    ) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler();
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler);
+    }
+
+    setupRoutes() {
+        this.router.post("/", this.createStudent);
+        this.router.get("/", this.getStudentList);
+        this.router.get("/:id", this.getStudentById);
+        this.router.get("/:id/grades", this.getStudentsGradesList);
+    }
+
+    private createStudent = CreateStudentController;
+    private getStudentList = GetStudentListController;
+    private getStudentById = GetStudentByIdController;
+    private getStudentsGradesList = GetStudentsGradesListController;
+}
 
 export async function CreateStudentController(req: Request, res: Response) {
     try {
