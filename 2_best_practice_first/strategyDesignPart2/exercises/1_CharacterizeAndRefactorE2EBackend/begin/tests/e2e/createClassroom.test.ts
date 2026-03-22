@@ -10,10 +10,13 @@ const feature = loadFeature(
 import { resetDatabase } from "../fixtures/reset";
 
 
-defineFeature(feature, (test) => {
     test('Successfully create a class room', ({given, when, then}) => {
         let requestBody: any = {};
         let response: any = {};
+
+        beforeAll(async () => {
+            await resetDatabase();
+        })
 
         given(/^I want to create a class room named "(.*)"$/, (name) => {
             requestBody = {
