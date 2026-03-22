@@ -9,14 +9,15 @@ const feature = loadFeature(
 );
 import { resetDatabase } from "../fixtures/reset";
 
+defineFeature(feature, (test) => {
+    beforeAll(async () => {
+        await resetDatabase();
+    })
+
 
     test('Successfully create a class room', ({given, when, then}) => {
         let requestBody: any = {};
         let response: any = {};
-
-        beforeAll(async () => {
-            await resetDatabase();
-        })
 
         given(/^I want to create a class room named "(.*)"$/, (name) => {
             requestBody = {
@@ -32,21 +33,23 @@ import { resetDatabase } from "../fixtures/reset";
             expect(response.status).toBe(201);
             expect(response.body.data.name).toBe(requestBody.name);
         });
+    })
 
+    test('Fail to create a class room', ({given, when, then}) => {
+        let requestBody: any = {};
+        let response: any = {};
 
-        test('Fail to create a class room', ({given, when, then}) => {
-            given('I want to create a class room with no name', () => {
-
-            });
-
-            when('I send a request to create a class room', () => {
-
-            });
-
-            then('the class room should not be created', () => {
-
-            });
+        given('I want to create a class room with no name', () => {
+            requestBody = {
+            };
         });
 
+        when('I send a request to create a class room', async () => {
+            response = await request(app).post("/classes").send(requestBody);
+        });
+
+        then('the class room should not be created', () => {
+            expect(response.status).toBe(400);
+        });
     });
 })
