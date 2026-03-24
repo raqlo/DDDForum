@@ -35,31 +35,43 @@ defineFeature(feature, (test) => {
     });
 
     test('Fail to create a student because of missing email', ({given, when, then}) => {
-        given(/^I want to create a student named (.*) and no email$/, (arg0) => {
 
+        let requestBody: any = {};
+        let response: any = {};
+
+        given(/^I want to create a student named (.*) and no email$/, (name) => {
+            requestBody = {
+                name: name,
+                email: undefined,
+            }
         });
 
-        when('I send a request to create a student', () => {
-
+        when('I send a request to create a student', async () => {
+            response = await request(app).post("/students").send(requestBody);
         });
 
         then('the student should not be created', () => {
-
+            expect(response.status).toBe(400);
         });
     });
     test('Fail to create a student because the email already exists', ({given, when, then}) => {
-        given(/^`There is an existing student with email (.*)`$/, (arg0) => {
+        let requestBody: any = {};
+        let response: any = {};
+
+        given(/^`There is an existing student with email (.*)`$/, async (email) => {
+            requestBody = {
+                name: "John Doe",
+                email: email,
+            }
+            await request(app).post("/students").send(requestBody);
+        });
+        when(/^`I send a request to create a student with email (.*)`$/, async (arg0) => {
+            response = await request(app).post("/students").send(requestBody);
 
         });
-
-        when('I send a request to create a student', () => {
-
-        });
-
-        then('the student should not be created', () => {
-
+        then('the student should not be created"', () => {
+            expect(response.status).toBe(500);
+            expect(response.body.success).toBeFalsy();
         });
     });
-
-
 })
