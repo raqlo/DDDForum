@@ -15,7 +15,7 @@ export class ClassBuilder {
         return this;
     }
 
-    async build() {
+    build() {
         return prisma.class.create({
             data: {
                 name: this.props.name as string,

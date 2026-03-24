@@ -7,3 +7,8 @@ Feature: Create Assignment
     Given I have a class room named "Math"
     When I create a new "Ecuations" assignment for the class
     Then The assignment should be created for the class
+
+    Scenario: Fail to create new assignment because of missing fields
+      Given I have a class room named "Spanish"
+      When I create an assignment with no name
+      Then I wont be able to create an assignment
