@@ -18,6 +18,7 @@ export class AssignmentBuilder {
         this.props.classId = classId;
         return this;
     }
+
     build() {
         return prisma.assignment.create({
             data: {
