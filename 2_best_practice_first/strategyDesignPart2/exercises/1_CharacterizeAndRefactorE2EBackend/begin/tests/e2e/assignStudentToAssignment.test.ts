@@ -7,6 +7,7 @@ import {StudentBuilder} from "../fixtures/studentBuilder";
 import {AssignmentBuilder} from "../fixtures/assignmentBuilder";
 import {app} from "../../src";
 import request from "supertest";
+import {StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/assignStudentToAssignment.feature")
@@ -76,5 +77,31 @@ defineFeature(feature, (test) => {
         });
     });
 
+    test('When student already has an assignment', ({given, when, then}) => {
+        let assignment: any = {};
+        let requestBody: any = {};
+        let response: any = {};
+        let studentAssignment: any = {};
+
+        given('That the student is already assigned to the assignment', async () => {
+            const student = new StudentBuilder().withName('John Doe').withEmail('jdoe123@email.com')
+            const classroom = new ClassBuilder().withName('Math 301')
+            const enrollment = await new ClassEnrollmentBuilder().withClass(classroom).withStudent(student).build();
+            assignment = new AssignmentBuilder().withClassId(enrollment.classId).withTitle('Math Assignment')
+            studentAssignment = await new StudentAssignmentBuilder().withAssignment(assignment).withStudentId(enrollment.studentId).build()
+        });
+
+        when('I try to assign the student to the assignment', async () => {
+            requestBody = {
+                studentId: studentAssignment.studentId,
+                assignmentId: studentAssignment.assignmentId,
+            }
+            response = await request(app).post('/student-assignments').send(requestBody)
+        });
+
+        then('It will notify me that I cannot duplicate an assignment', () => {
+            expect(response.status).toBe(409);
+        });
+    });
 
 })

@@ -14,3 +14,8 @@ Feature: Assign Student to Assignment
     And I have a student not enrolled in the class
     When I try to assign the student to the assignment
     Then It will prevent from adding the assignment to the student
+
+  Scenario: When student already has an assignment
+    Given That the student is already assigned to the assignment
+    When I try to assign the student to the assignment
+    Then It will notify me that I cannot duplicate an assignment
