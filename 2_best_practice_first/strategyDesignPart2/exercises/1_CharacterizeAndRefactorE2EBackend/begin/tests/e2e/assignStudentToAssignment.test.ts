@@ -17,13 +17,13 @@ defineFeature(feature, (test) => {
         await resetDatabase();
     })
 
-    test('Successfully assign student to assignment', ({ given, and, when, then }) => {
+    test('Successfully assign student to assignment', ({given, and, when, then}) => {
         let enrollment: any = {};
         let assignment: any = {};
         let response: any = {};
 
         given('That I have a student assigned to a class', async () => {
-            const classroom =  new ClassBuilder().withName('Math 301')
+            const classroom = new ClassBuilder().withName('Math 301')
             const student = new StudentBuilder().withName('John Snow').withEmail('jsnow@email.com')
             enrollment = await new ClassEnrollmentBuilder().withClass(classroom).withStudent(student).build()
         });
@@ -46,5 +46,35 @@ defineFeature(feature, (test) => {
             expect(response.body.data.assignmentId).toBe(assignment.id);
         });
     });
+
+    test('When student is not enrolled in class', ({given, and, when, then}) => {
+        let assignment: any = {};
+        let student: any = {};
+        let requestBody: any = {};
+        let response: any = {};
+
+        given('I have an assignment that exists for a class', async () => {
+            const classroom = await new ClassBuilder().withName('Spanish 101').build();
+            assignment = await new AssignmentBuilder().withTitle('Spanish Assignment').withClassId(classroom.id).build()
+        });
+
+        and('I have a student not enrolled in the class', async () => {
+            student = await new StudentBuilder().withEmail('jsnow@email.com').withName('John Snow').build();
+        });
+
+        when('I try to assign the student to the assignment', async () => {
+            requestBody = {
+                studentId: student.id,
+                assignmentId: assignment.id,
+            }
+            response = await request(app).post('/student-assignments').send(requestBody)
+        });
+
+        then('It will prevent from adding the assignment to the student', () => {
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBe('StudentNotEnrolled')
+        });
+    });
+
 
 })
