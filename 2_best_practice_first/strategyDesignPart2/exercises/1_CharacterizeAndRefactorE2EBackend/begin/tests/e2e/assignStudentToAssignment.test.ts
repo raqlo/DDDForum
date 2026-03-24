@@ -48,7 +48,7 @@ defineFeature(feature, (test) => {
         });
     });
 
-    test('When student is not enrolled in class', ({given, and, when, then}) => {
+    test('Fail creation when when student is not enrolled in class', ({given, and, when, then}) => {
         let assignment: any = {};
         let student: any = {};
         let requestBody: any = {};
@@ -77,7 +77,7 @@ defineFeature(feature, (test) => {
         });
     });
 
-    test('When student already has an assignment', ({given, when, then}) => {
+    test('Fail creation when student already has an assignment', ({given, when, then}) => {
         let assignment: any = {};
         let requestBody: any = {};
         let response: any = {};

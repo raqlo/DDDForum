@@ -45,7 +45,7 @@ defineFeature(feature, (test) => {
         });
     });
 
-    test('Student is already in the class', ({given, and, when, then}) => {
+    test('Fail to enroll if student is already in the class', ({given, and, when, then}) => {
         let classEnrollment: any = {};
         let requestBody: any = {};
         let response: any = {};
@@ -71,7 +71,7 @@ defineFeature(feature, (test) => {
         });
     });
 
-    test('Missing class or student', ({given, and, when, then}) => {
+    test('Fail to enroll if missing class or student', ({given, and, when, then}) => {
         let requestBody: any = {};
         let response: any = {};
         let classroom: any = {};
