@@ -18,7 +18,7 @@ export class ClassBuilder {
     build() {
         return prisma.class.create({
             data: {
-                name: this.props.name as string,
+                name: this.props.name,
             },
         });
     }

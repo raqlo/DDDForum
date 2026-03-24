@@ -12,3 +12,9 @@ Feature: Create Assignment
       Given I have a class room named "Spanish"
       When I create an assignment with no name
       Then I wont be able to create an assignment
+
+      Scenario: Successfully create assignment with same class and name
+        Given I have a class room named "Chemistry"
+        And An "Equations"assignment exists for the class
+        When I create an assignment with the same name
+        Then A new assignment would be created
