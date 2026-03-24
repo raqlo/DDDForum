@@ -8,12 +8,12 @@ const feature = loadFeature(
     path.join(__dirname, "../features/createClassRoom.feature")
 );
 import { resetDatabase } from "../fixtures/reset";
+import {ClassBuilder} from "../fixtures/classBuilder";
 
 defineFeature(feature, (test) => {
     beforeAll(async () => {
         await resetDatabase();
     })
-
 
     test('Successfully create a class room', ({given, when, then}) => {
         let requestBody: any = {};
@@ -35,7 +35,7 @@ defineFeature(feature, (test) => {
         });
     })
 
-    test('Fail to create a class room', ({given, when, then}) => {
+    test('Fail to create a class room because of missing name', ({ given, when, then }) => {
         let requestBody: any = {};
         let response: any = {};
 
@@ -52,4 +52,27 @@ defineFeature(feature, (test) => {
             expect(response.status).toBe(400);
         });
     });
+
+    test('Fail to create a class room because already exists', ({ given, when, then }) => {
+        let requestBody: any = {}
+        let response: any = {}
+        let classroom: any
+
+        given(/^I have a class room named "(.*)"$/, (className) => {
+            classroom = new ClassBuilder().withName(className).build();
+        });
+
+        when(/^I try to create a new class room named "(.*)"$/, async (arg0) => {
+            requestBody = {
+                name: arg0,
+            };
+            response = await request(app).post("/classes").send(requestBody);
+        });
+
+        then('it should not let me create a duplicate', () => {
+            expect(response.status).toBe(409);
+        });
+    });
+
+
 })
