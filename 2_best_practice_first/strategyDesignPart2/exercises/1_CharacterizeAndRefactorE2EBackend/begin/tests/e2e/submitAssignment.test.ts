@@ -48,4 +48,35 @@ defineFeature(feature, (test) => {
         });
 
     })
+
+    test('Student cannot submit assignment if is not assigned', ({ given, and, when, then }) => {
+        let enrollment: any = {};
+        let assignment: any = {};
+        let response: any = {};
+        let requestBody: any = {};
+        let student: any = {};
+
+        given('That I have a student assigned to a class', async () => {
+            const classroom = new ClassBuilder().withName('Math 301')
+            student = new StudentBuilder().withName('John Snow').withEmail('jsnow@email.com')
+            enrollment = await new ClassEnrollmentBuilder().withClass(classroom).withStudent(student).build()
+        });
+
+        and('That student has not assigned an assignment', async () => {
+            assignment = await new AssignmentBuilder().withClassId(enrollment.classId).withTitle('Math Assignment').build();
+        });
+
+        when('the student submits their assignment', async () => {
+            requestBody = {
+                assignmentId: assignment.id,
+                studentId: enrollment.studentId,
+            }
+            response = await request(app).post('/student-assignments/submit').send(requestBody)
+        });
+
+        then('An assignment submission is not created', () => {
+            expect(response.status).toBe(404);
+        });
+    });
+
 })
