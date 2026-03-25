@@ -28,7 +28,6 @@ defineFeature(feature, test => {
         });
 
         then('I get shown a list of the students with ther classes and grades', () => {
-            console.log(response.body)
             expect(response.status).toBe(200);
             expect(response.body.data.length).toBe(2);
             expect(response.body.data).toEqual(
