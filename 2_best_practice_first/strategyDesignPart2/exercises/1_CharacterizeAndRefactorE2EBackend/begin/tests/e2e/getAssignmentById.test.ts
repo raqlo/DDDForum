@@ -1,10 +1,10 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
-import {Assignment, AssignmentBuilder} from "../fixtures/assignmentBuilder";
-import {ClassBuilder, Classroom} from "../fixtures/classBuilder";
+import {AssignmentBuilder, ClassBuilder} from "../fixtures";
 import {resetDatabase} from "../fixtures/reset";
 import request from "supertest";
 import {app} from "../../src";
+import {Assignment, Classroom} from "../fixtures/types";
 
 
 const feature = loadFeature(

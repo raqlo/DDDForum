@@ -1,6 +1,6 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
-import {StudentBuilder} from "../fixtures/studentBuilder";
+import {StudentBuilder} from "../fixtures";
 import request from "supertest";
 import {app} from "../../src";
 import {resetDatabase} from "../fixtures/reset";

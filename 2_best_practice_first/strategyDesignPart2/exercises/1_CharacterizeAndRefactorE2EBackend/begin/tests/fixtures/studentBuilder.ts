@@ -1,6 +1,5 @@
 import {prisma} from "../../src/database";
-
-export type Student = { id: string, name: string, email: string };
+import {Student} from "./types";
 
 export class StudentBuilder {
     private props: StudentProps;

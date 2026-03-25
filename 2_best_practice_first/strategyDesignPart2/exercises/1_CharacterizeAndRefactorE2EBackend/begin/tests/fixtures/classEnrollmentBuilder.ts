@@ -1,8 +1,7 @@
 import {StudentBuilder} from "./studentBuilder";
 import {ClassBuilder} from "./classBuilder";
 import {prisma} from "../../src/database";
-
-export type ClassEnrollment = { studentId: string, classId: string };
+import {ClassEnrollment} from "./types";
 
 export class ClassEnrollmentBuilder {
     private student?: StudentBuilder;

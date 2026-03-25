@@ -1,13 +1,16 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
 import {resetDatabase} from "../fixtures/reset";
-import {ClassEnrollment, ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
-import {ClassBuilder} from "../fixtures/classBuilder";
-import {Student, StudentBuilder} from "../fixtures/studentBuilder";
-import {Assignment, AssignmentBuilder} from "../fixtures/assignmentBuilder";
+import {
+    AssignmentBuilder,
+    ClassBuilder,
+    ClassEnrollmentBuilder,
+    StudentAssignmentBuilder,
+    StudentBuilder
+} from "../fixtures";
 import {app} from "../../src";
 import request from "supertest";
-import {StudentAssignment, StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
+import {Assignment, ClassEnrollment, Student, StudentAssignment} from "../fixtures/types";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/assignStudentToAssignment.feature")

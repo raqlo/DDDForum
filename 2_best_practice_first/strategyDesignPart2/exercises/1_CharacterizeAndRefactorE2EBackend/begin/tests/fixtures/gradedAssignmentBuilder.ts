@@ -1,6 +1,5 @@
 import {prisma} from "../../src/database";
-
-export type GradedAssignment = { id: string, assignmentSubmissionId: string, grade: string | null };
+import {GradedAssignment} from "./types";
 
 export class GradedAssignmentBuilder {
     private props: { assignmentSubmissionId: string, grade: string; } = {

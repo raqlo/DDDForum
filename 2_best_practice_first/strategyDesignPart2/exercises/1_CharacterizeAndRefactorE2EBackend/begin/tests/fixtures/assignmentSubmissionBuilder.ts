@@ -1,6 +1,5 @@
 import {prisma} from "../../src/database";
-
-export type AssignmentSubmission = { id: string, studentAssignmentId: string };
+import {AssignmentSubmission} from "./types";
 
 export class AssignmentSubmissionBuilder {
     private studentAssignmentId?: string;

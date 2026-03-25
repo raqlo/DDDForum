@@ -1,10 +1,10 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
-import {Student, StudentBuilder} from "../fixtures/studentBuilder";
-import {response} from "express";
+import {StudentBuilder} from "../fixtures";
 import request from "supertest";
 import {app} from "../../src";
 import {resetDatabase} from "../fixtures/reset";
+import {Student} from "../fixtures/types";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/getStudentById.feature")

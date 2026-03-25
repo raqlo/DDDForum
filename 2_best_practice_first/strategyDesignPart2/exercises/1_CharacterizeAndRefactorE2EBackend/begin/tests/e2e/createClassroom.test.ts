@@ -1,14 +1,15 @@
 import request from "supertest";
-import { app } from "../../src";
+import {app} from "../../src";
 
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
+import {resetDatabase} from "../fixtures/reset";
+import {ClassBuilder} from "../fixtures";
+import {Classroom} from "../fixtures/types";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/createClassRoom.feature")
 );
-import { resetDatabase } from "../fixtures/reset";
-import {ClassBuilder, Classroom} from "../fixtures/classBuilder";
 
 defineFeature(feature, (test) => {
     beforeEach(async () => {

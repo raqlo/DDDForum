@@ -1,16 +1,18 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
 import {resetDatabase} from "../fixtures/reset";
-import {ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
-import {ClassBuilder} from "../fixtures/classBuilder";
-import {StudentBuilder} from "../fixtures/studentBuilder";
-import {AssignmentBuilder} from "../fixtures/assignmentBuilder";
-import {StudentAssignment, StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
-import {ClassEnrollment} from "@prisma/client";
-import {AssignmentSubmissionBuilder} from "../fixtures/assignmentSubmissionBuilder";
-import {GradedAssignmentBuilder} from "../fixtures/gradedAssignmentBuilder";
+import {
+    AssignmentBuilder,
+    AssignmentSubmissionBuilder,
+    ClassBuilder,
+    ClassEnrollmentBuilder,
+    GradedAssignmentBuilder,
+    StudentAssignmentBuilder,
+    StudentBuilder
+} from "../fixtures";
 import request from "supertest";
 import {app} from "../../src";
+import {StudentAssignment, ClassEnrollment} from "../fixtures/types";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/getStudentGrades.feature")
