@@ -2,6 +2,8 @@ import {prisma} from "../../src/database";
 
 export type AssignmentProps = { title: string, classId: string };
 
+export type Assignment = { id: string, classId: string, title: string };
+
 export class AssignmentBuilder {
     private props: AssignmentProps;
     constructor() {
@@ -25,6 +27,6 @@ export class AssignmentBuilder {
                 classId: this.props.classId,
                 title: this.props.title,
             },
-        });
+        }) as unknown as Promise<Assignment>;
     }
 }

@@ -1,6 +1,8 @@
 import {AssignmentBuilder} from "./assignmentBuilder";
 import {prisma} from "../../src/database";
 
+export type StudentAssignment = { id: string, studentId: string, assignmentId: string };
+
 export class StudentAssignmentBuilder {
     private assignment?: AssignmentBuilder;
     private student?: string;
@@ -30,6 +32,6 @@ export class StudentAssignmentBuilder {
                 studentId: this.student,
                 assignmentId: assignment.id,
             },
-        });
+        }) as unknown as Promise<StudentAssignment>;
     }
 }

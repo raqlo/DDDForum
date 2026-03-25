@@ -1,5 +1,7 @@
 import {prisma} from "../../src/database";
 
+export type Student = { id: string, name: string, email: string };
+
 export class StudentBuilder {
     private props: StudentProps;
 
@@ -26,7 +28,7 @@ export class StudentBuilder {
                 name: this.props.name,
                 email: this.props.email,
             },
-        })
+        }) as unknown as Promise<Student>;
     }
 }
 

@@ -2,6 +2,8 @@ import {StudentBuilder} from "./studentBuilder";
 import {ClassBuilder} from "./classBuilder";
 import {prisma} from "../../src/database";
 
+export type ClassEnrollment = { studentId: string, classId: string };
+
 export class ClassEnrollmentBuilder {
     private student?: StudentBuilder;
     private classroom?: ClassBuilder;
@@ -32,6 +34,6 @@ export class ClassEnrollmentBuilder {
                 studentId: student.id,
                 classId: classroom.id,
             },
-        });
+        }) as unknown as Promise<ClassEnrollment>;
     }
 }
