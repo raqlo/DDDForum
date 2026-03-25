@@ -1,13 +1,13 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
 import {resetDatabase} from "../fixtures/reset";
-import {ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
+import {ClassEnrollment, ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
 import {ClassBuilder} from "../fixtures/classBuilder";
-import {StudentBuilder} from "../fixtures/studentBuilder";
-import {AssignmentBuilder} from "../fixtures/assignmentBuilder";
+import {Student, StudentBuilder} from "../fixtures/studentBuilder";
+import {Assignment, AssignmentBuilder} from "../fixtures/assignmentBuilder";
 import {app} from "../../src";
 import request from "supertest";
-import {StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
+import {StudentAssignment, StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/assignStudentToAssignment.feature")
@@ -19,8 +19,8 @@ defineFeature(feature, (test) => {
     })
 
     test('Successfully assign student to assignment', ({given, and, when, then}) => {
-        let enrollment: any = {};
-        let assignment: any = {};
+        let enrollment: ClassEnrollment;
+        let assignment: Assignment;
         let response: any = {};
 
         given('That I have a student assigned to a class', async () => {
@@ -49,8 +49,8 @@ defineFeature(feature, (test) => {
     });
 
     test('Fail creation when when student is not enrolled in class', ({given, and, when, then}) => {
-        let assignment: any = {};
-        let student: any = {};
+        let assignment: Assignment;
+        let student: Student;
         let requestBody: any = {};
         let response: any = {};
 
@@ -78,10 +78,10 @@ defineFeature(feature, (test) => {
     });
 
     test('Fail creation when student already has an assignment', ({given, when, then}) => {
-        let assignment: any = {};
+        let assignment: AssignmentBuilder;
+        let studentAssignment: StudentAssignment;
         let requestBody: any = {};
         let response: any = {};
-        let studentAssignment: any = {};
 
         given('That the student is already assigned to the assignment', async () => {
             const student = new StudentBuilder().withName('John Doe').withEmail('jdoe123@email.com')

@@ -10,7 +10,7 @@ const feature = loadFeature(
 import {resetDatabase} from "../fixtures/reset";
 
 defineFeature(feature, (test) => {
-    beforeAll(async () => {
+    beforeEach(async () => {
         await resetDatabase();
     })
     test('Successfully create a student', ({given, when, then}) => {

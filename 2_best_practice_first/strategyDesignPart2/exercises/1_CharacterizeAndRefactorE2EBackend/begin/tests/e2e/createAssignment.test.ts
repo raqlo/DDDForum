@@ -1,10 +1,10 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
-import {ClassBuilder} from "../fixtures/classBuilder";
+import {ClassBuilder, Classroom} from "../fixtures/classBuilder";
 import request from "supertest";
 import {app} from "../../src";
 import {resetDatabase} from "../fixtures/reset";
-import {AssignmentBuilder} from "../fixtures/assignmentBuilder";
+import {Assignment, AssignmentBuilder} from "../fixtures/assignmentBuilder";
 
 
 const feature = loadFeature(
@@ -17,7 +17,7 @@ defineFeature(feature, (test) => {
     })
 
     test('Successfully create a new assignment', ({given, when, then}) => {
-        let classroom: any = {};
+        let classroom: Classroom;
         let result: any = {};
         let requestBody: any = {};
 
@@ -42,7 +42,7 @@ defineFeature(feature, (test) => {
     });
 
     test('Fail to create new assignment because of missing fields', ({given, when, then}) => {
-        let classroom: any = {};
+        let classroom: Classroom;
         let result: any = {};
         let requestBody: any = {};
 
@@ -65,8 +65,8 @@ defineFeature(feature, (test) => {
     });
 
     test('Successfully create assignment with same class and name', ({ given, and, when, then }) => {
-        let classroom: any = {};
-        let assignment: any = {};
+        let classroom: Classroom;
+        let assignment: Assignment;
         let result: any = {};
         let requestBody: any = {};
 

@@ -1,11 +1,11 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
 import {resetDatabase} from "../fixtures/reset";
-import {ClassBuilder} from "../fixtures/classBuilder";
-import {StudentBuilder} from "../fixtures/studentBuilder";
+import {ClassBuilder, Classroom} from "../fixtures/classBuilder";
+import {Student, StudentBuilder} from "../fixtures/studentBuilder";
 import request from "supertest";
 import {app} from "../../src";
-import {ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
+import {ClassEnrollment, ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/enrollStudentToClass.feature")
@@ -17,8 +17,8 @@ defineFeature(feature, (test) => {
     })
 
     test('Enroll student to a class', ({given, and, when, then}) => {
-        let student: any = {};
-        let classroom: any = {};
+        let student: Student;
+        let classroom: Classroom;
         let requestBody: any = {};
         let response: any = {};
 
@@ -46,7 +46,7 @@ defineFeature(feature, (test) => {
     });
 
     test('Fail to enroll if student is already in the class', ({given, and, when, then}) => {
-        let classEnrollment: any = {};
+        let classEnrollment: ClassEnrollment;
         let requestBody: any = {};
         let response: any = {};
 
@@ -74,8 +74,10 @@ defineFeature(feature, (test) => {
     test('Fail to enroll if missing class or student', ({given, and, when, then}) => {
         let requestBody: any = {};
         let response: any = {};
-        let classroom: any = {};
-        let student: any = {};
+        let classroom: Classroom;
+        let student: {
+            id: string,
+        };
 
         given('That I have a class', async () => {
             classroom = await new ClassBuilder().withName('Math 101').build();

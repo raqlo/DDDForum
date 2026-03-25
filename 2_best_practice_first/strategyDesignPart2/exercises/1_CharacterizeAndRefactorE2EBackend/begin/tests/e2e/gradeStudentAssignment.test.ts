@@ -1,10 +1,10 @@
 import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
-import {ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
+import {ClassEnrollment, ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
 import {ClassBuilder} from "../fixtures/classBuilder";
 import {StudentBuilder} from "../fixtures/studentBuilder";
 import {AssignmentBuilder} from "../fixtures/assignmentBuilder";
-import {StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
+import {StudentAssignment, StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
 import request from "supertest";
 import {AssignmentSubmissionBuilder} from "../fixtures/assignmentSubmissionBuilder";
 import {app} from "../../src";
@@ -19,8 +19,8 @@ defineFeature(feature, test => {
         await resetDatabase();
     })
     test('Successfully Grading Assignment', ({given, and, when, then}) => {
-        let enrollment: any = {};
-        let studentAssignment: any = {};
+        let enrollment: ClassEnrollment;
+        let studentAssignment: StudentAssignment;
         let requestBody: any = {};
         let response: any = {};
 
@@ -44,9 +44,7 @@ defineFeature(feature, test => {
                 grade: grade,
             }
 
-            console.log(requestBody)
-            response = await request(app).post('/student-assignments/grade').send(requestBody)
-            console.log(response.body)
+            response = await request(app).post('/student-assignments/grade').send(requestBody);
         });
 
         then('The assignment gets associated with the grade', () => {

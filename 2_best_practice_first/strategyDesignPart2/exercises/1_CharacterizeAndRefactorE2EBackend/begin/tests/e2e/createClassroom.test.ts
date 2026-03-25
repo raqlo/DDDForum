@@ -8,10 +8,10 @@ const feature = loadFeature(
     path.join(__dirname, "../features/createClassRoom.feature")
 );
 import { resetDatabase } from "../fixtures/reset";
-import {ClassBuilder} from "../fixtures/classBuilder";
+import {ClassBuilder, Classroom} from "../fixtures/classBuilder";
 
 defineFeature(feature, (test) => {
-    beforeAll(async () => {
+    beforeEach(async () => {
         await resetDatabase();
     })
 
@@ -56,10 +56,10 @@ defineFeature(feature, (test) => {
     test('Fail to create a class room because already exists', ({ given, when, then }) => {
         let requestBody: any = {}
         let response: any = {}
-        let classroom: any
+        let classroom: Classroom
 
-        given(/^I have a class room named "(.*)"$/, (className) => {
-            classroom = new ClassBuilder().withName(className).build();
+        given(/^I have a class room named "(.*)"$/, async (className) => {
+            classroom = await new ClassBuilder().withName(className).build();
         });
 
         when(/^I try to create a new class room named "(.*)"$/, async (arg0) => {

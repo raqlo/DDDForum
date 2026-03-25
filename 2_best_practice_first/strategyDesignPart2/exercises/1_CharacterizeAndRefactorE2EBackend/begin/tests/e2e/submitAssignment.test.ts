@@ -2,9 +2,9 @@ import {defineFeature, loadFeature} from "jest-cucumber";
 import path from "path";
 import {ClassBuilder} from "../fixtures/classBuilder";
 import {StudentBuilder} from "../fixtures/studentBuilder";
-import {ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
-import {AssignmentBuilder} from "../fixtures/assignmentBuilder";
-import {StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
+import {ClassEnrollment, ClassEnrollmentBuilder} from "../fixtures/classEnrollmentBuilder";
+import {Assignment, AssignmentBuilder} from "../fixtures/assignmentBuilder";
+import {StudentAssignment, StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
 import request from "supertest";
 import {app} from "../../src";
 import {resetDatabase} from "../fixtures/reset";
@@ -19,11 +19,11 @@ defineFeature(feature, (test) => {
         await resetDatabase()
     })
     test('Submits assignment', ({given, and, when, then}) => {
-        let enrollment: any = {};
-        let assignment: any = {};
+        let enrollment: ClassEnrollment;
+        let assignment: AssignmentBuilder;
         let response: any = {};
         let requestBody: any = {};
-        let studentAssignment: any = {};
+        let studentAssignment: StudentAssignment;
 
         given('That I have a student assigned to a class', async () => {
             const classroom = new ClassBuilder().withName('Math 301')
@@ -51,11 +51,11 @@ defineFeature(feature, (test) => {
     })
 
     test('Student cannot submit assignment if is not assigned', ({given, and, when, then}) => {
-        let enrollment: any = {};
-        let assignment: any = {};
+        let enrollment: ClassEnrollment;
+        let assignment: Assignment;
         let response: any = {};
         let requestBody: any = {};
-        let student: any = {};
+        let student: StudentBuilder;
 
         given('That I have a student assigned to a class', async () => {
             const classroom = new ClassBuilder().withName('Math 301')
@@ -82,12 +82,12 @@ defineFeature(feature, (test) => {
     });
 
     test('Student cannot submit assignment if is already submitted', ({given, and, when, then}) => {
-        let enrollment: any = {};
-        let assignment: any = {};
+        let enrollment: ClassEnrollment;
+        let assignment: AssignmentBuilder;
         let response: any = {};
         let requestBody: any = {};
-        let studentAssignment: any = {};
-        let student: any = {};
+        let studentAssignment: StudentAssignment;
+        let student: StudentBuilder;
 
         given('That I have a student assigned to a class', async () => {
             const classroom = new ClassBuilder().withName('Math 301')
