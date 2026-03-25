@@ -84,6 +84,39 @@ defineFeature(feature, test => {
             expect(response.body.error).toBe('AssignmentNotFound')
         });
     });
+    test('Fail to grade if student assignment didn\'t submit the assignment', ({given, and, when, then}) => {
+        let enrollment: ClassEnrollment;
+        let studentAssignment: StudentAssignment;
+        let requestBody: any = {};
+        let response: any = {};
+
+        given('That I have a student assigned to a class', async () => {
+            enrollment = await new ClassEnrollmentBuilder()
+                .withClass(new ClassBuilder().withName('Math 101'))
+                .withStudent(new StudentBuilder().withName('John Snow').withEmail('jsnowi@email.com'))
+                .build();
+        });
+
+        and('the assignment has not been submitted', async () => {
+            const assignment = new AssignmentBuilder().withClassId(enrollment.classId).withTitle('Math Assignment')
+            studentAssignment = await new StudentAssignmentBuilder().withAssignment(assignment).withStudentId(enrollment.studentId).build()
+        });
+
+        when('I grade the assignment', async () => {
+            requestBody = {
+                studentId: enrollment.studentId,
+                assignmentId: studentAssignment.assignmentId,
+                grade: 'A',
+            }
+
+            response = await request(app).post('/student-assignments/grade').send(requestBody);
+        });
+
+        then('The assignment does not get created', () => {
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBe('NotSubmittedError')
+        });
+    });
 
 
 })
