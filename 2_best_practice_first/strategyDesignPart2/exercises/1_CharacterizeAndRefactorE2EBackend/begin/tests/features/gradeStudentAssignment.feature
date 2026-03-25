@@ -17,3 +17,9 @@ Feature: Grade Student Assignment
       | C     |
       | D     |
       | F     |
+
+    Scenario: Fail to grade if student assignment does not exist
+      Given That I have a student assigned to a class
+      And The assignment does not exist
+      When I grade the assignment
+      Then The assignment gets created

@@ -52,4 +52,38 @@ defineFeature(feature, test => {
         });
     });
 
+    test('Fail to grade if student assignment does not exist', ({given, and, when, then}) => {
+        let enrollment: ClassEnrollment;
+        let assignmentId: string;
+        let requestBody: any = {};
+        let response: any = {};
+
+        given('That I have a student assigned to a class', async () => {
+            enrollment = await new ClassEnrollmentBuilder()
+                .withClass(new ClassBuilder().withName('Math 101'))
+                .withStudent(new StudentBuilder().withName('John Snow').withEmail('jsnowi@email.com'))
+                .build();
+        });
+
+        and('The assignment does not exist', () => {
+            assignmentId = '1234567890';
+        });
+
+        when('I grade the assignment', async () => {
+            requestBody = {
+                studentId: enrollment.studentId,
+                assignmentId: assignmentId,
+                grade: 'A',
+            }
+            response = await request(app).post('/student-assignments/grade').send(requestBody);
+
+        });
+
+        then('The assignment does not get created', () => {
+            expect(response.status).toBe(404);
+            expect(response.body.error).toBe('AssignmentNotFound')
+        });
+    });
+
+
 })
