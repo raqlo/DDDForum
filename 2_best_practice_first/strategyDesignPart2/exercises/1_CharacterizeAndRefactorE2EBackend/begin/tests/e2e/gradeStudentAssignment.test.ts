@@ -6,42 +6,15 @@ import {StudentBuilder} from "../fixtures/studentBuilder";
 import {AssignmentBuilder} from "../fixtures/assignmentBuilder";
 import {StudentAssignment, StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
 import request from "supertest";
-import {AssignmentSubmission, AssignmentSubmissionBuilder} from "../fixtures/assignmentSubmissionBuilder";
+import {AssignmentSubmissionBuilder} from "../fixtures/assignmentSubmissionBuilder";
 import {app} from "../../src";
 import {resetDatabase} from "../fixtures/reset";
-import {prisma} from "../../src/database";
+import {GradedAssignmentBuilder} from "../fixtures/gradedAssignmentBuilder";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/gradeStudentAssignment.feature")
 );
 
-export type GradedAssignment = { id: string, assignmentSubmissionId: string, grade: string | null };
-
-class GradedAssignmentBuilder {
-    private props: { assignmentSubmissionId: string, grade: string; } = {
-        assignmentSubmissionId: '',
-        grade: '',
-    }
-
-    withAssignmentSubmissionId(assignmentSubmissionId: string) {
-        this.props.assignmentSubmissionId = assignmentSubmissionId;
-        return this;
-    }
-
-    withGrade(grade: string) {
-        this.props.grade = grade;
-        return this;
-    }
-
-    build() {
-        return prisma.gradedAssignment.create({
-            data: {
-                grade: this.props.grade,
-                assignmentSubmissionId: this.props.assignmentSubmissionId
-            }
-        }) as Promise<GradedAssignment>;
-    }
-}
 
 defineFeature(feature, test => {
     beforeEach(async () => {
