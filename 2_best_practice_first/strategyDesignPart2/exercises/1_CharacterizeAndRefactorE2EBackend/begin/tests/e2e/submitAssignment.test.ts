@@ -98,6 +98,7 @@ defineFeature(feature, (test) => {
 
         then('An assignment submission is not created', () => {
             expect(response.status).toBe(404);
+            expect(response.body.error).toBe('AssignmentNotFound')
         });
     });
 
