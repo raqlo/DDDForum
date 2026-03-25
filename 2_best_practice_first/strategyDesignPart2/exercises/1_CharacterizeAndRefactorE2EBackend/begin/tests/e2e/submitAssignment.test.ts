@@ -8,32 +8,11 @@ import {StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
 import request from "supertest";
 import {app} from "../../src";
 import {resetDatabase} from "../fixtures/reset";
-import {prisma} from "../../src/database";
+import {AssignmentSubmissionBuilder} from "../fixtures/assignmentSubmissionBuilder";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/submitAssignment.feature")
 );
-
-class AssignmentSubmissionBuilder {
-    private studentAssignmentId?: string;
-
-    withStudentAssignmentId(studentAssignmentId: string) {
-        this.studentAssignmentId = studentAssignmentId;
-        return this;
-    }
-
-    async build() {
-        if (!this.studentAssignmentId) {
-            throw new Error('Student assignment builder is required');
-        }
-
-        return prisma.assignmentSubmission.create({
-            data: {
-                studentAssignmentId: this.studentAssignmentId,
-            },
-        });
-    }
-}
 
 defineFeature(feature, (test) => {
     beforeEach(async () => {
