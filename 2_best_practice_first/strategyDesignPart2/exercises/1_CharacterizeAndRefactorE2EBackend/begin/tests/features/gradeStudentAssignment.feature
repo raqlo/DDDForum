@@ -18,15 +18,22 @@ Feature: Grade Student Assignment
       | D     |
       | F     |
 
-    Scenario: Fail to grade if student assignment does not exist
-      Given That I have a student assigned to a class
-      And The assignment does not exist
-      When I grade the assignment
-      Then The assignment does not get created
+  Scenario: Fail to grade if student assignment does not exist
+    Given That I have a student assigned to a class
+    And The assignment does not exist
+    When I grade the assignment
+    Then The assignment does not get created
 
-      Scenario: Fail to grade if student assignment didn't submit the assignment
-        Given That I have a student assigned to a class
-        And the assignment has not been submitted
-        When I grade the assignment
-        Then The assignment does not get created
+  Scenario: Fail to grade if student assignment didn't submit the assignment
+    Given That I have a student assigned to a class
+    And the assignment has not been submitted
+    When I grade the assignment
+    Then The assignment does not get created
+
+  Scenario: Fail to grade if assignment is already graded
+    Given That I have a student assigned to a class
+    And the assignment has already been graded
+    When I grade the assignment
+    Then The assignment does not get created
+
 
