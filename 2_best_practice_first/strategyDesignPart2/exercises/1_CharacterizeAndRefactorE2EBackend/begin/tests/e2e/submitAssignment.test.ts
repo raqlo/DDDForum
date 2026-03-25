@@ -8,10 +8,32 @@ import {StudentAssignmentBuilder} from "../fixtures/studentAssignmentBuilder";
 import request from "supertest";
 import {app} from "../../src";
 import {resetDatabase} from "../fixtures/reset";
+import {prisma} from "../../src/database";
 
 const feature = loadFeature(
     path.join(__dirname, "../features/submitAssignment.feature")
 );
+
+class AssignmentSubmissionBuilder {
+    private studentAssignmentId?: string;
+
+    withStudentAssignmentId(studentAssignmentId: string) {
+        this.studentAssignmentId = studentAssignmentId;
+        return this;
+    }
+
+    async build() {
+        if (!this.studentAssignmentId) {
+            throw new Error('Student assignment builder is required');
+        }
+
+        return prisma.assignmentSubmission.create({
+            data: {
+                studentAssignmentId: this.studentAssignmentId,
+            },
+        });
+    }
+}
 
 defineFeature(feature, (test) => {
     beforeEach(async () => {
@@ -49,7 +71,7 @@ defineFeature(feature, (test) => {
 
     })
 
-    test('Student cannot submit assignment if is not assigned', ({ given, and, when, then }) => {
+    test('Student cannot submit assignment if is not assigned', ({given, and, when, then}) => {
         let enrollment: any = {};
         let assignment: any = {};
         let response: any = {};
@@ -78,5 +100,43 @@ defineFeature(feature, (test) => {
             expect(response.status).toBe(404);
         });
     });
+
+    test('Student cannot submit assignment if is already submitted', ({given, and, when, then}) => {
+        let enrollment: any = {};
+        let assignment: any = {};
+        let response: any = {};
+        let requestBody: any = {};
+        let studentAssignment: any = {};
+        let student: any = {};
+
+        given('That I have a student assigned to a class', async () => {
+            const classroom = new ClassBuilder().withName('Math 301')
+            student = new StudentBuilder().withName('John Snow').withEmail('jsnow@email.com')
+            enrollment = await new ClassEnrollmentBuilder().withClass(classroom).withStudent(student).build()
+        });
+
+        and('That student has assigned an assignment', async () => {
+            assignment = new AssignmentBuilder().withClassId(enrollment.classId).withTitle('Math Assignment')
+            studentAssignment = await new StudentAssignmentBuilder().withAssignment(assignment).withStudentId(enrollment.studentId).build()
+        });
+
+        and('The assignment has been submitted', async () => {
+            await new AssignmentSubmissionBuilder().withStudentAssignmentId(studentAssignment.id).build()
+        });
+
+        when('the student submits their assignment', async () => {
+            requestBody = {
+                assignmentId: studentAssignment.assignmentId,
+                studentId: enrollment.studentId,
+            }
+            response = await request(app).post('/student-assignments/submit').send(requestBody)
+        });
+
+        then('An assignment submission is not created', () => {
+            expect(response.status).toBe(409);
+            expect(response.body.error).toBe('AssignmentAlreadySubmitted')
+        });
+    });
+
 
 })
