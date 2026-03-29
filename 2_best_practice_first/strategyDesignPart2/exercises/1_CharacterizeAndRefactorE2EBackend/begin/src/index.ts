@@ -6,7 +6,7 @@ import {
 } from "./classes/controller";
 import {
   AssignmentController,
-} from "./assgnments/controller";
+} from "./assignments/controller";
 import {
  StudentController
 } from "./students/controller";
@@ -14,22 +14,6 @@ import {
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-export const Errors = {
-  ValidationError: "ValidationError",
-  StudentNotFound: "StudentNotFound",
-  ClassNotFound: "ClassNotFound",
-  ClassAlreadyExists: "ClassAlreadyExists",
-  AssignmentNotFound: "AssignmentNotFound",
-  ServerError: "ServerError",
-  ClientError: "ClientError",
-  StudentAlreadyEnrolled: "StudentAlreadyEnrolled",
-  StudentNotEnrolled: "StudentNotEnrolled",
-  AssignmentAlreadySubmitted: "AssignmentAlreadySubmitted",
-  NotSubmittedError: "NotSubmittedError",
-  AlreadyAssignedAssignmentToStudent: 'AlreadyAssignedAssignmentToStudent',
-  AlreadyGradedAssignment: 'AlreadyGradedAssignment'
-};
 
 export function isMissingKeys(data: any, keysToCheckFor: string[]) {
   for (let key of keysToCheckFor) {

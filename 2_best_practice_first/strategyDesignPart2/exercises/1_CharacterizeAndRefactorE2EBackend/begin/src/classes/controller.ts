@@ -1,7 +1,8 @@
 // POST class created
 import {Request, Response} from "express";
 import {prisma} from "../database";
-import {Errors, isMissingKeys, isUUID, parseForResponse} from "../index";
+import {isMissingKeys, isUUID, parseForResponse} from "../index";
+import Errors from "../shared/errors/constants";
 
 export class ClassController {
     async createClass(req: Request, res: Response) {
