@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
 import {
-  CreateClassController,
-  CreateClassEnrollmentController,
-  GetListOfAssignmentsByClass
+  ClassController
+
 } from "./classes/controller";
 import {
   CreateAssignmentController,
@@ -56,13 +55,15 @@ export function isUUID(id: string) {
   );
 }
 
+const classController = new ClassController();
+
 // API Endpoints
 
 app.post("/students", CreateStudentController);
 
-app.post("/classes", CreateClassController);
+app.post("/classes", classController.createClass);
 
-app.post("/class-enrollments", CreateClassEnrollmentController);
+app.post("/class-enrollments", classController.createClassEnrollment);
 
 app.post("/assignments", CreateAssignmentController);
 
@@ -79,7 +80,7 @@ app.get("/students/:id", GetStudentByIdController);
 
 app.get("/assignments/:id", GetAssignmentById);
 
-app.get("/classes/:id/assignments", GetListOfAssignmentsByClass);
+app.get("/classes/:id/assignments", classController.getListOfAssignmentsByClass);
 
 app.get("/student/:id/assignments", GetListOfAssignmentsByStudent);
 
