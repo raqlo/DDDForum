@@ -5,17 +5,10 @@ import {
 
 } from "./classes/controller";
 import {
-  CreateAssignmentController,
-  CreateStudentAssignment,
-  GetAssignmentById, GradeStudentAssignment,
-  SubmitStudentAssignment
+  AssignmentController,
 } from "./assgnments/controller";
 import {
-  CreateStudentController,
-  GetListOfAssignmentsByStudent,
-  GetListOfStudentGrades,
-  GetListOfStudentsController,
-  GetStudentByIdController
+ StudentController
 } from "./students/controller";
 
 const app = express();
@@ -56,35 +49,37 @@ export function isUUID(id: string) {
 }
 
 const classController = new ClassController();
+const assignmentController = new AssignmentController();
+const studentController = new StudentController();
 
 // API Endpoints
 
-app.post("/students", CreateStudentController);
+app.post("/students", studentController.createStudent);
 
 app.post("/classes", classController.createClass);
 
 app.post("/class-enrollments", classController.createClassEnrollment);
 
-app.post("/assignments", CreateAssignmentController);
+app.post("/assignments", assignmentController.createAssignment.bind(assignmentController));
 
-app.post("/student-assignments", CreateStudentAssignment);
+app.post("/student-assignments", assignmentController.createStudentAssignment.bind(assignmentController));
 
-app.post("/student-assignments/submit", SubmitStudentAssignment);
+app.post("/student-assignments/submit", assignmentController.submitStudentAssignment.bind(assignmentController));
 
-app.post("/student-assignments/grade", GradeStudentAssignment);
+app.post("/student-assignments/grade", assignmentController.gradeStudentAssignment.bind(assignmentController));
 
 
-app.get("/students", GetListOfStudentsController);
+app.get("/students", studentController.getListOfStudents);
 
-app.get("/students/:id", GetStudentByIdController);
+app.get("/students/:id", studentController.getStudentById);
 
-app.get("/assignments/:id", GetAssignmentById);
+app.get("/assignments/:id", assignmentController.getAssignmentById.bind(assignmentController));
 
 app.get("/classes/:id/assignments", classController.getListOfAssignmentsByClass);
 
-app.get("/student/:id/assignments", GetListOfAssignmentsByStudent);
+app.get("/student/:id/assignments", studentController.getListOfAssignmentsByStudent);
 
-app.get("/student/:id/grades", GetListOfStudentGrades);
+app.get("/student/:id/grades", studentController.getListOfStudentGrades);
 
 const port = process.env.PORT || 3000;
 
