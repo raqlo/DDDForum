@@ -15,7 +15,7 @@ export class AssignmentController {
         this.setupErrorHandler();
     }
 
-    async createAssignment(req: Request, res: Response) {
+    createAssignment = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["classId", "title"])) {
                 return res.status(400).json({
@@ -44,10 +44,10 @@ export class AssignmentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
     // POST student assigned to assignment
-    async createStudentAssignment(req: Request, res: Response) {
+    createStudentAssignment = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["studentId", "assignmentId"])) {
                 return res.status(400).json({
@@ -136,10 +136,10 @@ export class AssignmentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
     // POST student submitted assignment
-    async submitStudentAssignment(req: Request, res: Response) {
+    submitStudentAssignment = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["assignmentId", "studentId"])) {
                 return res.status(400).json({
@@ -200,10 +200,10 @@ export class AssignmentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
     // GET assignment by id
-    async getAssignmentById(req: Request, res: Response) {
+    getAssignmentById = async (req: Request, res: Response) => {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -241,10 +241,10 @@ export class AssignmentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
     // POST student assignment graded
-    async gradeStudentAssignment(req: Request, res: Response) {
+    gradeStudentAssignment = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["studentId", "assignmentId", "grade"])) {
                 return res.status(400).json({
@@ -333,7 +333,7 @@ export class AssignmentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
     private setupErrorHandler() {
         this.router.use(this.errorHandler);

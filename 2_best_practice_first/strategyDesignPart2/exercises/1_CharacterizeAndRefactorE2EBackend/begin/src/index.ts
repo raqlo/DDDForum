@@ -5,6 +5,7 @@ import {AssignmentController,} from "./assignments/controller";
 import {StudentController} from "./students/controller";
 import {errorHandler} from "./shared/errors/errors";
 import {StudentService} from "./students/service";
+import {ClassService} from "./classes/service";
 
 const app = express();
 app.use(express.json());
@@ -28,39 +29,40 @@ export function isUUID(id: string) {
 }
 
 const studentService = new StudentService();
+const classService = new ClassService();
 
-const classController = new ClassController(errorHandler);
-const assignmentController = new AssignmentController(errorHandler);
 const studentController = new StudentController(errorHandler, studentService);
+const classController = new ClassController(errorHandler, classService, studentService);
+const assignmentController = new AssignmentController(errorHandler);
 
 // API Endpoints
 
-app.post("/students", studentController.createStudent.bind(studentController));
+app.post("/students", studentController.createStudent);
 
 app.post("/classes", classController.createClass);
 
 app.post("/class-enrollments", classController.createClassEnrollment);
 
-app.post("/assignments", assignmentController.createAssignment.bind(assignmentController));
+app.post("/assignments", assignmentController.createAssignment);
 
-app.post("/student-assignments", assignmentController.createStudentAssignment.bind(assignmentController));
+app.post("/student-assignments", assignmentController.createStudentAssignment);
 
-app.post("/student-assignments/submit", assignmentController.submitStudentAssignment.bind(assignmentController));
+app.post("/student-assignments/submit", assignmentController.submitStudentAssignment);
 
-app.post("/student-assignments/grade", assignmentController.gradeStudentAssignment.bind(assignmentController));
+app.post("/student-assignments/grade", assignmentController.gradeStudentAssignment);
 
 
-app.get("/students", studentController.getListOfStudents.bind(studentController));
+app.get("/students", studentController.getListOfStudents);
 
-app.get("/students/:id", studentController.getStudentById.bind(studentController));
+app.get("/students/:id", studentController.getStudentById);
 
-app.get("/assignments/:id", assignmentController.getAssignmentById.bind(assignmentController));
+app.get("/assignments/:id", assignmentController.getAssignmentById);
 
 app.get("/classes/:id/assignments", classController.getListOfAssignmentsByClass);
 
-app.get("/student/:id/assignments", studentController.getListOfAssignmentsByStudent.bind(studentController));
+app.get("/student/:id/assignments", studentController.getListOfAssignmentsByStudent);
 
-app.get("/student/:id/grades", studentController.getListOfStudentGrades.bind(studentController));
+app.get("/student/:id/grades", studentController.getListOfStudentGrades);
 
 const port = process.env.PORT || 3000;
 

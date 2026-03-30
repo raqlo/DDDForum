@@ -1,19 +1,20 @@
 // POST class created
 import express, {Request, Response, Router} from "express";
-import {prisma} from "../database";
 import {isMissingKeys, isUUID, parseForResponse} from "../index";
 import Errors from "../shared/errors/constants";
 import {ErrorHandler} from "../shared/errors/errors";
+import {StudentService} from "../students/service";
+import {ClassService} from "./service";
 
 export class ClassController {
     private router: Router;
-    constructor( private errorHandler: ErrorHandler) {
+    constructor( private errorHandler: ErrorHandler, private classService: ClassService, private studentService: StudentService, ) {
         this.router = express.Router();
         this.setupRoutes();
         this.setupErrorHandler();
     }
 
-    async createClass(req: Request, res: Response) {
+    createClass = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["name"])) {
                 return res.status(400).json({
@@ -24,8 +25,7 @@ export class ClassController {
             }
 
             const {name} = req.body;
-
-            const classroomExists = await prisma.class.findUnique({where: {name}})
+            const classroomExists = await this.classService.findClassByName(name);
 
             if (classroomExists) {
                 return res
@@ -33,11 +33,8 @@ export class ClassController {
                     .json({error: Errors.ClassAlreadyExists, data: undefined, success: false});
             }
 
-            const cls = await prisma.class.create({
-                data: {
-                    name,
-                },
-            });
+
+            const cls = await this.classService.createClass(name);
 
             res
                 .status(201)
@@ -50,7 +47,7 @@ export class ClassController {
     };
 
     // POST student assigned to class
-    async createClassEnrollment(req: Request, res: Response) {
+    createClassEnrollment = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["studentId", "classId"])) {
                 return res.status(400).json({
@@ -63,11 +60,7 @@ export class ClassController {
             const {studentId, classId} = req.body;
 
             // check if student exists
-            const student = await prisma.student.findUnique({
-                where: {
-                    id: studentId,
-                },
-            });
+            const student = await this.studentService.getStudentById(studentId)
 
             if (!student) {
                 return res.status(404).json({
@@ -78,19 +71,11 @@ export class ClassController {
             }
 
             // check if class exists
-            const cls = await prisma.class.findUnique({
-                where: {
-                    id: classId,
-                },
-            });
+            const cls = await this.classService.findClassById(classId)
 
             // check if student is already enrolled in class
-            const duplicatedClassEnrollment = await prisma.classEnrollment.findFirst({
-                where: {
-                    studentId,
-                    classId,
-                },
-            });
+
+            const duplicatedClassEnrollment = await this.classService.getClassEnrollment(studentId, classId);
 
             if (duplicatedClassEnrollment) {
                 return res.status(409).json({
@@ -106,12 +91,8 @@ export class ClassController {
                     .json({error: Errors.ClassNotFound, data: undefined, success: false});
             }
 
-            const classEnrollment = await prisma.classEnrollment.create({
-                data: {
-                    studentId,
-                    classId,
-                },
-            });
+
+            const classEnrollment = await this.classService.createEnrollment(studentId, classId);
 
             res.status(201).json({
                 error: undefined,
@@ -126,7 +107,7 @@ export class ClassController {
     };
 
     // GET all assignments for class
-    async getListOfAssignmentsByClass(req: Request, res: Response) {
+    getListOfAssignmentsByClass = async (req: Request, res: Response) => {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -138,11 +119,7 @@ export class ClassController {
             }
 
             // check if class exists
-            const cls = await prisma.class.findUnique({
-                where: {
-                    id,
-                },
-            });
+            const cls = await this.classService.findClassById(id);
 
             if (!cls) {
                 return res
@@ -150,16 +127,7 @@ export class ClassController {
                     .json({error: Errors.ClassNotFound, data: undefined, success: false});
             }
 
-            const assignments = await prisma.assignment.findMany({
-                where: {
-                    classId: id,
-                },
-                include: {
-                    class: true,
-                    studentAssignments: true,
-                },
-            });
-
+            const assignments = await this.classService.getAssignments(id);
             res.status(200).json({
                 error: undefined,
                 data: parseForResponse(assignments),
@@ -182,7 +150,7 @@ export class ClassController {
 
     private setupRoutes() {
         this.router.post("/", this.createClass);
-        this.router.post("/:id/enroll", this.createClassEnrollment);
+        this.router.post("/enrollments", this.createClassEnrollment);
         this.router.get("/:id/assignments", this.getListOfAssignmentsByClass);
     }
 }

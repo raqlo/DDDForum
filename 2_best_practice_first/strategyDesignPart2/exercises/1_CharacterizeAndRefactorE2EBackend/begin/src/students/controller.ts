@@ -17,7 +17,7 @@ export class StudentController {
         this.setupErrorHandler();
     }
 
-    async createStudent(req: Request, res: Response) {
+    createStudent = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["name", "email"])) {
                 return res.status(400).json({
@@ -40,11 +40,10 @@ export class StudentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
-    async getListOfStudents(req: Request, res: Response) {
-
-// GET all students
+    // GET all students
+    getListOfStudents = async (req: Request, res: Response) => {
         try {
             const students = await this.studentService.GetAllStudents()
             res.status(200).json({
@@ -57,11 +56,11 @@ export class StudentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
 
     // GET a student by id
-    async getStudentById(req: Request, res: Response) {
+    getStudentById = async (req: Request, res: Response) => {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -91,10 +90,10 @@ export class StudentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
     // GET all student submitted assignments
-    async getListOfAssignmentsByStudent(req: Request, res: Response) {
+    getListOfAssignmentsByStudent = async (req: Request, res: Response) => {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -127,10 +126,10 @@ export class StudentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
     // GET all student grades
-    async getListOfStudentGrades(req: Request, res: Response) {
+    getListOfStudentGrades = async (req: Request, res: Response) => {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -164,7 +163,7 @@ export class StudentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
-    }
+    };
 
 
     getRouter() {
@@ -176,10 +175,10 @@ export class StudentController {
     }
 
     private setupRoutes() {
-        this.router.post("/", this.createStudent.bind(this));
-        this.router.get("/", this.getListOfStudents.bind(this));
-        this.router.get("/:id", this.getStudentById.bind(this));
-        this.router.get("/:id/assignments", this.getListOfAssignmentsByStudent.bind(this));
-        this.router.get("/:id/grades", this.getListOfStudentGrades.bind(this));
+        this.router.post("/", this.createStudent);
+        this.router.get("/", this.getListOfStudents);
+        this.router.get("/:id", this.getStudentById);
+        this.router.get("/:id/assignments", this.getListOfAssignmentsByStudent);
+        this.router.get("/:id/grades", this.getListOfStudentGrades);
     }
 }
