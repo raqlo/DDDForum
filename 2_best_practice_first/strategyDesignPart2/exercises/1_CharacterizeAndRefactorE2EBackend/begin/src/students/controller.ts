@@ -3,7 +3,8 @@ import express, {Request, Response, Router} from "express";
 import Errors from "../shared/errors/constants";
 import {ErrorHandler} from "../shared/errors/errors";
 import {StudentService} from "./service";
-import {isMissingKeys, isUUID, parseForResponse} from "../shared/utils/utils";
+import {isUUID, parseForResponse} from "../shared/utils/utils";
+import {CreateStudentDTO} from "./dtos/CreateStudentDTO";
 
 
 export class StudentController {
@@ -19,16 +20,8 @@ export class StudentController {
 
     createStudent = async (req: Request, res: Response) => {
         try {
-            if (isMissingKeys(req.body, ["name", "email"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
-
-            const {name, email} = req.body;
-            const student = await this.studentService.createStudent(name, email);
+            const dto = CreateStudentDTO.fromRequest(req.body);
+            const student = await this.studentService.createStudent(dto.name, dto.email);
 
             res.status(201).json({
                 error: undefined,
@@ -36,6 +29,13 @@ export class StudentController {
                 success: true,
             });
         } catch (error) {
+            if (error instanceof Error && error.message.includes("Missing required fields")) {
+                return res.status(400).json({
+                    error: Errors.ValidationError,
+                    data: undefined,
+                    success: false,
+                });
+            }
             res
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});

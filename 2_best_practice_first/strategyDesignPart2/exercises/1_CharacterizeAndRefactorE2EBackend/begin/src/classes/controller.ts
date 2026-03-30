@@ -4,7 +4,9 @@ import Errors from "../shared/errors/constants";
 import {ErrorHandler} from "../shared/errors/errors";
 import {StudentService} from "../students/service";
 import {ClassService} from "./service";
-import {isMissingKeys, isUUID, parseForResponse} from "../shared/utils/utils";
+import {isUUID, parseForResponse} from "../shared/utils/utils";
+import {CreateClassDTO} from "./dtos/CreateClassDTO";
+import {CreateClassEnrollmentDTO} from "./dtos/CreateClassEnrollmentDTO";
 
 export class ClassController {
     private router: Router;
@@ -16,16 +18,8 @@ export class ClassController {
 
     createClass = async (req: Request, res: Response) => {
         try {
-            if (isMissingKeys(req.body, ["name"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
-
-            const {name} = req.body;
-            const classroomExists = await this.classService.findClassByName(name);
+            const dto = CreateClassDTO.fromRequest(req.body);
+            const classroomExists = await this.classService.findClassByName(dto.name);
 
             if (classroomExists) {
                 return res
@@ -33,13 +27,19 @@ export class ClassController {
                     .json({error: Errors.ClassAlreadyExists, data: undefined, success: false});
             }
 
-
-            const cls = await this.classService.createClass(name);
+            const cls = await this.classService.createClass(dto.name);
 
             res
                 .status(201)
                 .json({error: undefined, data: parseForResponse(cls), success: true});
         } catch (error) {
+            if (error instanceof Error && error.message.includes("Missing required fields")) {
+                return res.status(400).json({
+                    error: Errors.ValidationError,
+                    data: undefined,
+                    success: false,
+                });
+            }
             res
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
@@ -49,18 +49,10 @@ export class ClassController {
     // POST student assigned to class
     createClassEnrollment = async (req: Request, res: Response) => {
         try {
-            if (isMissingKeys(req.body, ["studentId", "classId"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
-
-            const {studentId, classId} = req.body;
+            const dto = CreateClassEnrollmentDTO.fromRequest(req.body);
 
             // check if student exists
-            const student = await this.studentService.getStudentById(studentId)
+            const student = await this.studentService.getStudentById(dto.studentId)
 
             if (!student) {
                 return res.status(404).json({
@@ -71,11 +63,10 @@ export class ClassController {
             }
 
             // check if class exists
-            const cls = await this.classService.findClassById(classId)
+            const cls = await this.classService.findClassById(dto.classId)
 
             // check if student is already enrolled in class
-
-            const duplicatedClassEnrollment = await this.classService.getClassEnrollment(studentId, classId);
+            const duplicatedClassEnrollment = await this.classService.getClassEnrollment(dto.studentId, dto.classId);
 
             if (duplicatedClassEnrollment) {
                 return res.status(409).json({
@@ -91,8 +82,7 @@ export class ClassController {
                     .json({error: Errors.ClassNotFound, data: undefined, success: false});
             }
 
-
-            const classEnrollment = await this.classService.createEnrollment(studentId, classId);
+            const classEnrollment = await this.classService.createEnrollment(dto.studentId, dto.classId);
 
             res.status(201).json({
                 error: undefined,
@@ -100,6 +90,13 @@ export class ClassController {
                 success: true,
             });
         } catch (error) {
+            if (error instanceof Error && error.message.includes("Missing required fields")) {
+                return res.status(400).json({
+                    error: Errors.ValidationError,
+                    data: undefined,
+                    success: false,
+                });
+            }
             res
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});

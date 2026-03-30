@@ -5,7 +5,11 @@ import {ErrorHandler} from "../shared/errors/errors";
 import {StudentService} from "../students/service";
 import {ClassService} from "../classes/service";
 import {AssignmentService} from "./service";
-import {isMissingKeys, isUUID, parseForResponse} from "../shared/utils/utils";
+import {isUUID, parseForResponse} from "../shared/utils/utils";
+import {CreateAssignmentDTO} from "./dtos/CreateAssignmentDTO";
+import {CreateStudentAssignmentDTO} from "./dtos/CreateStudentAssignmentDTO";
+import {SubmitStudentAssignmentDTO} from "./dtos/SubmitStudentAssignmentDTO";
+import {GradeStudentAssignmentDTO} from "./dtos/GradeStudentAssignmentDTO";
 
 export class AssignmentController {
     private router: Router;
@@ -23,17 +27,8 @@ export class AssignmentController {
 
     createAssignment = async (req: Request, res: Response) => {
         try {
-            if (isMissingKeys(req.body, ["classId", "title"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
-
-            const {classId, title} = req.body;
-
-            const assignment = await this.assignmentService.createAssignment(classId, title);
+            const dto = CreateAssignmentDTO.fromRequest(req.body);
+            const assignment = await this.assignmentService.createAssignment(dto.classId, dto.title);
 
             res.status(201).json({
                 error: undefined,
@@ -41,6 +36,13 @@ export class AssignmentController {
                 success: true,
             });
         } catch (error) {
+            if (error instanceof Error && error.message.includes("Missing required fields")) {
+                return res.status(400).json({
+                    error: Errors.ValidationError,
+                    data: undefined,
+                    success: false,
+                });
+            }
             res
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
@@ -50,18 +52,10 @@ export class AssignmentController {
     // POST student assigned to assignment
     createStudentAssignment = async (req: Request, res: Response) => {
         try {
-            if (isMissingKeys(req.body, ["studentId", "assignmentId"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
-
-            const {studentId, assignmentId} = req.body;
+            const dto = CreateStudentAssignmentDTO.fromRequest(req.body);
 
             // check if student exists
-            const student = await this.studentService.getStudentById(studentId);
+            const student = await this.studentService.getStudentById(dto.studentId);
 
             if (!student) {
                 return res.status(404).json({
@@ -72,7 +66,7 @@ export class AssignmentController {
             }
 
             // check if assignment exists
-            const assignment = await this.assignmentService.getAssignmentById(assignmentId);
+            const assignment = await this.assignmentService.getAssignmentById(dto.assignmentId);
 
             if (!assignment) {
                 return res.status(404).json({
@@ -82,7 +76,7 @@ export class AssignmentController {
                 });
             }
 
-            const studentEnrolled = await this.classService.getClassEnrollment(studentId, assignment.classId);
+            const studentEnrolled = await this.classService.getClassEnrollment(dto.studentId, assignment.classId);
 
             if (!studentEnrolled) {
                 return res.status(404).json({
@@ -92,7 +86,7 @@ export class AssignmentController {
                 });
             }
 
-            const alreadyAssignedAssignment = await this.assignmentService.getStudentAssignment(studentId, assignmentId);
+            const alreadyAssignedAssignment = await this.assignmentService.getStudentAssignment(dto.studentId, dto.assignmentId);
 
             if (alreadyAssignedAssignment) {
                 return res.status(409).json({
@@ -102,7 +96,7 @@ export class AssignmentController {
                 });
             }
 
-            const studentAssignment = await this.assignmentService.createStudentAssignment(studentId, assignmentId);
+            const studentAssignment = await this.assignmentService.createStudentAssignment(dto.studentId, dto.assignmentId);
 
             res.status(201).json({
                 error: undefined,
@@ -110,6 +104,13 @@ export class AssignmentController {
                 success: true,
             });
         } catch (error) {
+            if (error instanceof Error && error.message.includes("Missing required fields")) {
+                return res.status(400).json({
+                    error: Errors.ValidationError,
+                    data: undefined,
+                    success: false,
+                });
+            }
             res
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
@@ -119,18 +120,10 @@ export class AssignmentController {
     // POST student submitted assignment
     submitStudentAssignment = async (req: Request, res: Response) => {
         try {
-            if (isMissingKeys(req.body, ["assignmentId", "studentId"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
-
-            const {studentId, assignmentId} = req.body;
+            const dto = SubmitStudentAssignmentDTO.fromRequest(req.body);
 
             // check if student assignment exists
-            const studentAssignment = await this.assignmentService.getStudentAssignment(studentId, assignmentId);
+            const studentAssignment = await this.assignmentService.getStudentAssignment(dto.studentId, dto.assignmentId);
 
             if (!studentAssignment) {
                 return res.status(404).json({
@@ -159,6 +152,13 @@ export class AssignmentController {
                 success: true,
             });
         } catch (error) {
+            if (error instanceof Error && error.message.includes("Missing required fields")) {
+                return res.status(400).json({
+                    error: Errors.ValidationError,
+                    data: undefined,
+                    success: false,
+                });
+            }
             res
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
@@ -201,27 +201,10 @@ export class AssignmentController {
     // POST student assignment graded
     gradeStudentAssignment = async (req: Request, res: Response) => {
         try {
-            if (isMissingKeys(req.body, ["studentId", "assignmentId", "grade"])) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
-
-            const {studentId, assignmentId, grade} = req.body;
-
-            // validate grade
-            if (!["A", "A+", "B", "C", "D", "F"].includes(grade)) {
-                return res.status(400).json({
-                    error: Errors.ValidationError,
-                    data: undefined,
-                    success: false,
-                });
-            }
+            const dto = GradeStudentAssignmentDTO.fromRequest(req.body);
 
             // check if student assignment exists
-            const studentAssignment = await this.assignmentService.getStudentAssignment(studentId, assignmentId);
+            const studentAssignment = await this.assignmentService.getStudentAssignment(dto.studentId, dto.assignmentId);
 
             if (!studentAssignment) {
                 return res.status(404).json({
@@ -242,7 +225,7 @@ export class AssignmentController {
                 });
             }
 
-            const alreadyGradedAssignment = await this.assignmentService.getGradedAssignment(assignmentId);
+            const alreadyGradedAssignment = await this.assignmentService.getGradedAssignment(dto.assignmentId);
 
             if (alreadyGradedAssignment) {
                 return res.status(409).json({
@@ -254,7 +237,7 @@ export class AssignmentController {
 
             const studentAssignmentGrade = await this.assignmentService.createGradedAssignment(
                 studentAssignmentSubmission.id,
-                grade
+                dto.grade
             );
 
             res.status(201).json({
@@ -263,6 +246,13 @@ export class AssignmentController {
                 success: true,
             });
         } catch (error) {
+            if (error instanceof Error && (error.message.includes("Missing required fields") || error.message.includes("Invalid grade"))) {
+                return res.status(400).json({
+                    error: Errors.ValidationError,
+                    data: undefined,
+                    success: false,
+                });
+            }
             res
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
