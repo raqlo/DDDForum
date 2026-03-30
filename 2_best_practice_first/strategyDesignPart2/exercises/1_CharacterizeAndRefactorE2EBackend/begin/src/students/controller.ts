@@ -1,22 +1,23 @@
 // POST student created
 import express, {Request, Response, Router} from "express";
-import {prisma} from "../database";
-import { isMissingKeys, isUUID, parseForResponse} from "../index";
+import {isMissingKeys, isUUID, parseForResponse} from "../index";
 import Errors from "../shared/errors/constants";
 import {ErrorHandler} from "../shared/errors/errors";
+import {StudentService} from "./service";
+
 
 export class StudentController {
     private router: Router;
 
     constructor(
-        private errorHandler: ErrorHandler
-    ) {
+        private errorHandler: ErrorHandler,
+        private studentService: StudentService) {
         this.router = express.Router();
         this.setupRoutes();
         this.setupErrorHandler();
     }
 
-    createStudent = async (req: Request, res: Response) => {
+    async createStudent(req: Request, res: Response) {
         try {
             if (isMissingKeys(req.body, ["name", "email"])) {
                 return res.status(400).json({
@@ -27,13 +28,7 @@ export class StudentController {
             }
 
             const {name, email} = req.body;
-
-            const student = await prisma.student.create({
-                data: {
-                    name,
-                    email,
-                },
-            });
+            const student = await this.studentService.createStudent(name, email);
 
             res.status(201).json({
                 error: undefined,
@@ -46,20 +41,12 @@ export class StudentController {
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
     }
-    getListOfStudents = async function (req: Request, res: Response) {
+
+    async getListOfStudents(req: Request, res: Response) {
 
 // GET all students
         try {
-            const students = await prisma.student.findMany({
-                include: {
-                    classes: true,
-                    assignments: true,
-                    reportCards: true,
-                },
-                orderBy: {
-                    name: "asc",
-                },
-            });
+            const students = await this.studentService.GetAllStudents()
             res.status(200).json({
                 error: undefined,
                 data: parseForResponse(students),
@@ -72,8 +59,9 @@ export class StudentController {
         }
     }
 
+
     // GET a student by id
-    getStudentById = async (req: Request, res: Response) => {
+    async getStudentById(req: Request, res: Response) {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -83,16 +71,7 @@ export class StudentController {
                     success: false,
                 });
             }
-            const student = await prisma.student.findUnique({
-                where: {
-                    id,
-                },
-                include: {
-                    classes: true,
-                    assignments: true,
-                    reportCards: true,
-                },
-            });
+            const student = await this.studentService.getStudentById(id);
 
             if (!student) {
                 return res.status(404).json({
@@ -113,8 +92,9 @@ export class StudentController {
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
     }
+
     // GET all student submitted assignments
-    getListOfAssignmentsByStudent = async (req: Request, res: Response) => {
+    async getListOfAssignmentsByStudent(req: Request, res: Response) {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -126,11 +106,7 @@ export class StudentController {
             }
 
             // check if student exists
-            const student = await prisma.student.findUnique({
-                where: {
-                    id,
-                },
-            });
+            const student = await this.studentService.getStudentById(id)
 
             if (!student) {
                 return res.status(404).json({
@@ -139,15 +115,7 @@ export class StudentController {
                     success: false,
                 });
             }
-
-            const studentAssignments = await prisma.studentAssignment.findMany({
-                where: {
-                    studentId: id
-                },
-                include: {
-                    assignment: true,
-                },
-            });
+            const studentAssignments = await this.studentService.getListOfAssignmentsByStudent(id);
 
             res.status(200).json({
                 error: undefined,
@@ -160,8 +128,9 @@ export class StudentController {
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
     }
+
     // GET all student grades
-    getListOfStudentGrades = async (req: Request, res: Response) => {
+    async getListOfStudentGrades(req: Request, res: Response) {
         try {
             const {id} = req.params;
             if (!isUUID(id)) {
@@ -173,11 +142,7 @@ export class StudentController {
             }
 
             // check if student exists
-            const student = await prisma.student.findUnique({
-                where: {
-                    id,
-                },
-            });
+            const student = await this.studentService.getStudentById(id)
 
             if (!student) {
                 return res.status(404).json({
@@ -187,22 +152,7 @@ export class StudentController {
                 });
             }
 
-            const gradedAssignments = await prisma.gradedAssignment.findMany({
-                where: {
-                    assignmentSubmission: {
-                        studentAssignment: {
-                            studentId: id
-                        }
-                    }
-                },
-                include: {
-                    assignmentSubmission: {
-                        include: {
-                            studentAssignment: true
-                        }
-                    },
-                },
-            });
+            const gradedAssignments = await this.studentService.getListOfStudentGrades(id);
 
             res.status(200).json({
                 error: undefined,
@@ -226,10 +176,10 @@ export class StudentController {
     }
 
     private setupRoutes() {
-        this.router.post("/", this.createStudent);
-        this.router.get("/", this.getListOfStudents);
-        this.router.get("/:id", this.getStudentById);
-        this.router.get("/:id/assignments", this.getListOfAssignmentsByStudent);
-        this.router.get("/:id/grades", this.getListOfStudentGrades);
+        this.router.post("/", this.createStudent.bind(this));
+        this.router.get("/", this.getListOfStudents.bind(this));
+        this.router.get("/:id", this.getStudentById.bind(this));
+        this.router.get("/:id/assignments", this.getListOfAssignmentsByStudent.bind(this));
+        this.router.get("/:id/grades", this.getListOfStudentGrades.bind(this));
     }
 }
