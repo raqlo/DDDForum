@@ -9,7 +9,7 @@ import {ClassService} from "./classes/service";
 import {AssignmentService} from "./assignments/service";
 import {Database} from "./database";
 import {PrismaClient} from "@prisma/client";
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 
 const app = express();

@@ -1,5 +1,5 @@
-import {prisma} from "../../src/database";
 import {GradedAssignment} from "./types";
+import {testDb} from "./testDatabase";
 
 export class GradedAssignmentBuilder {
     private props: { assignmentSubmissionId: string, grade: string; } = {
@@ -18,11 +18,6 @@ export class GradedAssignmentBuilder {
     }
 
     build() {
-        return prisma.gradedAssignment.create({
-            data: {
-                grade: this.props.grade,
-                assignmentSubmissionId: this.props.assignmentSubmissionId
-            }
-        }) as Promise<GradedAssignment>;
+        return testDb.assignments.createGradedAssignment(this.props.assignmentSubmissionId, this.props.grade) as Promise<GradedAssignment>;
     }
 }

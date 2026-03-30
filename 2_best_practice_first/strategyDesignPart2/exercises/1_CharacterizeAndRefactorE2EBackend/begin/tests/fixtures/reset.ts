@@ -1,4 +1,4 @@
-import { prisma } from "../../src/database";
+import {prisma} from "../../src";
 
 async function resetDatabase() {
   const deleteAllClassEnrollments = prisma.classEnrollment.deleteMany();

@@ -1,7 +1,7 @@
 import {StudentBuilder} from "./studentBuilder";
 import {ClassBuilder} from "./classBuilder";
-import {prisma} from "../../src/database";
 import {ClassEnrollment} from "./types";
+import {testDb} from "./testDatabase";
 
 export class ClassEnrollmentBuilder {
     private student?: StudentBuilder;
@@ -28,11 +28,6 @@ export class ClassEnrollmentBuilder {
         const student = await this.student.build();
         const classroom = await this.classroom.build();
 
-        return prisma.classEnrollment.create({
-            data: {
-                studentId: student.id,
-                classId: classroom.id,
-            },
-        }) as unknown as Promise<ClassEnrollment>;
+        return testDb.classes.createEnrollment(student.id, classroom.id) as unknown as Promise<ClassEnrollment>;
     }
 }

@@ -1,4 +1,4 @@
-import {prisma} from "../../src/database";
+import {testDb} from "./testDatabase";
 import {Student} from "./types";
 
 export class StudentBuilder {
@@ -22,12 +22,7 @@ export class StudentBuilder {
     }
 
     build() {
-        return prisma.student.create({
-            data: {
-                name: this.props.name,
-                email: this.props.email,
-            },
-        }) as unknown as Promise<Student>;
+        return testDb.students.save(this.props.name, this.props.email) as unknown as Promise<Student>;
     }
 }
 

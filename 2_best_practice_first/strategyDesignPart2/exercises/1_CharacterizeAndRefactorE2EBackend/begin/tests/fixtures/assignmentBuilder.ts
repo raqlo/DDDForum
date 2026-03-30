@@ -1,5 +1,5 @@
-import {prisma} from "../../src/database";
 import {Assignment} from "./types";
+import {testDb} from "./testDatabase";
 
 export type AssignmentProps = { title: string, classId: string };
 
@@ -21,11 +21,6 @@ export class AssignmentBuilder {
     }
 
     build() {
-        return prisma.assignment.create({
-            data: {
-                classId: this.props.classId,
-                title: this.props.title,
-            },
-        }) as unknown as Promise<Assignment>;
+        return testDb.assignments.save(this.props.classId, this.props.title) as unknown as Promise<Assignment>;
     }
 }

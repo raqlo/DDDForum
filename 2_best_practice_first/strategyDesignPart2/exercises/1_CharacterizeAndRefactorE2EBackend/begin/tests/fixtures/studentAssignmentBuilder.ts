@@ -1,6 +1,6 @@
 import {AssignmentBuilder} from "./assignmentBuilder";
-import {prisma} from "../../src/database";
 import {StudentAssignment} from "./types";
+import {testDb} from "./testDatabase";
 
 export class StudentAssignmentBuilder {
     private assignment?: AssignmentBuilder;
@@ -26,11 +26,6 @@ export class StudentAssignmentBuilder {
 
         const assignment = await this.assignment.build();
 
-        return prisma.studentAssignment.create({
-            data: {
-                studentId: this.student,
-                assignmentId: assignment.id,
-            },
-        }) as unknown as Promise<StudentAssignment>;
+        return testDb.assignments.createStudentAssignment(this.student, assignment.id) as unknown as Promise<StudentAssignment>;
     }
 }

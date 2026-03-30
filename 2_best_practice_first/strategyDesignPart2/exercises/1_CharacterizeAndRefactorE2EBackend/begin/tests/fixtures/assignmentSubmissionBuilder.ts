@@ -1,5 +1,5 @@
-import {prisma} from "../../src/database";
 import {AssignmentSubmission} from "./types";
+import {testDb} from "./testDatabase";
 
 export class AssignmentSubmissionBuilder {
     private studentAssignmentId?: string;
@@ -14,10 +14,6 @@ export class AssignmentSubmissionBuilder {
             throw new Error('Student assignment builder is required');
         }
 
-        return prisma.assignmentSubmission.create({
-            data: {
-                studentAssignmentId: this.studentAssignmentId,
-            },
-        }) as unknown as Promise<AssignmentSubmission>;
+        return testDb.assignments.createAssignmentSubmission(this.studentAssignmentId) as unknown as Promise<AssignmentSubmission>;
     }
 }
