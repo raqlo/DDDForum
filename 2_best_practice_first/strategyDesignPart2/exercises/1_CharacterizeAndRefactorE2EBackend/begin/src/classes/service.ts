@@ -1,53 +1,30 @@
-import {prisma} from "../database";
+import {Database} from "../database";
 
 export class ClassService {
+    constructor(private db: Database) {
+    }
+
     async findClassByName(name: string) {
-        return prisma.class.findUnique({where: {name}});
+        return this.db.classes.getByName(name);
     }
 
     async createClass(name: string) {
-        return prisma.class.create({
-            data: {
-                name,
-            },
-        });
+        return this.db.classes.save(name);
     }
 
     async getClassEnrollment(studentId: string, classId: string) {
-        return prisma.classEnrollment.findFirst({
-            where: {
-                studentId,
-                classId,
-            },
-        });
+        return this.db.classes.getEnrollment(studentId, classId);
     }
 
     async createEnrollment(studentId: string, classId: string) {
-        return prisma.classEnrollment.create({
-            data: {
-                studentId,
-                classId,
-            },
-        });
+        return this.db.classes.createEnrollment(studentId, classId);
     }
 
     async findClassById(id: string) {
-        return prisma.class.findUnique({
-            where: {
-                id,
-            },
-        });
+        return this.db.classes.getById(id);
     }
 
     async getAssignments(id: string) {
-        return prisma.assignment.findMany({
-            where: {
-                classId: id,
-            },
-            include: {
-                class: true,
-                studentAssignments: true,
-            },
-        });
+        return this.db.classes.getAssignments(id);
     }
 }

@@ -1,75 +1,26 @@
-import {prisma} from "../database";
+import {Database} from "../database";
 
 export class StudentService {
-    public async createStudent(name: string, email: string) {
-        const student = await prisma.student.create({
-            data: {
-                name,
-                email,
-            },
-        });
-        return student;
+    constructor(private db: Database) {
     }
 
+    async createStudent(name: string, email: string) {
+        return this.db.students.save(name, email);
+    }
 
-    async GetAllStudents() {
-        const students = await prisma.student.findMany({
-            include: {
-                classes: true,
-                assignments: true,
-                reportCards: true,
-            },
-            orderBy: {
-                name: "asc",
-            },
-        });
-        return students;
+    async getAllStudents() {
+        return this.db.students.getAll();
     }
 
     async getStudentById(id: string) {
-        const student = await prisma.student.findUnique({
-            where: {
-                id,
-            },
-            include: {
-                classes: true,
-                assignments: true,
-                reportCards: true,
-            },
-        });
-        return student;
+        return this.db.students.getById(id);
     }
 
     async getListOfAssignmentsByStudent(id: string) {
-        const studentAssignments = await prisma.studentAssignment.findMany({
-            where: {
-                studentId: id
-            },
-            include: {
-                assignment: true,
-            },
-        });
-        return studentAssignments;
+        return this.db.students.getAssignments(id);
     }
 
     async getListOfStudentGrades(id: string) {
-        const listOfStudentGrades = await prisma.gradedAssignment.findMany({
-            where: {
-                assignmentSubmission: {
-                    studentAssignment: {
-                        studentId: id
-                    }
-                }
-            },
-            include: {
-                assignmentSubmission: {
-                    include: {
-                        studentAssignment: true
-                    }
-                },
-            },
-        });
-        return listOfStudentGrades;
+        return this.db.students.getGrades(id);
     }
 }
-

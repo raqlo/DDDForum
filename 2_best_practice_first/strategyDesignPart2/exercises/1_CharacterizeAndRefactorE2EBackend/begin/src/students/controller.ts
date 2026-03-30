@@ -45,7 +45,7 @@ export class StudentController {
     // GET all students
     getListOfStudents = async (req: Request, res: Response) => {
         try {
-            const students = await this.studentService.GetAllStudents()
+            const students = await this.studentService.getAllStudents()
             res.status(200).json({
                 error: undefined,
                 data: parseForResponse(students),

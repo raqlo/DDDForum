@@ -1,81 +1,38 @@
-import {prisma} from "../database";
+import {Database} from "../database";
 
 export class AssignmentService {
+    constructor(private db: Database) {
+    }
+
     async createAssignment(classId: string, title: string) {
-        return prisma.assignment.create({
-            data: {
-                classId,
-                title,
-            },
-        });
+        return this.db.assignments.save(classId, title);
     }
 
     async getAssignmentById(assignmentId: string, includeRelations = false) {
-        return prisma.assignment.findUnique({
-            where: {id: assignmentId},
-            ...(includeRelations && {
-                include: {
-                    class: true,
-                    studentAssignments: true,
-                }
-            })
-        });
+        return this.db.assignments.getById(assignmentId, includeRelations);
     }
 
     async getStudentAssignment(studentId: string, assignmentId: string) {
-        return prisma.studentAssignment.findUnique({
-            where: {
-                studentId_assignmentId: {
-                    studentId,
-                    assignmentId
-                }
-            }
-        });
+        return this.db.assignments.getStudentAssignment(studentId, assignmentId);
     }
 
     async createStudentAssignment(studentId: string, assignmentId: string) {
-        return prisma.studentAssignment.create({
-            data: {
-                studentId,
-                assignmentId,
-            },
-        });
+        return this.db.assignments.createStudentAssignment(studentId, assignmentId);
     }
 
     async getAssignmentSubmission(studentAssignmentId: string) {
-        return prisma.assignmentSubmission.findFirst({
-            where: {
-                studentAssignmentId
-            }
-        });
+        return this.db.assignments.getAssignmentSubmission(studentAssignmentId);
     }
 
     async createAssignmentSubmission(studentAssignmentId: string) {
-        return prisma.assignmentSubmission.create({
-            data: {
-                studentAssignmentId
-            },
-        });
+        return this.db.assignments.createAssignmentSubmission(studentAssignmentId);
     }
 
     async getGradedAssignment(assignmentId: string) {
-        return prisma.gradedAssignment.findFirst({
-            where: {
-                assignmentSubmission: {
-                    studentAssignment: {
-                        assignmentId: assignmentId
-                    }
-                }
-            }
-        });
+        return this.db.assignments.getGradedAssignment(assignmentId);
     }
 
     async createGradedAssignment(assignmentSubmissionId: string, grade: string) {
-        return prisma.gradedAssignment.create({
-            data: {
-                grade,
-                assignmentSubmissionId
-            }
-        });
+        return this.db.assignments.createGradedAssignment(assignmentSubmissionId, grade);
     }
 }

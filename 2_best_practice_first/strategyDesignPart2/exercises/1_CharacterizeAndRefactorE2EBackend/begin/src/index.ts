@@ -7,6 +7,10 @@ import {errorHandler} from "./shared/errors/errors";
 import {StudentService} from "./students/service";
 import {ClassService} from "./classes/service";
 import {AssignmentService} from "./assignments/service";
+import {Database} from "./database";
+import {PrismaClient} from "@prisma/client";
+const prisma = new PrismaClient();
+
 
 const app = express();
 app.use(express.json());
@@ -29,9 +33,11 @@ export function isUUID(id: string) {
     );
 }
 
-const studentService = new StudentService();
-const classService = new ClassService();
-const assignmentService = new AssignmentService();
+const db = new Database(prisma);
+
+const studentService = new StudentService(db);
+const classService = new ClassService(db);
+const assignmentService = new AssignmentService(db);
 
 const studentController = new StudentController(errorHandler, studentService);
 const classController = new ClassController(errorHandler, classService, studentService);
