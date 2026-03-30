@@ -1,14 +1,20 @@
 // POST assignment created
 import express, {Request, Response, Router} from "express";
-import {prisma} from "../database";
 import {isMissingKeys, isUUID, parseForResponse} from "../index";
 import Errors from "../shared/errors/constants";
 import {ErrorHandler} from "../shared/errors/errors";
+import {StudentService} from "../students/service";
+import {ClassService} from "../classes/service";
+import {AssignmentService} from "./service";
 
 export class AssignmentController {
     private router: Router;
+
     constructor(
-        private errorHandler: ErrorHandler
+        private errorHandler: ErrorHandler,
+        private assignmentService: AssignmentService,
+        private studentService: StudentService,
+        private classService: ClassService
     ) {
         this.router = express.Router();
         this.setupRoutes();
@@ -27,12 +33,7 @@ export class AssignmentController {
 
             const {classId, title} = req.body;
 
-            const assignment = await prisma.assignment.create({
-                data: {
-                    classId,
-                    title,
-                },
-            });
+            const assignment = await this.assignmentService.createAssignment(classId, title);
 
             res.status(201).json({
                 error: undefined,
@@ -60,11 +61,7 @@ export class AssignmentController {
             const {studentId, assignmentId} = req.body;
 
             // check if student exists
-            const student = await prisma.student.findUnique({
-                where: {
-                    id: studentId,
-                },
-            });
+            const student = await this.studentService.getStudentById(studentId);
 
             if (!student) {
                 return res.status(404).json({
@@ -75,11 +72,7 @@ export class AssignmentController {
             }
 
             // check if assignment exists
-            const assignment = await prisma.assignment.findUnique({
-                where: {
-                    id: assignmentId,
-                },
-            });
+            const assignment = await this.assignmentService.getAssignmentById(assignmentId);
 
             if (!assignment) {
                 return res.status(404).json({
@@ -89,12 +82,7 @@ export class AssignmentController {
                 });
             }
 
-            const studentEnrolled = await prisma.classEnrollment.findFirst({
-                where: {
-                    studentId,
-                    classId: assignment.classId,
-                },
-            });
+            const studentEnrolled = await this.classService.getClassEnrollment(studentId, assignment.classId);
 
             if (!studentEnrolled) {
                 return res.status(404).json({
@@ -104,12 +92,7 @@ export class AssignmentController {
                 });
             }
 
-            const alreadyAssignedAssignment = await prisma.studentAssignment.findFirst({
-                where: {
-                    studentId: studentId,
-                    assignmentId: assignmentId
-                }
-            });
+            const alreadyAssignedAssignment = await this.assignmentService.getStudentAssignment(studentId, assignmentId);
 
             if (alreadyAssignedAssignment) {
                 return res.status(409).json({
@@ -119,12 +102,7 @@ export class AssignmentController {
                 });
             }
 
-            const studentAssignment = await prisma.studentAssignment.create({
-                data: {
-                    studentId,
-                    assignmentId,
-                },
-            });
+            const studentAssignment = await this.assignmentService.createStudentAssignment(studentId, assignmentId);
 
             res.status(201).json({
                 error: undefined,
@@ -152,14 +130,7 @@ export class AssignmentController {
             const {studentId, assignmentId} = req.body;
 
             // check if student assignment exists
-            const studentAssignment = await prisma.studentAssignment.findUnique({
-                where: {
-                    studentId_assignmentId: {
-                        assignmentId,
-                        studentId,
-                    },
-                },
-            });
+            const studentAssignment = await this.assignmentService.getStudentAssignment(studentId, assignmentId);
 
             if (!studentAssignment) {
                 return res.status(404).json({
@@ -170,11 +141,7 @@ export class AssignmentController {
             }
 
             // Check if assignment submission exists
-            const assignmentSubmission = await prisma.assignmentSubmission.findFirst({
-                where: {
-                    studentAssignmentId: studentAssignment.id
-                }
-            });
+            const assignmentSubmission = await this.assignmentService.getAssignmentSubmission(studentAssignment.id);
 
             if (assignmentSubmission) {
                 return res.status(409).json({
@@ -184,11 +151,7 @@ export class AssignmentController {
                 });
             }
 
-            const studentAssignmentUpdated = await prisma.assignmentSubmission.create({
-                data: {
-                    studentAssignmentId: studentAssignment.id
-                },
-            },);
+            const studentAssignmentUpdated = await this.assignmentService.createAssignmentSubmission(studentAssignment.id);
 
             res.status(201).json({
                 error: undefined,
@@ -213,15 +176,7 @@ export class AssignmentController {
                     success: false,
                 });
             }
-            const assignment = await prisma.assignment.findUnique({
-                include: {
-                    class: true,
-                    studentAssignments: true,
-                },
-                where: {
-                    id,
-                },
-            });
+            const assignment = await this.assignmentService.getAssignmentById(id, true);
 
             if (!assignment) {
                 return res.status(404).json({
@@ -266,14 +221,7 @@ export class AssignmentController {
             }
 
             // check if student assignment exists
-            const studentAssignment = await prisma.studentAssignment.findUnique({
-                where: {
-                    studentId_assignmentId: {
-                        assignmentId,
-                        studentId,
-                    },
-                },
-            });
+            const studentAssignment = await this.assignmentService.getStudentAssignment(studentId, assignmentId);
 
             if (!studentAssignment) {
                 return res.status(404).json({
@@ -284,11 +232,7 @@ export class AssignmentController {
             }
 
             // Check if student assignment submitted
-            const studentAssignmentSubmission = await prisma.assignmentSubmission.findFirst({
-                where: {
-                    studentAssignmentId: studentAssignment.id
-                }
-            })
+            const studentAssignmentSubmission = await this.assignmentService.getAssignmentSubmission(studentAssignment.id);
 
             if (!studentAssignmentSubmission) {
                 return res.status(400).json({
@@ -298,15 +242,7 @@ export class AssignmentController {
                 });
             }
 
-            const alreadyGradedAssignment = await prisma.gradedAssignment.findFirst({
-                where: {
-                    assignmentSubmission: {
-                        studentAssignment: {
-                            assignmentId: assignmentId
-                        }
-                    }
-                }
-            });
+            const alreadyGradedAssignment = await this.assignmentService.getGradedAssignment(assignmentId);
 
             if (alreadyGradedAssignment) {
                 return res.status(409).json({
@@ -316,12 +252,10 @@ export class AssignmentController {
                 });
             }
 
-            const studentAssignmentGrade = await prisma.gradedAssignment.create({
-                data: {
-                    grade,
-                    assignmentSubmissionId: studentAssignmentSubmission?.id as string
-                }
-            });
+            const studentAssignmentGrade = await this.assignmentService.createGradedAssignment(
+                studentAssignmentSubmission.id,
+                grade
+            );
 
             res.status(201).json({
                 error: undefined,
@@ -334,6 +268,10 @@ export class AssignmentController {
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
     };
+
+    getRouter() {
+        return this.router;
+    }
 
     private setupErrorHandler() {
         this.router.use(this.errorHandler);

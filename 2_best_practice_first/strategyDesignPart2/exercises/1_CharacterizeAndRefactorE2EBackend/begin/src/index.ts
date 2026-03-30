@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import {ClassController} from "./classes/controller";
-import {AssignmentController,} from "./assignments/controller";
+import {AssignmentController} from "./assignments/controller";
 import {StudentController} from "./students/controller";
 import {errorHandler} from "./shared/errors/errors";
 import {StudentService} from "./students/service";
 import {ClassService} from "./classes/service";
+import {AssignmentService} from "./assignments/service";
 
 const app = express();
 app.use(express.json());
@@ -30,10 +31,11 @@ export function isUUID(id: string) {
 
 const studentService = new StudentService();
 const classService = new ClassService();
+const assignmentService = new AssignmentService();
 
 const studentController = new StudentController(errorHandler, studentService);
 const classController = new ClassController(errorHandler, classService, studentService);
-const assignmentController = new AssignmentController(errorHandler);
+const assignmentController = new AssignmentController(errorHandler, assignmentService, studentService, classService);
 
 // API Endpoints
 
