@@ -1,10 +1,21 @@
 // POST student created
-import {Request, Response} from "express";
+import express, {Request, Response, Router} from "express";
 import {prisma} from "../database";
 import { isMissingKeys, isUUID, parseForResponse} from "../index";
 import Errors from "../shared/errors/constants";
+import {ErrorHandler} from "../shared/errors/errors";
 
 export class StudentController {
+    private router: Router;
+
+    constructor(
+        private errorHandler: ErrorHandler
+    ) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler();
+    }
+
     createStudent = async (req: Request, res: Response) => {
         try {
             if (isMissingKeys(req.body, ["name", "email"])) {
@@ -203,5 +214,22 @@ export class StudentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
+    }
+
+
+    getRouter() {
+        return this.router;
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler);
+    }
+
+    private setupRoutes() {
+        this.router.post("/", this.createStudent);
+        this.router.get("/", this.getListOfStudents);
+        this.router.get("/:id", this.getStudentById);
+        this.router.get("/:id/assignments", this.getListOfAssignmentsByStudent);
+        this.router.get("/:id/grades", this.getListOfStudentGrades);
     }
 }

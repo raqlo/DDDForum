@@ -1,10 +1,20 @@
 // POST assignment created
-import {Request, Response} from "express";
+import express, {Request, Response, Router} from "express";
 import {prisma} from "../database";
-import { isMissingKeys, isUUID, parseForResponse} from "../index";
+import {isMissingKeys, isUUID, parseForResponse} from "../index";
 import Errors from "../shared/errors/constants";
+import {ErrorHandler} from "../shared/errors/errors";
 
 export class AssignmentController {
+    private router: Router;
+    constructor(
+        private errorHandler: ErrorHandler
+    ) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler();
+    }
+
     async createAssignment(req: Request, res: Response) {
         try {
             if (isMissingKeys(req.body, ["classId", "title"])) {
@@ -323,5 +333,17 @@ export class AssignmentController {
                 .status(500)
                 .json({error: Errors.ServerError, data: undefined, success: false});
         }
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler);
+    }
+
+    private setupRoutes() {
+        this.router.post("/", this.createAssignment);
+        this.router.post("/:id/students", this.createStudentAssignment);
+        this.router.post("/:id/submit", this.submitStudentAssignment);
+        this.router.get("/:id", this.getAssignmentById);
+        this.router.post("/:id/grade", this.gradeStudentAssignment);
     }
 }

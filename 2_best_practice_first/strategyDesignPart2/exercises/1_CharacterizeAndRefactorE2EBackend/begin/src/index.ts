@@ -10,6 +10,7 @@ import {
 import {
  StudentController
 } from "./students/controller";
+import {errorHandler} from "./shared/errors/errors";
 
 const app = express();
 app.use(express.json());
@@ -32,9 +33,9 @@ export function isUUID(id: string) {
   );
 }
 
-const classController = new ClassController();
-const assignmentController = new AssignmentController();
-const studentController = new StudentController();
+const classController = new ClassController(errorHandler);
+const assignmentController = new AssignmentController(errorHandler);
+const studentController = new StudentController(errorHandler);
 
 // API Endpoints
 
