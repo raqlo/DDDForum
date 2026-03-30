@@ -1,10 +1,10 @@
 // POST class created
 import express, {Request, Response, Router} from "express";
-import {isMissingKeys, isUUID, parseForResponse} from "../index";
 import Errors from "../shared/errors/constants";
 import {ErrorHandler} from "../shared/errors/errors";
 import {StudentService} from "../students/service";
 import {ClassService} from "./service";
+import {isMissingKeys, isUUID, parseForResponse} from "../shared/utils/utils";
 
 export class ClassController {
     private router: Router;
