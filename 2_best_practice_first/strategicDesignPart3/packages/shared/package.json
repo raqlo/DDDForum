@@ -1,4 +1,9 @@
 {
   "name": "@dddforum/shared",
-  "private": true
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/supertest": "^7.2.0",
+    "supertest": "^7.2.2"
+  }
 }

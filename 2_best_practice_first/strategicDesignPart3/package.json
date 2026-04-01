@@ -1,6 +1,7 @@
 {
   "name": "@dddforum",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
@@ -14,6 +15,7 @@
     "start:dev:front": "npm run start:dev --workspace=@dddforum/frontend"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.16.19",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
