@@ -21,7 +21,7 @@ defineFeature(feature, (test) => {
         let addEmailToListResponse: any = {}
         let createUserResponse: any = {}
         let createUserInput: any
-        let createMarketingInput: {userId: string, consent: boolean}
+        let createMarketingInput: { userId: string, consent: boolean }
 
         given('I am a new user', async () => {
             createUserInput = new CreateUserInputBuilder()
@@ -97,7 +97,7 @@ defineFeature(feature, (test) => {
     });
 
 
-    test('Invalid or missing registration details', ({ given, when, then, and }) => {
+    test('Invalid or missing registration details', ({given, when, then, and}) => {
         let createUserResponse: any = {}
         let createUserInput: any = {}
         given('I am a new user', () => {
@@ -125,67 +125,65 @@ defineFeature(feature, (test) => {
     });
 
 
-test('Account already created with email', ({ given, when, then, and }) => {
-    let createUserResponses : any[] = []
-    let createUserInputs: any[] = []
+    test('Account already created with email', ({given, when, then, and}) => {
+        let createUserResponses: any[] = []
+        let createUserInputs: any[] = []
 
-    given('a set of users already created accounts', (table) => {
-        // 1. Create the input objects
-        table.map(async (row: any) => {
-            const user = await new UserBuilder()
-                .withFirstName(row.firstName)
-                .withLastName(row.lastName)
-                .withEmail(row.email)
-                .withUsername(row.firstName + row.lastName)
-                .build();
+        given('a set of users already created accounts', async (table) => {
+            for (const row of table) {
+                const user = await new UserBuilder()
+                    .withFirstName(row.firstName)
+                    .withLastName(row.lastName)
+                    .withEmail(row.email)
+                    .withUsername(row.firstName + row.lastName)
+                    .build();
 
-            createUserInputs.push(user)
+                createUserInputs.push(user);
+            }
+            console.log(createUserInputs);
         });
-        console.log(createUserInputs)
-    });
 
-    when('new users attempt to register with those emails', () => {
+        when('new users attempt to register with those emails', async () => {
+            const promises = createUserInputs.map(input =>
+                request(app).post("/users/new").send(input)
+            );
+            createUserResponses = await Promise.all(promises);
+        });
 
-        createUserInputs.forEach(input => {
-            request(app).post("/users/new").send(input).then(response => {
-                createUserResponses.push(response)
+        then('they should see an error notifying them that the account already exists', () => {
+            createUserResponses.forEach((response) => {
+                expect(response.status).toBe(409);
+                expect(response.body.error).toBeDefined();
+                expect(response.body.success).toBeFalsy();
             })
-        })
-    });
+        });
 
-    then('they should see an error notifying them that the account already exists', () => {
-        createUserResponses.forEach((response) => {
-            expect(response.error).toBeDefined();
-            expect(response.success).toBeFalsy();
-            expect(response.error.code).toEqual("UsernameAlreadyTaken");
-        })
-    });
-
-    and('they should not have been sent access to account details', () => {
-        createUserResponses.forEach((response) => {
-            expect(response.success).toBe(false);
-            expect(response.data).toBeNull();
-            expect(response.error).toBeDefined();
+        and('they should not have been sent access to account details', () => {
+            createUserResponses.forEach((response) => {
+                expect(response.body.success).toBe(false);
+                expect(response.body.data).toBeUndefined();
+                expect(response.body.error).toBeDefined();
+            });
         });
     });
-});
 
-    // test('Username already taken', ({ given, when, then, and }) => {
-    //     given('a set of users have already created their accounts with valid details', (table) => {
-    //
-    //     });
-    //
-    //     when('new users attempt to register with already taken usernames', (table) => {
-    //
-    //     });
-    //
-    //     then('they see an error notifying them that the username has already been taken', () => {
-    //
-    //     });
-    //
-    //     and('they should not have been sent access to account details', () => {
-    //
-    //     });
-    // });
+    test('Username already taken', ({given, when, then, and}) => {
+        given('a set of users have already created their accounts with valid details', (table) => {
+            let createUserResponses: any[] = []
+            let createUserInputs: any[] = []
+        });
+
+        when('new users attempt to register with already taken usernames', (table) => {
+
+        });
+
+        then('they see an error notifying them that the username has already been taken', () => {
+
+        });
+
+        and('they should not have been sent access to account details', () => {
+
+        });
+    });
 
 })
