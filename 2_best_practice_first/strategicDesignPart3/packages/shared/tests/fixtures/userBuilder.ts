@@ -4,6 +4,7 @@
 import {faker} from "@faker-js/faker";
 
 export interface UserInput {
+    id?: string;
     firstName: string;
     lastName: string;
     email: string;

@@ -2,6 +2,7 @@
 import express, { Request, Response } from 'express';
 import { prisma } from './database';
 import { User } from '@prisma/client';
+import {email} from "envalid";
 const cors = require('cors')
 const app = express();
 app.use(express.json());
@@ -78,6 +79,36 @@ app.post('/users/new', async (req: Request, res: Response) => {
   }
 });
 
+
+async function marketingController (req: Request, res: Response) {
+  const keyIsMissing = isMissingKeys(req.body,
+      ['userId', 'consent']
+  );
+
+  if (keyIsMissing) {
+    return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false })
+  }
+
+  const { userId, consent } = req.body;
+
+  // Find the user by email
+  const user = await prisma.user.findFirst({where: {id: userId}});
+
+  if (!user) {
+    return res.status(404).json({ error: Errors.UserNotFound, data: undefined, success: false })
+  }
+
+  // Create marketing record with userId, not email
+  const marketing = await prisma.marketing.create({
+    data: {
+      userId: userId,  // ✅ Use userId instead of email
+      consent: consent
+    }
+  })
+  return res.status(201).json({ error: undefined, data: marketing, success: true });
+}
+
+app.post('/marketing/new', marketingController)
 
 // Get a user by email
 app.get('/users', async (req: Request, res: Response) => {

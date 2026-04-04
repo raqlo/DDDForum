@@ -13,7 +13,8 @@ defineFeature(feature, (test) => {
     test('Successful registration with marketing emails accepted', ({given, when, then, and}) => {
         let addEmailToListResponse: any = {}
         let createUserResponse: any = {}
-        let createUserInput: Partial<UserInput>
+        let createUserInput: any
+        let createMarketingInput: {userId: string, consent: boolean}
 
         given('I am a new user', async () => {
             createUserInput = new CreateUserInputBuilder()
@@ -25,10 +26,10 @@ defineFeature(feature, (test) => {
             createUserResponse = await request(app)
                 .post("/users/new")
                 .send(createUserInput);
-
+            const {data} = createUserResponse.body!
             addEmailToListResponse = await request(app)
                 .post("/marketing/new")
-                .send({email: createUserInput.email});
+                .send({userId: data.id, consent: true});
         });
 
         then('I should be granted access to my account', () => {
@@ -39,35 +40,56 @@ defineFeature(feature, (test) => {
             expect(data.firstName).toEqual(createUserInput.firstName);
             expect(data.lastName).toEqual(createUserInput.lastName);
             expect(data.username).toEqual(createUserInput.username);
-
         });
 
         and('I should expect to receive marketing emails', () => {
-            expect(addEmailToListResponse.status).toBe(201);
+            const {data} = addEmailToListResponse.body!
 
+            expect(addEmailToListResponse.status).toBe(201);
+            expect(data.consent).toBe(true);
         });
     });
 
 
-    // test('Successful registration without marketing emails accepted', ({ given, when, then, and }) => {
-    //     given('I am a new user', () => {
-    //
-    //     });
-    //
-    //     when('I register with valid account details declining marketing emails', () => {
-    //
-    //     });
-    //
-    //     then('I should be granted access to my account', () => {
-    //
-    //     });
-    //
-    //     and('I should not expect to receive marketing emails', () => {
-    //
-    //     });
-    // });
-    //
-    //
+    test('Successful registration without marketing emails accepted', ({given, when, then, and}) => {
+        let addEmailToListResponse: any = {}
+        let createUserResponse: any = {}
+        let createUserInput: Partial<UserInput>
+
+        given('I am a new user', () => {
+            createUserInput = new CreateUserInputBuilder()
+                .withAllRandomDetails()
+                .build();
+        });
+
+        when('I register with valid account details declining marketing emails', async () => {
+            createUserResponse = await request(app)
+                .post("/users/new")
+                .send(createUserInput);
+
+            const {data} = createUserResponse.body!
+            addEmailToListResponse = await request(app)
+                .post("/marketing/new")
+                .send({userId: data.id, consent: false});
+        });
+        then('I should be granted access to my account', () => {
+            const {data} = createUserResponse.body!
+            expect(createUserResponse.status).toBe(201);
+            expect(data.id).toBeDefined();
+            expect(data.email).toEqual(createUserInput.email);
+            expect(data.firstName).toEqual(createUserInput.firstName);
+            expect(data.lastName).toEqual(createUserInput.lastName);
+            expect(data.username).toEqual(createUserInput.username);
+        });
+        and('I should not expect to receive marketing emails', () => {
+            const {data} = addEmailToListResponse.body!
+
+            expect(addEmailToListResponse.status).toBe(201);
+            expect(data.consent).toBe(false);
+        });
+    });
+
+
     // test('Invalid or missing registration details', ({ given, when, then, and }) => {
     //     given('I am a new user', () => {
     //

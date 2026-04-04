@@ -9,13 +9,13 @@ Feature: Registration
     Then I should be granted access to my account
     And I should expect to receive marketing emails
 
-#  # Success scenarios
-#  Scenario: Successful registration without marketing emails accepted
-#    Given I am a new user
-#    When I register with valid account details declining marketing emails
-#    Then I should be granted access to my account
-#    And I should not expect to receive marketing emails
-#
+  # Success scenarios
+  Scenario: Successful registration without marketing emails accepted
+    Given I am a new user
+    When I register with valid account details declining marketing emails
+    Then I should be granted access to my account
+    And I should not expect to receive marketing emails
+
 #  # Failure scenarios
 #  Scenario: Invalid or missing registration details
 #    Given I am a new user
