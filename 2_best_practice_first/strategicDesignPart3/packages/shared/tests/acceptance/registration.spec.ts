@@ -168,21 +168,52 @@ defineFeature(feature, (test) => {
     });
 
     test('Username already taken', ({given, when, then, and}) => {
-        given('a set of users have already created their accounts with valid details', (table) => {
-            let createUserResponses: any[] = []
-            let createUserInputs: any[] = []
+        let registrationResponses: any[] = []
+        let newUserInputs: any[] = []
+
+        given('a set of users have already created their accounts with valid details', async (table) => {
+            for (const row of table) {
+                await new UserBuilder()
+                    .withFirstName(row.firstName)
+                    .withLastName(row.lastName)
+                    .withEmail(row.email)
+                    .withUsername(row.username)
+                    .build();
+            }
         });
 
-        when('new users attempt to register with already taken usernames', (table) => {
+        when('new users attempt to register with already taken usernames', async (table) => {
+            for (const row of table) {
+                const newUser = {
+                    firstName: row.firstName,
+                    lastName: row.lastName,
+                    email: row.email,
+                    username: row.username,
+                    password: row.email
+                };
+                newUserInputs.push(newUser);
+            }
 
+            const promises = newUserInputs.map(input =>
+                request(app).post("/users/new").send(input)
+            );
+            registrationResponses = await Promise.all(promises);
         });
 
         then('they see an error notifying them that the username has already been taken', () => {
-
+            registrationResponses.forEach((response) => {
+                expect(response.status).toBe(409);
+                expect(response.body.error).toBeDefined();
+                expect(response.body.success).toBeFalsy();
+            })
         });
 
         and('they should not have been sent access to account details', () => {
-
+            registrationResponses.forEach((response) => {
+                expect(response.body.success).toBe(false);
+                expect(response.body.data).toBeUndefined();
+                expect(response.body.error).toBeDefined();
+            });
         });
     });
 
