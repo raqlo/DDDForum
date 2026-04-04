@@ -90,23 +90,32 @@ defineFeature(feature, (test) => {
     });
 
 
-    // test('Invalid or missing registration details', ({ given, when, then, and }) => {
-    //     given('I am a new user', () => {
-    //
-    //     });
-    //
-    //     when('I register with invalid account details', () => {
-    //
-    //     });
-    //
-    //     then('I should see an error notifying me that my input is invalid', () => {
-    //
-    //     });
-    //
-    //     and('I should not have been sent access to account details', () => {
-    //
-    //     });
-    // });
+    test('Invalid or missing registration details', ({ given, when, then, and }) => {
+        let createUserResponse: any = {}
+        let createUserInput: any = {}
+        given('I am a new user', () => {
+            createUserInput = new CreateUserInputBuilder()
+                .withFirstName('John')
+                .withEmail('123@email.com')
+                .build();
+        });
+
+        when('I register with invalid account details', async () => {
+            createUserResponse = await request(app)
+                .post("/users/new")
+                .send(createUserInput);
+        });
+
+        then('I should see an error notifying me that my input is invalid', () => {
+            expect(createUserResponse.status).toBe(400);
+            expect(createUserResponse.body.error).toBe('ValidationError');
+        });
+
+        and('I should not have been sent access to account details', () => {
+            expect(createUserResponse.body.data).toBeUndefined()
+            expect(createUserResponse.body.success).toBe(false)
+        });
+    });
     //
     //
     // test('Account already created with email', ({ given, when, then, and }) => {

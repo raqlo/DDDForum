@@ -15,11 +15,11 @@ export class CreateUserInputBuilder {
     private props: Partial<UserInput>;
 
     constructor() {
-        this.props = <UserInput>{
-            firstName: "",
-            lastName: "",
-            email: "",
-            username: "",
+        this.props = <Partial<UserInput>>{
+            firstName: undefined,
+            lastName: undefined,
+            email: undefined,
+            username: undefined,
         };
     }
 
