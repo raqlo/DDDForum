@@ -1,14 +1,21 @@
 import {defineFeature, loadFeature} from 'jest-cucumber';
 import path from 'path';
-import {CreateUserInputBuilder, UserInput} from "../fixtures/userBuilder";
+import {CreateUserInputBuilder, UserBuilder, UserInput} from "../fixtures/userBuilder";
 import request from 'supertest';
 import {app} from "@dddforum/backend/src";
+import {DatabaseFixture} from "../fixtures/databaseFixture";
 
 
 const feature = loadFeature(path.join(__dirname, '../features/registration.feature'));
 
 
 defineFeature(feature, (test) => {
+    const databaseFixture = new DatabaseFixture();
+
+    beforeEach(async () => {
+        await databaseFixture.resetDatabase()
+    })
+
 
     test('Successful registration with marketing emails accepted', ({given, when, then, and}) => {
         let addEmailToListResponse: any = {}
@@ -116,26 +123,53 @@ defineFeature(feature, (test) => {
             expect(createUserResponse.body.success).toBe(false)
         });
     });
-    //
-    //
-    // test('Account already created with email', ({ given, when, then, and }) => {
-    //     given('a set of users already created accounts', (table) => {
-    //
-    //     });
-    //
-    //     when('new users attempt to register with those emails', () => {
-    //
-    //     });
-    //
-    //     then('they should see an error notifying them that the account already exists', () => {
-    //
-    //     });
-    //
-    //     and('they should not have been sent access to account details', () => {
-    //
-    //     });
-    // });
-    //
+
+
+test('Account already created with email', ({ given, when, then, and }) => {
+    let createUserResponses : any[] = []
+    let createUserInputs: any[] = []
+
+    given('a set of users already created accounts', (table) => {
+        // 1. Create the input objects
+        table.map(async (row: any) => {
+            const user = await new UserBuilder()
+                .withFirstName(row.firstName)
+                .withLastName(row.lastName)
+                .withEmail(row.email)
+                .withUsername(row.firstName + row.lastName)
+                .build();
+
+            createUserInputs.push(user)
+        });
+        console.log(createUserInputs)
+    });
+
+    when('new users attempt to register with those emails', () => {
+
+        createUserInputs.forEach(input => {
+            request(app).post("/users/new").send(input).then(response => {
+                createUserResponses.push(response)
+            })
+        })
+    });
+
+    then('they should see an error notifying them that the account already exists', () => {
+        createUserResponses.forEach((response) => {
+            expect(response.error).toBeDefined();
+            expect(response.success).toBeFalsy();
+            expect(response.error.code).toEqual("UsernameAlreadyTaken");
+        })
+    });
+
+    and('they should not have been sent access to account details', () => {
+        createUserResponses.forEach((response) => {
+            expect(response.success).toBe(false);
+            expect(response.data).toBeNull();
+            expect(response.error).toBeDefined();
+        });
+    });
+});
+
     // test('Username already taken', ({ given, when, then, and }) => {
     //     given('a set of users have already created their accounts with valid details', (table) => {
     //
