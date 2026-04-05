@@ -1,7 +1,7 @@
 // import { CreateUserInput } from "@dddforum/shared/src/api/users";
 // import { TextUtil } from "@dddforum/shared/src/utils/textUtils";
 
-import {faker, th} from "@faker-js/faker";
+import {faker} from "@faker-js/faker";
 import {PrismaClient} from "@prisma/client";
 import {prisma} from "../../../backend/src/database";
 

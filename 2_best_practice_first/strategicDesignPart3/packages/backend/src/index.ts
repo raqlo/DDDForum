@@ -165,8 +165,8 @@ app.listen(port, () => {
 });
 
 
-prisma.post.findMany({})
-  .then((posts) => console.log(posts))
-  .catch((err) => console.log(err));
+// prisma.post.findMany({})
+//   .then((posts) => console.log(posts))
+//   .catch((err) => console.log(err));
 
 export {app}

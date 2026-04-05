@@ -1,12 +1,12 @@
 import {defineFeature, loadFeature} from 'jest-cucumber';
 import path from 'path';
-import {CreateUserInputBuilder, UserBuilder, UserInput} from "../fixtures/userBuilder";
+import {CreateUserInputBuilder, UserBuilder, UserInput} from "../../../shared/tests/fixtures/userBuilder";
 import request from 'supertest';
 import {app} from "@dddforum/backend/src";
-import {DatabaseFixture} from "../fixtures/databaseFixture";
+import {DatabaseFixture} from "../../../shared/tests/fixtures/databaseFixture";
 
 
-const feature = loadFeature(path.join(__dirname, '../features/registration.feature'));
+const feature = loadFeature(path.join(__dirname, '../../../shared/tests/features/registration.feature'));
 
 
 defineFeature(feature, (test) => {

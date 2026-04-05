@@ -5,17 +5,9 @@ const config: Config = {
     projects: [
         {
             preset: 'ts-jest',
-            displayName: 'backend-unit',
-            testEnvironment: 'node',
-            testMatch: ['<rootDir>/packages/backend/src/**/*.{test,spec}.ts'],
-            rootDir: '.',
-            moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-        },
-        {
-            preset: 'ts-jest',
             displayName: 'e2e',
             testEnvironment: 'node',
-            testMatch: ['<rootDir>/packages/shared/tests/acceptance/**/*.spec.ts'],
+            testMatch: ['<rootDir>/packages/backend/tests/e2e/**/*.spec.ts'],
             rootDir: '.',
             transform: {
                 '^.+\\.(t|j)s$': 'ts-jest',
