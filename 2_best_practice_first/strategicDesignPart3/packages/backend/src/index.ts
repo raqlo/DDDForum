@@ -158,12 +158,6 @@ app.get('/posts', async (req: Request, res: Response) => {
     return res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
   }
 });
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
 
 // prisma.post.findMany({})
 //   .then((posts) => console.log(posts))

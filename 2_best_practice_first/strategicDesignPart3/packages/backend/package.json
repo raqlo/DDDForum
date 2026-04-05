@@ -10,7 +10,7 @@
     "db:seed": "prisma db seed",
     "db:reset": "rimraf ./dev.db && npm run migrate && npm run generate",
     "start:dev": "npm run migrate && npm run generate && npx nodemon",
-    "start": "npm run build && node build/index.js",
+    "start": "npm run build && node build/server.js",
     "lint": "eslint  --ext .ts",
     "prettier-format": "run-script-os",
     "prettier-format:win32": "prettier --config .prettierrc \"./src/**/*.ts\" --write",
