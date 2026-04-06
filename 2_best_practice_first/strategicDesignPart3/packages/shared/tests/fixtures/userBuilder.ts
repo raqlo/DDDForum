@@ -120,13 +120,12 @@ export class UserBuilder {
         return this;
     }
 
-    public build() {
+    public async build() {
         if(!this.props.firstName) throw new Error('First name is required')
         if(!this.props.lastName) throw new Error('Last name is required')
         if(!this.props.email) throw new Error('Email is required')
         if(!this.props.username) throw new Error('Username is required')
-        return (
-            this.connection.user.create({
+        const user = await this.connection.user.create({
                 data: {
                     email: this.props.email,
                     firstName: this.props.firstName,
@@ -135,6 +134,9 @@ export class UserBuilder {
                     password: this.props.email,
                 }
             })
-        )
+
+        const member = await this.connection.member.create({ data: { userId: user.id }})
+
+        return {member, user}
     }
 }

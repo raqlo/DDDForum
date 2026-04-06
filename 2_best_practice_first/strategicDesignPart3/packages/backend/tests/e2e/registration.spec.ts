@@ -131,7 +131,7 @@ defineFeature(feature, (test) => {
 
         given('a set of users already created accounts', async (table) => {
             for (const row of table) {
-                const user = await new UserBuilder()
+                const {user} = await new UserBuilder()
                     .withFirstName(row.firstName)
                     .withLastName(row.lastName)
                     .withEmail(row.email)

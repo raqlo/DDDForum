@@ -24,16 +24,18 @@ defineFeature(feature, (test) => {
 
         given('That I an existing user', async () => {
             let userInput = new CreateUserInputBuilder().withAllRandomDetails().build()
-            existingUser = await new UserBuilder()
+            const {member, user} = await new UserBuilder()
                 .withFirstName(userInput.firstName!)
                 .withLastName(userInput.lastName!)
                 .withEmail(userInput.email!)
                 .withUsername(userInput.username!)
                 .build();
+
+            existingUser = user;
         });
 
         when('I try to look for the email of the user', async () => {
-            response = await request(app).get(`/users?email=${existingUser.email}`).send()
+            response = await request(app).get(`/users`).query({email: existingUser.email}).send()
         });
 
         then('I get a succesful response with the details of the user', () => {
