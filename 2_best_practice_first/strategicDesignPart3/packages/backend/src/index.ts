@@ -5,6 +5,7 @@ import {PostController} from "./controllers/postController";
 import {ErrorExceptionHandler} from "./shared/errors/errorHandler";
 import {MarketingService} from "./services/marketingService";
 import {prisma} from "./database";
+import {UserService} from "./services/userService";
 
 const cors = require('cors')
 const app = express();
@@ -12,9 +13,10 @@ app.use(express.json());
 app.use(cors())
 
 const marketingService = new MarketingService(prisma);
+const userService = new UserService(prisma);
 
 const errorHandler = new ErrorExceptionHandler();
-const userController = new UserController(errorHandler);
+const userController = new UserController(errorHandler, userService);
 const marketingController = new MarketingController(errorHandler, marketingService);
 const postController = new PostController(errorHandler)
 
