@@ -1,9 +1,14 @@
 // Create a new user
-import express, {Request, Response} from "express";
+import express, {NextFunction, Request, Response} from "express";
 import {prisma} from "../database";
 import {generateRandomPassword, isMissingKeys, parseUserForResponse} from "../shared/utils";
-import {Errors} from "../shared/errors/constants";
 import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
+import {
+    EmailAlreadyInUse,
+    UsernameAlreadyTaken,
+    UserNotFoundException,
+    ValidationError
+} from "../shared/errors/exceptions";
 
 
 export class UserController {
@@ -28,27 +33,28 @@ export class UserController {
         this.router.use(this.errorHandler.handle);
     }
 
-    createUserAccount = async (req: Request, res: Response) => {
+    createUserAccount = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const keyIsMissing = isMissingKeys(req.body,
                 ['email', 'firstName', 'lastName', 'username']
             );
 
             if (keyIsMissing) {
-                return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false})
+                throw new ValidationError()
             }
 
             const userData = req.body;
 
             const existingUserByEmail = await prisma.user.findFirst({where: {email: req.body.email}});
             if (existingUserByEmail) {
-                return res.status(409).json({error: Errors.EmailAlreadyInUse, data: undefined, success: false})
+                throw new EmailAlreadyInUse()
             }
 
             const existingUserByUsername = await prisma.user.findFirst({where: {username: req.body.username as string}});
             if (existingUserByUsername) {
-                return res.status(409).json({error: Errors.UsernameAlreadyTaken, data: undefined, success: false})
+                throw new UsernameAlreadyTaken()
             }
+
 
             const {user, member} = await prisma.$transaction(async (tx) => {
                 const user = await prisma.user.create({data: {...userData, password: generateRandomPassword(10)}});
@@ -60,24 +66,24 @@ export class UserController {
         } catch (error) {
             console.log(error)
             // Return a failure error response
-            return res.status(500).json({error: Errors.ServerError, data: undefined, success: false});
+            next(error);
         }
     };
-    getUsers = async (req: Request, res: Response) => {
+    getUsers = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const email = req.query.email as string;
             if (email === undefined) {
-                return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false})
+                throw new ValidationError()
             }
 
             const user = await prisma.user.findUnique({where: {email}});
             if (!user) {
-                return res.status(404).json({error: Errors.UserNotFound, data: undefined, success: false})
+                throw new UserNotFoundException()
             }
 
             return res.status(200).json({error: undefined, data: parseUserForResponse(user), succes: true});
         } catch (error) {
-            return res.status(500).json({error: Errors.ServerError, data: undefined, success: false});
+            next(error);
         }
     };
 }

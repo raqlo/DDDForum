@@ -1,6 +1,12 @@
 import {Errors} from "./constants";
 import {NextFunction, Response, Request} from "express";
-import {ClientError, InvalidRequestBodyException, UserNotFoundException} from "./exceptions";
+import {
+    ClientError,
+    EmailAlreadyInUse,
+    InvalidRequestBodyException, UsernameAlreadyTaken,
+    UserNotFoundException,
+    ValidationError
+} from "./exceptions";
 
 export class ErrorExceptionHandler {
     public handle = (
@@ -27,11 +33,38 @@ export class ErrorExceptionHandler {
         }
         if (error instanceof ClientError) {
             return res.status(400).json({
-                error: 'ClientError',
+                error: Errors.ClientError,
                 data: undefined,
                 success: false,
                 message: error.message,
             });
+        }
+
+        if (error instanceof ValidationError) {
+            return res.status(400).json({
+                error: Errors.ValidationError,
+                data: undefined,
+                success: false,
+                message: error.message,
+            })
+        }
+
+        if (error instanceof EmailAlreadyInUse) {
+            return res.status(409).json({
+                error: Errors.EmailAlreadyInUse,
+                data: undefined,
+                success: false,
+                message: error.message,
+            })
+        }
+
+        if (error instanceof UsernameAlreadyTaken) {
+            return res.status(409).json({
+                error: Errors.UsernameAlreadyTaken,
+                data: undefined,
+                success: false,
+                message: error.message,
+            })
         }
 
         return res.status(500).json({

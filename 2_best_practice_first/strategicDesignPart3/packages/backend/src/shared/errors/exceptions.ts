@@ -15,3 +15,21 @@ export class ClientError extends Error {
         super(message);
     }
 }
+
+export class ValidationError extends Error {
+    constructor() {
+        super("Invalid request body");
+    }
+}
+
+export class EmailAlreadyInUse extends Error {
+    constructor() {
+        super("Email already in use");
+    }
+}
+
+export class UsernameAlreadyTaken extends Error {
+    constructor() {
+        super("Username already taken");
+    }
+}
