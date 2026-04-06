@@ -3,15 +3,19 @@ import {UserController} from "./controllers/userController";
 import {MarketingController} from "./controllers/marketingController";
 import {PostController} from "./controllers/postController";
 import {ErrorExceptionHandler} from "./shared/errors/errorHandler";
+import {MarketingService} from "./services/marketingService";
+import {prisma} from "./database";
 
 const cors = require('cors')
 const app = express();
 app.use(express.json());
 app.use(cors())
 
+const marketingService = new MarketingService(prisma);
+
 const errorHandler = new ErrorExceptionHandler();
 const userController = new UserController(errorHandler);
-const marketingController = new MarketingController(errorHandler);
+const marketingController = new MarketingController(errorHandler, marketingService);
 const postController = new PostController(errorHandler)
 
 app.use('/users', userController.getRouter());

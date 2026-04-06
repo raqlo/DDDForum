@@ -1,43 +1,38 @@
-import express, {Request, Response} from "express";
-import {isMissingKeys} from "../shared/utils";
+import express, {NextFunction, Request, Response} from "express";
 import {prisma} from "../database";
-import {InvalidRequestBodyException, UserNotFoundException} from "../shared/errors/exceptions";
+import {UserNotFoundException} from "../shared/errors/exceptions";
 import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
+import {MarketingService} from "../services/marketingService";
+import {CreateMarketingRecordDto} from "../dtos/createMarketingRecord.dto";
 
 export class MarketingController {
     private router: express.Router;
-    constructor( private errorHandler: ErrorExceptionHandler ) {
+
+    constructor(private errorHandler: ErrorExceptionHandler, private marketingService: MarketingService) {
         this.router = express.Router();
         this.setupRoutes();
         this.setupErrorHandler();
     }
 
-    addUserToMarketingList = async (req: Request, res: Response) => {
-        const keyIsMissing = isMissingKeys(req.body,
-            ['userId', 'consent']
-        );
+    addUserToMarketingList = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const dto = CreateMarketingRecordDto.fromRequest(req.body);
 
-        if (keyIsMissing) {
-            throw new InvalidRequestBodyException()
-        }
+            const {userId, consent} = dto;
 
-        const {userId, consent} = req.body;
+            // Find the user by email
+            const user = await prisma.user.findFirst({where: {id: userId}});
 
-        // Find the user by email
-        const user = await prisma.user.findFirst({where: {id: userId}});
-
-        if (!user) {
-            throw new UserNotFoundException()
-        }
-
-        // Create marketing record with userId, not email
-        const marketing = await prisma.marketing.create({
-            data: {
-                userId: userId,  // ✅ Use userId instead of email
-                consent: consent
+            if (!user) {
+                throw new UserNotFoundException()
             }
-        })
-        return res.status(201).json({error: undefined, data: marketing, success: true});
+
+            // Create marketing record with userId, not email
+            const marketing = await this.marketingService.createMarketingRecord({userId, consent})
+            return res.status(201).json({error: undefined, data: marketing, success: true});
+        } catch (error) {
+            next(error);
+        }
     }
 
     getRouter() {
