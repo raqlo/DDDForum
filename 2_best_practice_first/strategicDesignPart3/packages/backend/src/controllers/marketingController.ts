@@ -49,6 +49,6 @@ export class MarketingController {
     }
 
     private setupRoutes() {
-        this.router.post("/", this.addUserToMarketingList);
+        this.router.post("/new", this.addUserToMarketingList);
     }
 }

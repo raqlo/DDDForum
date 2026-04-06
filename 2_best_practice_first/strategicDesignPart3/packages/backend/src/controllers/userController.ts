@@ -1,11 +1,33 @@
 // Create a new user
-import {Request, Response} from "express";
+import express, {Request, Response} from "express";
 import {prisma} from "../database";
 import {generateRandomPassword, isMissingKeys, parseUserForResponse} from "../shared/utils";
 import {Errors} from "../shared/errors/constants";
+import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
 
 
 export class UserController {
+    private router: express.Router;
+
+    constructor(private errorHandler: ErrorExceptionHandler) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler();
+    }
+
+    getRouter() {
+        return this.router;
+    }
+
+    private setupRoutes() {
+        this.router.post("/new", this.createUserAccount);
+        this.router.get("/", this.getUsers);
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler.handle);
+    }
+
     createUserAccount = async (req: Request, res: Response) => {
         try {
             const keyIsMissing = isMissingKeys(req.body,

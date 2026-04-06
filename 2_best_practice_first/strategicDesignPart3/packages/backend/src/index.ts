@@ -10,15 +10,13 @@ app.use(express.json());
 app.use(cors())
 
 const errorHandler = new ErrorExceptionHandler();
-const userController = new UserController();
+const userController = new UserController(errorHandler);
 const marketingController = new MarketingController(errorHandler);
 const postController = new PostController(errorHandler)
 
-app.post('/users/new', userController.createUserAccount);
+app.use('/users', userController.getRouter());
 
-app.use('/marketing/new', marketingController.getRouter())
-
-app.get('/users', userController.getUsers);
+app.use('/marketing', marketingController.getRouter())
 
 app.use('/posts', postController.getRouter());
 
