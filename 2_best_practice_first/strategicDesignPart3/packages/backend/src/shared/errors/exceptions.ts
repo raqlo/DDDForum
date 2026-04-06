@@ -9,3 +9,9 @@ export class UserNotFoundException extends Error {
         super("User not found");
     }
 }
+
+export class ClientError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}

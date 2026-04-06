@@ -12,15 +12,15 @@ app.use(cors())
 const errorHandler = new ErrorExceptionHandler();
 const userController = new UserController();
 const marketingController = new MarketingController(errorHandler);
-const postController = new PostController()
+const postController = new PostController(errorHandler)
 
 app.post('/users/new', userController.createUserAccount);
 
-app.post('/marketing/new', marketingController.addUserToMarketingList)
+app.use('/marketing/new', marketingController.getRouter())
 
 app.get('/users', userController.getUsers);
 
-app.get('/posts', postController.getPosts);
+app.use('/posts', postController.getRouter());
 
 // prisma.post.findMany({})
 //   .then((posts) => console.log(posts))

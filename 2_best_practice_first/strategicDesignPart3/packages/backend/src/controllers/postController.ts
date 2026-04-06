@@ -1,15 +1,28 @@
 // Get posts
-import {Request, Response} from "express";
+import express, {Request, Response} from "express";
 import {Errors} from "../shared/errors/constants";
 import {prisma} from "../database";
+import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
+import {ClientError} from "../shared/errors/exceptions";
 
 export class PostController {
-    async getPosts(req: Request, res: Response) {
+    private router: express.Router;
+    constructor( private errorHandler: ErrorExceptionHandler ) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler();
+    }
+
+    getRouter() {
+        return this.router;
+    }
+
+    getPosts = async (req: Request, res: Response, next: express.NextFunction) => {
         try {
             const {sort} = req.query;
 
             if (sort !== 'recent') {
-                return res.status(400).json({error: Errors.ClientError, data: undefined, success: false})
+                throw new ClientError('as')
             }
 
             let postsWithVotes = await prisma.post.findMany({
@@ -29,7 +42,15 @@ export class PostController {
 
             return res.json({error: undefined, data: {posts: postsWithVotes}, success: true});
         } catch (error) {
-            return res.status(500).json({error: Errors.ServerError, data: undefined, success: false});
+            next(error);
         }
+    };
+
+    private setupRoutes() {
+        this.router.get("/", this.getPosts);
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler.handle);
     }
 }

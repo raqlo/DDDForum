@@ -1,6 +1,6 @@
 import {Errors} from "./constants";
 import {NextFunction, Response, Request} from "express";
-import {InvalidRequestBodyException, UserNotFoundException} from "./exceptions";
+import {ClientError, InvalidRequestBodyException, UserNotFoundException} from "./exceptions";
 
 export class ErrorExceptionHandler {
     public handle = (
@@ -17,13 +17,21 @@ export class ErrorExceptionHandler {
                 message: error.message,
             });
         }
-        if(error instanceof UserNotFoundException) {
+        if (error instanceof UserNotFoundException) {
             return res.status(404).json({
                 error: Errors.UserNotFound,
                 data: undefined,
                 success: false,
                 message: error.message,
             })
+        }
+        if (error instanceof ClientError) {
+            return res.status(400).json({
+                error: 'ClientError',
+                data: undefined,
+                success: false,
+                message: error.message,
+            });
         }
 
         return res.status(500).json({
