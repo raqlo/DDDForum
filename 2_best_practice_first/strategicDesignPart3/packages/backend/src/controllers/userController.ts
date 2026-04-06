@@ -2,7 +2,7 @@
 import {Request, Response} from "express";
 import {prisma} from "../database";
 import {generateRandomPassword, isMissingKeys, parseUserForResponse} from "../shared/utils";
-import {Errors} from "../shared/errors";
+import {Errors} from "../shared/errors/constants";
 
 
 export class UserController {

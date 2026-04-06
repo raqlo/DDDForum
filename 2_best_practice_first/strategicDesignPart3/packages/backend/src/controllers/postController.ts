@@ -1,6 +1,6 @@
 // Get posts
 import {Request, Response} from "express";
-import {Errors} from "../shared/errors";
+import {Errors} from "../shared/errors/constants";
 import {prisma} from "../database";
 
 export class PostController {

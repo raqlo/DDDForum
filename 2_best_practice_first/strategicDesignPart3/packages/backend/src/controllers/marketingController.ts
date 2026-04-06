@@ -1,16 +1,24 @@
-import {Request, Response} from "express";
+import express, {Request, Response} from "express";
 import {isMissingKeys} from "../shared/utils";
-import {Errors} from "../shared/errors";
 import {prisma} from "../database";
+import {InvalidRequestBodyException, UserNotFoundException} from "../shared/errors/exceptions";
+import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
 
 export class MarketingController {
+    private router: express.Router;
+    constructor( private errorHandler: ErrorExceptionHandler ) {
+        this.router = express.Router();
+        this.setupRoutes();
+        this.setupErrorHandler();
+    }
+
     addUserToMarketingList = async (req: Request, res: Response) => {
         const keyIsMissing = isMissingKeys(req.body,
             ['userId', 'consent']
         );
 
         if (keyIsMissing) {
-            return res.status(400).json({error: Errors.ValidationError, data: undefined, success: false})
+            throw new InvalidRequestBodyException()
         }
 
         const {userId, consent} = req.body;
@@ -19,7 +27,7 @@ export class MarketingController {
         const user = await prisma.user.findFirst({where: {id: userId}});
 
         if (!user) {
-            return res.status(404).json({error: Errors.UserNotFound, data: undefined, success: false})
+            throw new UserNotFoundException()
         }
 
         // Create marketing record with userId, not email
@@ -30,5 +38,17 @@ export class MarketingController {
             }
         })
         return res.status(201).json({error: undefined, data: marketing, success: true});
+    }
+
+    getRouter() {
+        return this.router;
+    }
+
+    private setupErrorHandler() {
+        this.router.use(this.errorHandler.handle);
+    }
+
+    private setupRoutes() {
+        this.router.post("/", this.addUserToMarketingList);
     }
 }
