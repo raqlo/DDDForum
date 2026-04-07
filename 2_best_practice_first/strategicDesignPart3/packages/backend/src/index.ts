@@ -9,6 +9,7 @@ import {prisma} from "./database";
 import {UserService} from "./services/userService";
 import {PostService} from "./services/postService";
 import {UserRepository} from "./repository/userRepo";
+import {MarketingRepository} from "./repository/marketingRepository";
 
 const cors = require('cors')
 const app = express();
@@ -17,12 +18,13 @@ app.use(cors())
 
 // Repo
 const userRepo = new UserRepository(prisma)
+const marketingRepo = new MarketingRepository(prisma)
 
 // External service instances
 const contactListAPI = new ContactListAPI();
 
 // Business service instances
-const marketingService = new MarketingService(prisma, contactListAPI);
+const marketingService = new MarketingService(contactListAPI, marketingRepo);
 const userService = new UserService(userRepo);
 const postService = new PostService(prisma);
 

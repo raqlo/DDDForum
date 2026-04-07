@@ -1,7 +1,5 @@
-// Create a new user
 import express, {NextFunction, Request, Response} from "express";
-import {prisma} from "../database";
-import {generateRandomPassword, parseUserForResponse} from "../shared/utils";
+import {parseUserForResponse} from "../shared/utils";
 import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
 import {
     EmailAlreadyInUse,
@@ -10,7 +8,7 @@ import {
     ValidationError
 } from "../shared/errors/exceptions";
 import {CreateUserDto} from "../dtos/createUser.dto";
-import { UserService} from "../services/userService";
+import {UserService} from "../services/userService";
 
 
 export class UserController {

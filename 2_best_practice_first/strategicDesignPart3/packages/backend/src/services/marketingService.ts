@@ -1,24 +1,16 @@
 import {PrismaClient} from "@prisma/client";
 import {MarketingRecord} from "../dtos/createMarketingRecord.dto";
 import {ContactListAPI} from "./contactListApi";
-
+import {MarketingRepository} from "../repository/marketingRepository";
 
 export class MarketingService {
-    private connection: PrismaClient;
-    private contactListAPI: ContactListAPI;
 
-    constructor(db: PrismaClient, contactListAPI: ContactListAPI) {
-        this.connection = db;
-        this.contactListAPI = contactListAPI;
+    constructor(private contactListAPI: ContactListAPI, private marketingRepository: MarketingRepository) {
     }
 
     createMarketingRecord = async ({userId, consent, email}: MarketingRecord & { email: string }) => {
-        const marketingRecord = await this.connection.marketing.create({
-            data: {
-                userId: userId,
-                consent: consent
-            }
-        });
+
+        const marketingRecord = await this.marketingRepository.save(userId, consent);
 
         if (consent) {
             try {
