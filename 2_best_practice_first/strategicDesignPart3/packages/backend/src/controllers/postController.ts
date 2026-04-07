@@ -1,13 +1,13 @@
 // Get posts
 import express, {Request, Response} from "express";
-import {Errors} from "../shared/errors/constants";
-import {prisma} from "../database";
 import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
 import {ClientError} from "../shared/errors/exceptions";
+import {PostService} from "../services/postService";
 
 export class PostController {
     private router: express.Router;
-    constructor( private errorHandler: ErrorExceptionHandler ) {
+
+    constructor(private errorHandler: ErrorExceptionHandler, private postService: PostService) {
         this.router = express.Router();
         this.setupRoutes();
         this.setupErrorHandler();
@@ -22,23 +22,10 @@ export class PostController {
             const {sort} = req.query;
 
             if (sort !== 'recent') {
-                throw new ClientError('as')
+                throw new ClientError()
             }
 
-            let postsWithVotes = await prisma.post.findMany({
-                include: {
-                    votes: true, // Include associated votes for each post
-                    memberPostedBy: {
-                        include: {
-                            user: true
-                        }
-                    },
-                    comments: true
-                },
-                orderBy: {
-                    dateCreated: 'desc', // Sorts by dateCreated in descending order
-                },
-            });
+            let postsWithVotes = await this.postService.getPostsWithVotes();
 
             return res.json({error: undefined, data: {posts: postsWithVotes}, success: true});
         } catch (error) {

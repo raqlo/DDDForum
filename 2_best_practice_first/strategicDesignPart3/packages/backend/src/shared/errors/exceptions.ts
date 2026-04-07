@@ -11,7 +11,7 @@ export class UserNotFoundException extends Error {
 }
 
 export class ClientError extends Error {
-    constructor(message: string) {
+    constructor(message: string = "Client Error") {
         super(message);
     }
 }
