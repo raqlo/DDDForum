@@ -4,6 +4,7 @@ import {MarketingController} from "./controllers/marketingController";
 import {PostController} from "./controllers/postController";
 import {ErrorExceptionHandler} from "./shared/errors/errorHandler";
 import {MarketingService} from "./services/marketingService";
+import {ContactListAPI} from "./services/contactListApi";
 import {prisma} from "./database";
 import {UserService} from "./services/userService";
 import {PostService} from "./services/postService";
@@ -13,7 +14,11 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-const marketingService = new MarketingService(prisma);
+// External service instances
+const contactListAPI = new ContactListAPI();
+
+// Business service instances
+const marketingService = new MarketingService(prisma, contactListAPI);
 const userService = new UserService(prisma);
 const postService = new PostService(prisma);
 

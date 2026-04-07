@@ -20,15 +20,19 @@ export class MarketingController {
 
             const {userId, consent} = dto;
 
-            // Find the user by email
+            // Find the user by id
             const user = await prisma.user.findFirst({where: {id: userId}});
 
             if (!user) {
                 throw new UserNotFoundException()
             }
 
-            // Create marketing record with userId, not email
-            const marketing = await this.marketingService.createMarketingRecord({userId, consent})
+            // Create marketing record and sync with external email service
+            const marketing = await this.marketingService.createMarketingRecord({
+                userId,
+                consent,
+                email: user.email
+            })
             return res.status(201).json({error: undefined, data: marketing, success: true});
         } catch (error) {
             next(error);
