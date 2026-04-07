@@ -47,20 +47,7 @@ export class UserController {
                 throw new UsernameAlreadyTaken()
             }
 
-
-            const {user, member} = await prisma.$transaction(async (tx) => {
-                const user = await prisma.user.create({
-                    data: {
-                        email: userData.email,
-                        firstName: userData.firstName,
-                        lastName: userData.lastName,
-                        username: userData.username,
-                        password: generateRandomPassword(10)
-                    }
-                });
-                const member = await this.userService.getMember(user.id);
-                return {user, member}
-            })
+            const {user, member} = await this.userService.createUser(userData)
 
             return res.status(201).json({error: undefined, data: parseUserForResponse(user), success: true});
         } catch (error) {

@@ -1,18 +1,22 @@
-import {PrismaClient} from "@prisma/client";
-import {prisma} from "../database";
+import {UserRepository} from "../repository/userRepo";
+import {User} from "../dtos/createUser.dto";
 
 
 export class UserService {
-    private connection: PrismaClient;
+    private connection: UserRepository;
 
-    constructor(db: PrismaClient) {
+    constructor(db: UserRepository) {
         this.connection = db
     }
 
-    getUserByEmail = async (email: string) => await this.connection.user.findFirst({where: {email}});
+    getUserByEmail = async (email: string) => await this.connection.findByEmail(email);
 
-    getUserByUsername = async (username: string) => await this.connection.user.findFirst({where: {username}});
+    getUserByUsername = async (username: string) => await this.connection.findByUsername(username);
 
-    getMember = async (userId: number) => await prisma.member.create({data: {userId}});
+    createUser = async (userData: User) => {
+        const user = await this.connection.createUser({...userData})
+        const member = await this.connection.createMember(user.id)
+        return {member, user}
+    };
 }
 
