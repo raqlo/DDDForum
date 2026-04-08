@@ -1,7 +1,12 @@
-import { app } from './index';
+import { CompositionRoot } from './shared/compositionRoot';
 
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT) || 3000;
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const compositionRoot = CompositionRoot.getInstance(port);
+
+const webServer = compositionRoot.getWebServer();
+
+webServer.start().catch((error) => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
 });
