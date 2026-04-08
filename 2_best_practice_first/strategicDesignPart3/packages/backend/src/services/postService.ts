@@ -1,8 +1,8 @@
-import {PostRepository} from "../repository/postRepository";
+import {PostPersistence, PostRepository} from "../repository/postRepository";
 
 export class PostService {
 
-    constructor(private postRepository: PostRepository) {
+    constructor(private postRepository: PostPersistence) {
     }
 
     getPostsWithVotes = async () => this.postRepository.findMany();

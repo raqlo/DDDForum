@@ -1,11 +1,13 @@
-import {UserRepository} from "../repository/userRepo";
+import {UserPersistence, UserRepository} from "../repository/userRepo";
 import {User} from "../dtos/createUser.dto";
+import {TransactionalEmailApi} from "./transactionalEmailApi";
 
 
 export class UserService {
-    private connection: UserRepository;
+    private connection: UserPersistence;
 
-    constructor(db: UserRepository) {
+    constructor(db: UserPersistence, private emailAPI: TransactionalEmailApi,
+    ) {
         this.connection = db
     }
 

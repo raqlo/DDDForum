@@ -3,7 +3,17 @@ import {prisma} from "../database";
 import {generateRandomPassword} from "../shared/utils";
 import {User} from "../dtos/createUser.dto";
 
-export class UserRepository {
+export interface UserPersistence {
+    createUser(userData: User): Promise<any>;
+
+    findByEmail(email: string): Promise<any>;
+
+    findByUsername(username: string): Promise<any>;
+
+    createMember(userId: number): Promise<any>;
+}
+
+export class UserRepository implements UserPersistence {
     constructor(private db: PrismaClient) {
     }
 

@@ -1,6 +1,10 @@
 import {PrismaClient} from "@prisma/client";
 
-export class PostRepository {
+export interface PostPersistence {
+    findMany: () => Promise<any>;
+}
+
+export class PostRepository implements PostPersistence {
     private connection: PrismaClient;
 
     constructor(db: PrismaClient) {
