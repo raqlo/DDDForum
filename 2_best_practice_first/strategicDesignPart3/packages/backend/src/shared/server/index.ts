@@ -129,4 +129,8 @@ export class WebServer {
     public getApp(): express.Application {
         return this.app;
     }
+
+    mountRouter(route: string, controller: express.Router) {
+        this.app.use(route, controller);
+    }
 }

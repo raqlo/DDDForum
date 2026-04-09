@@ -1,8 +1,8 @@
 // Get posts
 import express, {Request, Response} from "express";
-import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
-import {ClientError} from "../shared/errors/exceptions";
-import {PostService} from "../services/postService";
+import {ErrorExceptionHandler} from "../../shared/errors/errorHandler";
+import {ClientError} from "../../shared/errors/exceptions";
+import {PostService} from "./postService";
 
 export class PostController {
     private router: express.Router;
@@ -37,7 +37,7 @@ export class PostController {
         this.router.get("/", this.getPosts);
     }
 
-    private setupErrorHandler() {
+    private setupErrorHandler = () => {
         this.router.use(this.errorHandler.handle);
-    }
+    };
 }

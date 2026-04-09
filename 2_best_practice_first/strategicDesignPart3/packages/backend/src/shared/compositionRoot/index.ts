@@ -10,10 +10,11 @@ import { ContactListAPI } from '../../services/contactListApi';
 import { TransactionalEmailApi } from '../../services/transactionalEmailApi';
 import { UserService } from '../../services/userService';
 import { MarketingService } from '../../services/marketingService';
-import { PostService } from '../../services/postService';
+import { PostService } from '../../modules/posts/postService';
 import { UserController } from '../../controllers/userController';
 import { MarketingController } from '../../controllers/marketingController';
-import { PostController } from '../../controllers/postController';
+import { PostController } from '../../modules/posts/postController';
+import {PostsModule} from "../../modules/posts/postsModule";
 
 export class CompositionRoot {
     private static instance: CompositionRoot | null = null;
@@ -29,6 +30,8 @@ export class CompositionRoot {
     private userService: UserService;
     private marketingService: MarketingService;
     private postService: PostService;
+    private postsModule: PostsModule;
+
 
     public static getInstance(port: number = 3000): CompositionRoot {
         if (!CompositionRoot.instance) {
@@ -56,8 +59,11 @@ export class CompositionRoot {
         this.marketingService = new MarketingService(this.contactListAPI, this.database.marketing);
         this.postService = new PostService(this.database.posts);
 
+        this.postsModule = this.createPostsModule();
+
         // WebServer (created but not started)
         this.webServer = this.createWebServer();
+
     }
 
 
@@ -122,6 +128,7 @@ export class CompositionRoot {
     }
 
 
+
     private createWebServer(): WebServer {
         const app = this.createExpressApp();
         return new WebServer(
@@ -154,5 +161,13 @@ export class CompositionRoot {
      */
     public getPrismaClient(): PrismaClient {
         return this.prismaClient;
+    }
+
+    private createPostsModule() {
+        return PostsModule.build(this.database);
+    }
+
+    private mountRoutes() {
+        this.postsModule.mountRouter(this.webServer);
     }
 }

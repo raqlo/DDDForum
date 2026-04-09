@@ -1,5 +1,5 @@
 import {UserPersistence, UserRepository} from "../../repository/userRepo";
-import {PostPersistence, PostRepository} from "../../repository/postRepository";
+import {PostPersistence, PostRepository} from "../../modules/posts/postRepository";
 import {MarketingRepository} from "../../repository/marketingRepository";
 import {PrismaClient} from "@prisma/client";
 

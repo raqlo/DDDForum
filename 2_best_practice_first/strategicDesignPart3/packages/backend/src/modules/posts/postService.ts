@@ -1,4 +1,4 @@
-import {PostPersistence, PostRepository} from "../repository/postRepository";
+import {PostPersistence, PostRepository} from "./postRepository";
 
 export class PostService {
 
