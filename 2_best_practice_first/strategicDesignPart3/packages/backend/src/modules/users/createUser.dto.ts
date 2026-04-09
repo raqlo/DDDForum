@@ -1,5 +1,5 @@
-import {isMissingKeys} from "../shared/utils";
-import {InvalidRequestBodyException} from "../shared/errors/exceptions";
+import {isMissingKeys} from "../../shared/utils";
+import {InvalidRequestBodyException} from "../../shared/errors/exceptions";
 
 export type User = {
     email: string;

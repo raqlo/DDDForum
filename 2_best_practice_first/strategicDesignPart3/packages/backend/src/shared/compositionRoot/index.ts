@@ -7,14 +7,16 @@ import { Database } from '../database';
 import { WebServer } from '../server';
 import { Config } from '../config';
 import { ContactListAPI } from '../../services/contactListApi';
-import { TransactionalEmailApi } from '../../services/transactionalEmailApi';
-import { UserService } from '../../services/userService';
+import { TransactionalEmailApi } from '../../modules/notifications/transactionalEmailApi';
+import { UserService } from '../../modules/users/userService';
 import { MarketingService } from '../../services/marketingService';
 import { PostService } from '../../modules/posts/postService';
-import { UserController } from '../../controllers/userController';
+import { UserController } from '../../modules/users/userController';
 import { MarketingController } from '../../controllers/marketingController';
 import { PostController } from '../../modules/posts/postController';
 import {PostsModule} from "../../modules/posts/postsModule";
+import {UsersModule} from "../../modules/users/usersModule";
+import {NotificationsModule} from "../../modules/notifications/notificationsModule";
 
 export class CompositionRoot {
     private static instance: CompositionRoot | null = null;
@@ -29,6 +31,7 @@ export class CompositionRoot {
     private transactionalEmailApi: TransactionalEmailApi;
     private userService: UserService;
     private marketingService: MarketingService;
+    private notificationsModule: NotificationsModule;
     private postService: PostService;
     private postsModule: PostsModule;
 
@@ -53,6 +56,7 @@ export class CompositionRoot {
         // External Services (no dependencies)
         this.contactListAPI = new ContactListAPI();
         this.transactionalEmailApi = new TransactionalEmailApi();
+        this.notificationsModule = this.createNotificationsModule();
 
         // Business Services (depend on database facade + external services)
         this.userService = new UserService(this.database.users, this.transactionalEmailApi);
@@ -81,6 +85,10 @@ export class CompositionRoot {
 
     private getErrorHandler(): ErrorExceptionHandler {
         return this.errorHandler;
+    }
+
+    createNotificationsModule () {
+        return NotificationsModule.build();
     }
 
     /**
@@ -165,6 +173,10 @@ export class CompositionRoot {
 
     private createPostsModule() {
         return PostsModule.build(this.database);
+    }
+
+    private createUsersModule() {
+        return UsersModule.build(this.database, this.notificationsModule.getTransactionalEmailAPI());
     }
 
     private mountRoutes() {

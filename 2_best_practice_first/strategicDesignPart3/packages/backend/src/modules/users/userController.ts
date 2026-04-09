@@ -1,14 +1,14 @@
 import express, {NextFunction, Request, Response} from "express";
-import {parseUserForResponse} from "../shared/utils";
-import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
+import {parseUserForResponse} from "../../shared/utils";
+import {ErrorExceptionHandler} from "../../shared/errors/errorHandler";
 import {
     EmailAlreadyInUse,
     UsernameAlreadyTaken,
     UserNotFoundException,
     ValidationError
-} from "../shared/errors/exceptions";
-import {CreateUserDto} from "../dtos/createUser.dto";
-import {UserService} from "../services/userService";
+} from "../../shared/errors/exceptions";
+import {CreateUserDto} from "./createUser.dto";
+import {UserService} from "./userService";
 
 
 export class UserController {

@@ -1,6 +1,6 @@
-import {UserPersistence, UserRepository} from "../repository/userRepo";
-import {User} from "../dtos/createUser.dto";
-import {TransactionalEmailApi} from "./transactionalEmailApi";
+import {UserPersistence, UserRepository} from "./userRepo";
+import {User} from "./createUser.dto";
+import {TransactionalEmailApi} from "../notifications/transactionalEmailApi";
 
 
 export class UserService {

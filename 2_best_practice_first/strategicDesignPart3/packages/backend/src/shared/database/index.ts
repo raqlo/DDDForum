@@ -1,4 +1,4 @@
-import {UserPersistence, UserRepository} from "../../repository/userRepo";
+import {UserPersistence, UserRepository} from "../../modules/users/userRepo";
 import {PostPersistence, PostRepository} from "../../modules/posts/postRepository";
 import {MarketingRepository} from "../../repository/marketingRepository";
 import {PrismaClient} from "@prisma/client";

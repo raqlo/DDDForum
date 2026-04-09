@@ -1,7 +1,7 @@
 import {PrismaClient} from "@prisma/client";
-import {prisma} from "../database";
-import {generateRandomPassword} from "../shared/utils";
-import {User} from "../dtos/createUser.dto";
+import {prisma} from "../../database";
+import {generateRandomPassword} from "../../shared/utils";
+import {User} from "./createUser.dto";
 
 export interface UserPersistence {
     createUser(userData: User): Promise<any>;
