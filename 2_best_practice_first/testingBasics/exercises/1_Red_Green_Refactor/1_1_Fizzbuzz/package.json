@@ -1,0 +1,15 @@
+{
+  "name": "1_1_fizzbuzz",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+      "test:dev": "bun --bun test --watch"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
