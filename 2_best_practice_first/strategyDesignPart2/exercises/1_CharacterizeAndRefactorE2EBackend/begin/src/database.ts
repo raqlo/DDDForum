@@ -1,5 +1,16 @@
-import { PrismaClient } from '@prisma/client';
+import {PrismaClient} from '@prisma/client';
+import {StudentPersistence, StudentRepository} from './students/repository';
+import {ClassPersistence, ClassRepository} from './classes/repository';
+import {AssignmentPersistence, AssignmentRepository} from './assignments/repository';
 
-const prisma = new PrismaClient();
+export class Database {
+    public students: StudentPersistence;
+    public classes: ClassPersistence;
+    public assignments: AssignmentPersistence;
 
-export { prisma }
+    constructor(private prisma: PrismaClient) {
+        this.students = new StudentRepository(prisma);
+        this.classes = new ClassRepository(prisma);
+        this.assignments = new AssignmentRepository(prisma);
+    }
+}
