@@ -49,7 +49,7 @@ export const createUsersAPI = (apiURL: string) => {
         },
         getUserByEmail: async (email: string): Promise<GetUserByEmailResponse> => {
             try {
-                const successResponse = await axios.get(`${apiURL}/users/${email}`);
+                const successResponse = await axios.get(`${apiURL}/users?email=${email}`);
                 return successResponse.data as GetUserByEmailResponse;
             } catch (err) {
                 //@ts-ignore

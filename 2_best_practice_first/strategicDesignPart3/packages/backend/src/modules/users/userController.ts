@@ -66,7 +66,7 @@ export class UserController {
                 throw new UserNotFoundException()
             }
 
-            return res.status(200).json({error: undefined, data: parseUserForResponse(user), succes: true});
+            return res.status(200).json({error: undefined, data: parseUserForResponse(user), success: true});
         } catch (error) {
             next(error);
         }

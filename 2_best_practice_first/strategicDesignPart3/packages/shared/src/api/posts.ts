@@ -28,7 +28,7 @@ export type Post = {
 
 export type GetPostErrors = ServerError;
 
-export type GetPostsResponse = APIResponse<Post[], GetPostErrors>;
+export type GetPostsResponse = APIResponse<{posts: Post[] }, GetPostErrors>;
 
 export type PostsResponse = GetPostsResponse;
 
