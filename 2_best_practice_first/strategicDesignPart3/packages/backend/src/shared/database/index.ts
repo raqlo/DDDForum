@@ -1,6 +1,6 @@
 import {UserPersistence, UserRepository} from "../../modules/users/userRepo";
 import {PostPersistence, PostRepository} from "../../modules/posts/postRepository";
-import {MarketingRepository} from "../../repository/marketingRepository";
+import {MarketingRepository} from "../../modules/marketing/marketingRepository";
 import {PrismaClient} from "@prisma/client";
 
 export class Database {

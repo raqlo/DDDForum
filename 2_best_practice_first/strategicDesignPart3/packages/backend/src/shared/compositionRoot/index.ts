@@ -2,39 +2,26 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { prisma } from '../../database';
 
-import { ErrorExceptionHandler } from '../errors/errorHandler';
 import { Database } from '../database';
 import { WebServer } from '../server';
 import { Config } from '../config';
-import { ContactListAPI } from '../../services/contactListApi';
-import { TransactionalEmailApi } from '../../modules/notifications/transactionalEmailApi';
-import { UserService } from '../../modules/users/userService';
-import { MarketingService } from '../../services/marketingService';
-import { PostService } from '../../modules/posts/postService';
-import { UserController } from '../../modules/users/userController';
-import { MarketingController } from '../../controllers/marketingController';
-import { PostController } from '../../modules/posts/postController';
 import {PostsModule} from "../../modules/posts/postsModule";
 import {UsersModule} from "../../modules/users/usersModule";
 import {NotificationsModule} from "../../modules/notifications/notificationsModule";
+import {MarketingModule} from "../../modules/marketing/marketingModule";
 
 export class CompositionRoot {
     private static instance: CompositionRoot | null = null;
 
     private prismaClient: PrismaClient;
-    private errorHandler: ErrorExceptionHandler;
     private config: Config;
     private database: Database;
     private webServer: WebServer;
 
-    private contactListAPI: ContactListAPI;
-    private transactionalEmailApi: TransactionalEmailApi;
-    private userService: UserService;
-    private marketingService: MarketingService;
     private notificationsModule: NotificationsModule;
-    private postService: PostService;
     private postsModule: PostsModule;
-
+    private marketingModule: MarketingModule;
+    private usersModule: UsersModule;
 
     public static getInstance(port: number = 3000): CompositionRoot {
         if (!CompositionRoot.instance) {
@@ -48,43 +35,20 @@ export class CompositionRoot {
         // Infra (no dependencies)
         this.config = new Config('start');
         this.prismaClient = prisma;
-        this.errorHandler = new ErrorExceptionHandler();
+        // this.errorHandler = new ErrorExceptionHandler();
 
         // Database facade (depends on Prisma)
         this.database = new Database(this.prismaClient);
 
-        // External Services (no dependencies)
-        this.contactListAPI = new ContactListAPI();
-        this.transactionalEmailApi = new TransactionalEmailApi();
+        // Modules (depends on database)
         this.notificationsModule = this.createNotificationsModule();
-
-        // Business Services (depend on database facade + external services)
-        this.userService = new UserService(this.database.users, this.transactionalEmailApi);
-        this.marketingService = new MarketingService(this.contactListAPI, this.database.marketing);
-        this.postService = new PostService(this.database.posts);
-
         this.postsModule = this.createPostsModule();
+        this.marketingModule = this.createMarketingModule();
+        this.usersModule = this.createUsersModule();
 
         // WebServer (created but not started)
         this.webServer = this.createWebServer();
-
-    }
-
-
-    private getUserService(): UserService {
-        return this.userService;
-    }
-
-    private getMarketingService(): MarketingService {
-        return this.marketingService;
-    }
-
-    private getPostService(): PostService {
-        return this.postService;
-    }
-
-    private getErrorHandler(): ErrorExceptionHandler {
-        return this.errorHandler;
+        this.mountRoutes();
     }
 
     createNotificationsModule () {
@@ -92,29 +56,7 @@ export class CompositionRoot {
     }
 
     /**
-     * Create controllers - these are leaf nodes in the dependency graph
-     * Controllers depend on services but nothing depends on controllers
-     * That's why they're created in a method, not in the constructor
-     */
-    private createControllers() {
-        const userService = this.getUserService();
-        const marketingService = this.getMarketingService();
-        const postService = this.getPostService();
-        const errorHandler = this.getErrorHandler();
-
-        const userController = new UserController(errorHandler, userService);
-        const marketingController = new MarketingController(errorHandler, marketingService);
-        const postController = new PostController(errorHandler, postService);
-
-        return {
-            userController,
-            marketingController,
-            postController,
-        };
-    }
-
-    /**
-     * Creates the Express app and wires up routes to controllers
+     * Creates the Express app
      */
     private createExpressApp(): express.Application {
         const cors = require('cors');
@@ -123,14 +65,6 @@ export class CompositionRoot {
         // Middleware
         app.use(express.json());
         app.use(cors());
-
-        // Get all controllers
-        const controllers = this.createControllers();
-
-        // Mount routes
-        app.use('/users', controllers.userController.getRouter());
-        app.use('/marketing', controllers.marketingController.getRouter());
-        app.use('/posts', controllers.postController.getRouter());
 
         return app;
     }
@@ -157,6 +91,24 @@ export class CompositionRoot {
         return this.webServer.getApp();
     }
 
+    private mountRoutes() {
+        this.postsModule.mountRouter(this.webServer);
+        this.marketingModule.mountRouter(this.webServer);
+        this.usersModule.mountRouter(this.webServer);
+    }
+
+    private createPostsModule() {
+        return PostsModule.build(this.database);
+    }
+
+    private createUsersModule() {
+        return UsersModule.build(this.database, this.notificationsModule.getTransactionalEmailAPI());
+    }
+
+    private createMarketingModule() {
+        return MarketingModule.build(this.database);
+    }
+
     /**
      * Get database connection (useful for testing/cleanup)
      */
@@ -169,17 +121,5 @@ export class CompositionRoot {
      */
     public getPrismaClient(): PrismaClient {
         return this.prismaClient;
-    }
-
-    private createPostsModule() {
-        return PostsModule.build(this.database);
-    }
-
-    private createUsersModule() {
-        return UsersModule.build(this.database, this.notificationsModule.getTransactionalEmailAPI());
-    }
-
-    private mountRoutes() {
-        this.postsModule.mountRouter(this.webServer);
     }
 }

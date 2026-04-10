@@ -1,7 +1,7 @@
 import {PrismaClient} from "@prisma/client";
-import {MarketingRecord} from "../dtos/createMarketingRecord.dto";
+import {MarketingRecord} from "./createMarketingRecord.dto";
 import {ContactListAPI} from "./contactListApi";
-import {MarketingRepository} from "../repository/marketingRepository";
+import {MarketingRepository} from "./marketingRepository";
 
 export class MarketingService {
 

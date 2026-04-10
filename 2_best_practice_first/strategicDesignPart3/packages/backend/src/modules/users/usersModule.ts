@@ -3,6 +3,7 @@ import {UserService} from "./userService";
 import {ErrorExceptionHandler} from "../../shared/errors/errorHandler";
 import {UserController} from "./userController";
 import {TransactionalEmailApi} from "../notifications/transactionalEmailApi";
+import {WebServer} from "../../shared/server";
 
 export class UsersModule {
     private usersService: UserService;
@@ -34,4 +35,8 @@ export class UsersModule {
     }
 
     public getUsersController = () => this.usersController;
+
+    mountRouter(webServer: WebServer) {
+        webServer.mountRouter("/users", this.usersController.getRouter())
+    }
 }

@@ -1,9 +1,9 @@
 import express, {NextFunction, Request, Response} from "express";
-import {prisma} from "../database";
-import {UserNotFoundException} from "../shared/errors/exceptions";
-import {ErrorExceptionHandler} from "../shared/errors/errorHandler";
-import {MarketingService} from "../services/marketingService";
-import {CreateMarketingRecordDto} from "../dtos/createMarketingRecord.dto";
+import {prisma} from "../../database";
+import {UserNotFoundException} from "../../shared/errors/exceptions";
+import {ErrorExceptionHandler} from "../../shared/errors/errorHandler";
+import {MarketingService} from "./marketingService";
+import {CreateMarketingRecordDto} from "./createMarketingRecord.dto";
 
 export class MarketingController {
     private router: express.Router;
