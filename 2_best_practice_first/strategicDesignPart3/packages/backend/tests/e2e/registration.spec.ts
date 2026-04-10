@@ -1,9 +1,12 @@
 import {defineFeature, loadFeature} from 'jest-cucumber';
 import path from 'path';
-import {CreateUserInputBuilder, UserBuilder, UserInput} from "../../../shared/tests/fixtures/userBuilder";
-import request from 'supertest';
-import {app} from "@dddforum/backend/src";
+import {CreateUserInputBuilder, UserBuilder} from "../../../shared/tests/fixtures/userBuilder";
 import {DatabaseFixture} from "../../../shared/tests/fixtures/databaseFixture";
+import {createAPIClient} from "@dddforum/shared/src/api";
+import {WebServer} from "../../src/shared/server";
+import {CompositionRoot} from "../../src/shared/compositionRoot";
+import {CreateUserResponse} from "@dddforum/shared/src/api/users";
+import {AddEmailToListResponse, MarketingResponse} from "@dddforum/shared/src/api/marketing";
 
 
 const feature = loadFeature(path.join(__dirname, '../../../shared/tests/features/registration.feature'));
@@ -11,6 +14,18 @@ const feature = loadFeature(path.join(__dirname, '../../../shared/tests/features
 
 defineFeature(feature, (test) => {
     const databaseFixture = new DatabaseFixture();
+    const apiClient = createAPIClient('http://localhost:3000');
+    let server: WebServer;
+
+    beforeAll(async () => {
+        const compositionRoot = CompositionRoot.getInstance(3000);
+        server = compositionRoot.getWebServer();
+        await server.start();
+    });
+
+    afterAll(async () => {
+        await server.stop();
+    });
 
     beforeEach(async () => {
         await databaseFixture.resetDatabase()
@@ -18,8 +33,8 @@ defineFeature(feature, (test) => {
 
 
     test('Successful registration with marketing emails accepted', ({given, when, then, and}) => {
-        let addEmailToListResponse: any = {}
-        let createUserResponse: any = {}
+        let addEmailToListResponse: AddEmailToListResponse
+        let createUserResponse: CreateUserResponse
         let createUserInput: any
         let createMarketingInput: { userId: string, consent: boolean }
 
@@ -30,75 +45,60 @@ defineFeature(feature, (test) => {
         });
 
         when('I register with valid account details accepting marketing emails', async () => {
-            createUserResponse = await request(app)
-                .post("/users/new")
-                .send(createUserInput);
-            const {data} = createUserResponse.body!
-            addEmailToListResponse = await request(app)
-                .post("/marketing/new")
-                .send({userId: data.id, consent: true});
+            createUserResponse = await apiClient.users.register(createUserInput)
+            addEmailToListResponse = await apiClient.marketing.addEmailToList(createUserResponse.data.id, true)
         });
 
         then('I should be granted access to my account', () => {
-            const {data} = createUserResponse.body!
-            expect(createUserResponse.status).toBe(201);
-            expect(data.id).toBeDefined();
-            expect(data.email).toEqual(createUserInput.email);
-            expect(data.firstName).toEqual(createUserInput.firstName);
-            expect(data.lastName).toEqual(createUserInput.lastName);
-            expect(data.username).toEqual(createUserInput.username);
+
+            expect(createUserResponse.success).toBeTruthy();
+            expect(createUserResponse.data.id).toBeDefined();
+            expect(createUserResponse.data.email).toEqual(createUserInput.email);
+            expect(createUserResponse.data.firstName).toEqual(createUserInput.firstName);
+            expect(createUserResponse.data.lastName).toEqual(createUserInput.lastName);
+            expect(createUserResponse.data.username).toEqual(createUserInput.username);
         });
 
         and('I should expect to receive marketing emails', () => {
-            const {data} = addEmailToListResponse.body!
-
-            expect(addEmailToListResponse.status).toBe(201);
-            expect(data.consent).toBe(true);
+            expect(addEmailToListResponse.success).toBeTruthy()
+            expect(addEmailToListResponse.data.consent).toBe(true);
         });
     });
 
 
     test('Successful registration without marketing emails accepted', ({given, when, then, and}) => {
-        let addEmailToListResponse: any = {}
-        let createUserResponse: any = {}
-        let createUserInput: Partial<UserInput>
+        let addEmailToListResponse: AddEmailToListResponse
+        let createUserResponse: CreateUserResponse
+        let createUserInput: any
 
-        given('I am a new user', () => {
+        given('I am a new user', async () => {
             createUserInput = new CreateUserInputBuilder()
                 .withAllRandomDetails()
                 .build();
         });
 
         when('I register with valid account details declining marketing emails', async () => {
-            createUserResponse = await request(app)
-                .post("/users/new")
-                .send(createUserInput);
-
-            const {data} = createUserResponse.body!
-            addEmailToListResponse = await request(app)
-                .post("/marketing/new")
-                .send({userId: data.id, consent: false});
+            createUserResponse = await apiClient.users.register(createUserInput)
+            addEmailToListResponse = await apiClient.marketing.addEmailToList(createUserResponse.data.id, false)
         });
+
         then('I should be granted access to my account', () => {
-            const {data} = createUserResponse.body!
-            expect(createUserResponse.status).toBe(201);
-            expect(data.id).toBeDefined();
-            expect(data.email).toEqual(createUserInput.email);
-            expect(data.firstName).toEqual(createUserInput.firstName);
-            expect(data.lastName).toEqual(createUserInput.lastName);
-            expect(data.username).toEqual(createUserInput.username);
+            expect(createUserResponse.success).toBeTruthy();
+            expect(createUserResponse.data.id).toBeDefined();
+            expect(createUserResponse.data.email).toEqual(createUserInput.email);
+            expect(createUserResponse.data.firstName).toEqual(createUserInput.firstName);
+            expect(createUserResponse.data.lastName).toEqual(createUserInput.lastName);
+            expect(createUserResponse.data.username).toEqual(createUserInput.username);
         });
         and('I should not expect to receive marketing emails', () => {
-            const {data} = addEmailToListResponse.body!
-
-            expect(addEmailToListResponse.status).toBe(201);
-            expect(data.consent).toBe(false);
+            expect(addEmailToListResponse.success).toBeTruthy();
+            expect(addEmailToListResponse.data.consent).toBe(false);
         });
     });
 
 
     test('Invalid or missing registration details', ({given, when, then, and}) => {
-        let createUserResponse: any = {}
+        let createUserResponse: CreateUserResponse
         let createUserInput: any = {}
         given('I am a new user', () => {
             createUserInput = new CreateUserInputBuilder()
@@ -108,25 +108,23 @@ defineFeature(feature, (test) => {
         });
 
         when('I register with invalid account details', async () => {
-            createUserResponse = await request(app)
-                .post("/users/new")
-                .send(createUserInput);
+            createUserResponse = await apiClient.users.register(createUserInput);
         });
 
         then('I should see an error notifying me that my input is invalid', () => {
-            expect(createUserResponse.status).toBe(400);
-            expect(createUserResponse.body.error).toBe('ValidationError');
+            expect(createUserResponse.success).toBe(false);
+            expect(createUserResponse.error).toBe('ValidationError');
         });
 
         and('I should not have been sent access to account details', () => {
-            expect(createUserResponse.body.data).toBeUndefined()
-            expect(createUserResponse.body.success).toBe(false)
+            expect(createUserResponse.data).toBeUndefined()
+            expect(createUserResponse.success).toBe(false)
         });
     });
 
 
     test('Account already created with email', ({given, when, then, and}) => {
-        let createUserResponses: any[] = []
+        let createUserResponses: CreateUserResponse[] = []
         let createUserInputs: any[] = []
 
         given('a set of users already created accounts', async (table) => {
@@ -145,30 +143,30 @@ defineFeature(feature, (test) => {
 
         when('new users attempt to register with those emails', async () => {
             const promises = createUserInputs.map(input =>
-                request(app).post("/users/new").send(input)
+                apiClient.users.register(input)
             );
             createUserResponses = await Promise.all(promises);
         });
 
         then('they should see an error notifying them that the account already exists', () => {
             createUserResponses.forEach((response) => {
-                expect(response.status).toBe(409);
-                expect(response.body.error).toBeDefined();
-                expect(response.body.success).toBeFalsy();
+                expect(response.success).toBeFalsy();
+                expect(response.error).toBeDefined();
+                expect(response.error).toBe('EmailAlreadyInUse');
             })
         });
 
         and('they should not have been sent access to account details', () => {
             createUserResponses.forEach((response) => {
-                expect(response.body.success).toBe(false);
-                expect(response.body.data).toBeUndefined();
-                expect(response.body.error).toBeDefined();
+                expect(response.success).toBe(false);
+                expect(response.data).toBeUndefined();
+                expect(response.error).toBeDefined();
             });
         });
     });
 
     test('Username already taken', ({given, when, then, and}) => {
-        let registrationResponses: any[] = []
+        let registrationResponses: CreateUserResponse[] = []
         let newUserInputs: any[] = []
 
         given('a set of users have already created their accounts with valid details', async (table) => {
@@ -195,24 +193,24 @@ defineFeature(feature, (test) => {
             }
 
             const promises = newUserInputs.map(input =>
-                request(app).post("/users/new").send(input)
+                apiClient.users.register(input)
             );
             registrationResponses = await Promise.all(promises);
         });
 
         then('they see an error notifying them that the username has already been taken', () => {
             registrationResponses.forEach((response) => {
-                expect(response.status).toBe(409);
-                expect(response.body.error).toBeDefined();
-                expect(response.body.success).toBeFalsy();
+                expect(response.success).toBeFalsy();
+                expect(response.error).toBeDefined();
+                expect(response.error).toBe('UserNameAlreadyTaken');
             })
         });
 
         and('they should not have been sent access to account details', () => {
             registrationResponses.forEach((response) => {
-                expect(response.body.success).toBe(false);
-                expect(response.body.data).toBeUndefined();
-                expect(response.body.error).toBeDefined();
+                expect(response.success).toBe(false);
+                expect(response.data).toBeUndefined();
+                expect(response.error).toBeDefined();
             });
         });
     });

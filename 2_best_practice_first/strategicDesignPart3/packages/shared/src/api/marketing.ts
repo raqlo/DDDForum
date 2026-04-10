@@ -2,7 +2,7 @@ import axios from "axios";
 import { APIResponse, GenericErrors } from ".";
 
 export type AddEmailToListErrors = GenericErrors;
-export type AddEmailToListResponse = APIResponse<boolean, AddEmailToListErrors>;
+export type AddEmailToListResponse = APIResponse<{id: number, userId: number, consent: boolean}, AddEmailToListErrors>;
 
 export type MarketingResponse = APIResponse<
   AddEmailToListResponse | null,
@@ -11,10 +11,11 @@ export type MarketingResponse = APIResponse<
 
 export const createMarketingAPI = (apiURL: string) => {
   return {
-    addEmailToList: async (email: string): Promise<AddEmailToListResponse> => {
+    addEmailToList: async (userId: number, consent: boolean): Promise<AddEmailToListResponse> => {
       try {
         const successResponse = await axios.post(`${apiURL}/marketing/new`, {
-          email,
+          userId,
+          consent
         });
         return successResponse.data as AddEmailToListResponse;
       } catch (err) {
