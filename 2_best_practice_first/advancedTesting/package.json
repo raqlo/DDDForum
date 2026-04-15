@@ -26,7 +26,7 @@
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
     "@types/node": "^18.16.19",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "envalid": "^8.0.0",

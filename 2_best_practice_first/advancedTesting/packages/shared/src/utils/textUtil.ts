@@ -15,4 +15,8 @@ export class TextUtil {
   public static isBetweenLength(text: string, minLength: number, maxLength: number): boolean {
     return text.length >= minLength && text.length <= maxLength;
   }
+  public static createRandomEmail(): string {
+    const randomSequence = Math.floor(Math.random() * 1000000);
+    return `testemail-${randomSequence}@gmail.com`;
+  }
 }
