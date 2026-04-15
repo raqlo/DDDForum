@@ -8,6 +8,15 @@ export type CreateUserParams = {
   username: string;
 };
 
+export type ValidatedUser = {
+  id?: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  password: string;
+}
+
 export type User = {
   id: number;
   email: string;

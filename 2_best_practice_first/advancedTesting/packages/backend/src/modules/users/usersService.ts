@@ -5,45 +5,52 @@ import {
   UserNotFoundException,
   UsernameAlreadyTakenException,
 } from "./usersExceptions";
-import { User } from "@dddforum/shared/src/api/users";
-import { TransactionalEmailAPI } from "../notifications/transactionalEmailAPI";
+import {User, ValidatedUser} from "@dddforum/shared/src/api/users";
+import {UsersRepository} from "./ports/usersRepo";
+import {TextUtil} from "@dddforum/shared/src/utils/textUtil";
+import {TransactionalEmailApi} from "../notifications/ports/transactionalEmailApi";
 
 export class UsersService {
   constructor(
-    private db: Database,
-    private emailAPI: TransactionalEmailAPI,
+    private repository: UsersRepository, // This should be done
+    private emailAPI:  TransactionalEmailApi,
   ) {}
 
   async createUser(userData: CreateUserCommand): Promise<User> {
-    const existingUserByEmail = await this.db.users.findUserByEmail(
+    const existingUserByEmail = await this.repository.findUserByEmail(
       userData.email,
     );
     if (existingUserByEmail) {
       throw new EmailAlreadyInUseException(userData.email);
     }
 
-    const existingUserByUsername = await this.db.users.findUserByUsername(
+    const existingUserByUsername = await this.repository.findUserByUsername(
       userData.username,
     );
     if (existingUserByUsername) {
       throw new UsernameAlreadyTakenException(userData.username);
     }
 
-    const { password, ...user } = await this.db.users.save(userData);
+    const validatedUser: ValidatedUser = {
+      ...userData.props,
+      password: TextUtil.createRandomText(10)
+    }
+
+    const prismaUser = await this.repository.save(validatedUser);
 
     await this.emailAPI.sendMail({
-      to: user.email,
+      to: validatedUser.email,
       subject: "Your login details to DDDForum",
       text: `Welcome to DDDForum. You can login with the following details </br>
-      email: ${user.email}
-      password: ${password}`,
+      email: ${validatedUser.email}
+      password: ${validatedUser.password}`,
     });
 
-    return user;
+    return prismaUser;
   }
 
   async getUserByEmail(email: string) {
-    const user = await this.db.users.findUserByEmail(email);
+    const user = await this.repository.findUserByEmail(email);
     if (!user) {
       throw new UserNotFoundException(email);
     }
