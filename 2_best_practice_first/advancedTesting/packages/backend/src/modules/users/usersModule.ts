@@ -5,30 +5,9 @@ import { WebServer } from "../../shared/http/webServer";
 import {IUsersService, UsersService} from "./usersService";
 import { userErrorHandler } from "./usersErrors";
 import {ProductionUserRepository} from "./adapters/productionUserRepository";
+import {InMemoryUserRepository} from "./adapters/inMemoryUserRepositorySpy";
 import {UsersRepository} from "./ports/usersRepo";
-import { User, ValidatedUser } from "@dddforum/shared/src/api/users";
 import {Config} from "../../shared/config";
-
-class InMemoryUserRepositorySpy implements UsersRepository {
-    findUserByEmail(email: string): Promise<User | null> {
-        throw new Error("Method not implemented.");
-    }
-    save(user: ValidatedUser): Promise<User> {
-        throw new Error("Method not implemented.");
-    }
-    findById(id: number): Promise<User | null> {
-        throw new Error("Method not implemented.");
-    }
-    delete(email: string): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    findUserByUsername(username: string): Promise<User | null> {
-        throw new Error("Method not implemented.");
-    }
-    update(id: number, props: Partial<ValidatedUser>): Promise<User | null> {
-        throw new Error("Method not implemented.");
-    }
-}
 
 export class UsersModule {
   private usersService: UsersService;
@@ -68,7 +47,7 @@ export class UsersModule {
   private createUsersRepository() {
     if (this.usersRepository) return this.usersRepository;
     if (this.shouldBuildFakeRepository) {
-      return new InMemoryUserRepositorySpy();
+      return new InMemoryUserRepository();
     }
 
     return new ProductionUserRepository(this.dbConnection.getConnection());
