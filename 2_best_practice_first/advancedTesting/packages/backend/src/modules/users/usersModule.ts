@@ -7,6 +7,7 @@ import { userErrorHandler } from "./usersErrors";
 import {ProductionUserRepository} from "./adapters/productionUserRepository";
 import {UsersRepository} from "./ports/usersRepo";
 import { User, ValidatedUser } from "@dddforum/shared/src/api/users";
+import {Config} from "../../shared/config";
 
 class InMemoryUserRepositorySpy implements UsersRepository {
     findUserByEmail(email: string): Promise<User | null> {
@@ -33,20 +34,19 @@ export class UsersModule {
   private usersService: UsersService;
   private usersController: UsersController;
   private usersRepository: UsersRepository;
-  private shouldBuildFakeRepository: boolean;
 
   private constructor(
     private dbConnection: Database,
     private emailAPI: TransactionalEmailAPI,
+    private config: Config
   ) {
-    this.shouldBuildFakeRepository = false;
     this.usersRepository = this.createUsersRepository();
     this.usersService = this.createUsersService(this.usersRepository);
     this.usersController = this.createUsersController(this.usersService);
   }
 
-  static build(dbConnection: Database, emailAPI: TransactionalEmailAPI) {
-    return new UsersModule(dbConnection, emailAPI);
+  static build(dbConnection: Database, emailAPI: TransactionalEmailAPI, config: Config) {
+    return new UsersModule(dbConnection, emailAPI, config);
   }
 
   private createUsersService(repository: UsersRepository) {
@@ -72,5 +72,28 @@ export class UsersModule {
     }
 
     return new ProductionUserRepository(this.dbConnection.getConnection());
+  }
+
+  getUsersService() {
+    return this.usersService;
+  }
+
+  getUsersRepository() {
+    return this.usersRepository;
+  }
+
+  protected getEnvironment() {
+    return this.config.getEnvironment();
+  }
+
+  protected getScript() {
+    return this.config.getScript();
+  }
+
+  get shouldBuildFakeRepository() {
+    return (
+      this.getScript() === "test:unit" ||
+      this.getEnvironment() === "development"
+    );
   }
 }

@@ -7,8 +7,10 @@ import {
   NotificationsModule,
   MarketingModule,
 } from "@dddforum/backend/src/modules";
+import {Application} from "../application/applicationInterface";
 
 export class CompositionRoot {
+
   private static instance: CompositionRoot | null = null;
 
   private webServer: WebServer;
@@ -50,6 +52,7 @@ export class CompositionRoot {
     return UsersModule.build(
       this.dbConnection,
       this.notificationsModule.getTransactionalEmailAPI(),
+      this.config
     );
   }
 
@@ -82,5 +85,20 @@ export class CompositionRoot {
       this.dbConnection = dbConnection;
     }
     return dbConnection;
+  }
+
+  getApplication(): Application {
+    return {
+      users: this.usersModule.getUsersService(),
+      posts: this.postsModule.getPostsService(),
+      marketing: this.marketingModule.getMarketingService(),
+    };
+  }
+
+  getRepositories() {
+    return {
+      users: this.usersModule.getUsersRepository(),
+      posts: this.postsModule.getPostsRepository(),
+    };
   }
 }
