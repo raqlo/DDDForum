@@ -1,13 +1,12 @@
-import { ServerErrorException } from "../../shared/exceptions";
-import { ContactListAPI } from "./contactListAPI";
+import {ServerErrorException} from "../../shared/exceptions";
+import {ContactListApi} from "./ports/contactListApi";
 
 export class MarketingService {
-  constructor(private contactListAPI: ContactListAPI) {}
+  constructor(private contactListAPI: ContactListApi) {}
 
   async addEmailToList(email: string) {
     try {
-      const result = await this.contactListAPI.addEmailToList(email);
-      return result;
+      return await this.contactListAPI.addEmailToList(email);
     } catch (err) {
       throw new ServerErrorException();
     }

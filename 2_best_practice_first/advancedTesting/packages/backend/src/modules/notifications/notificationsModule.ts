@@ -1,7 +1,8 @@
-import { TransactionalEmailAPI } from "./transactionalEmailAPI";
+import { TransactionalEmailApi } from "./ports/transactionalEmailApi";
+import {TransactionalEmailAPI} from "./transactionalEmailAPI";
 
 export class NotificationsModule {
-  private transactionalEmailAPI: TransactionalEmailAPI;
+  private readonly transactionalEmailAPI: TransactionalEmailApi;
 
   private constructor() {
     this.transactionalEmailAPI = this.createTransactionalEmailAPI();
@@ -11,11 +12,11 @@ export class NotificationsModule {
     return new NotificationsModule();
   }
 
-  public getTransactionalEmailAPI() {
-    return this.transactionalEmailAPI;
+  private createTransactionalEmailAPI(): TransactionalEmailApi {
+    return new TransactionalEmailAPI();
   }
 
-  private createTransactionalEmailAPI() {
-    return new TransactionalEmailAPI();
+  public getTransactionalEmailAPI(): TransactionalEmailApi {
+    return this.transactionalEmailAPI;
   }
 }

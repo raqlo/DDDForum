@@ -15,6 +15,11 @@ export interface PostsPersistence {
   findPosts(sort: string): Promise<Post[]>;
 }
 
+export interface Database {
+  getConnection(): PrismaClient
+  connect(): Promise<void>;
+}
+
 export class Database {
   public users: UsersPersistence;
   public posts: PostsPersistence;
