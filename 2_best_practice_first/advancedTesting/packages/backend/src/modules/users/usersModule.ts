@@ -1,8 +1,8 @@
 import { UsersController } from "./usersController";
-import { Database } from "../../shared/database";
+import type { Database } from "../../shared/database";
 import { TransactionalEmailAPI } from "../notifications/transactionalEmailAPI";
 import { WebServer } from "../../shared/http/webServer";
-import { UsersService } from "./usersService";
+import {IUsersService, UsersService} from "./usersService";
 import { userErrorHandler } from "./usersErrors";
 import {ProductionUserRepository} from "./adapters/productionUserRepository";
 import {UsersRepository} from "./ports/usersRepo";
@@ -32,30 +32,29 @@ class InMemoryUserRepositorySpy implements UsersRepository {
 export class UsersModule {
   private usersService: UsersService;
   private usersController: UsersController;
-  private usersRepository: InMemoryUserRepositorySpy;
+  private usersRepository: UsersRepository;
   private shouldBuildFakeRepository: boolean;
 
   private constructor(
     private dbConnection: Database,
     private emailAPI: TransactionalEmailAPI,
   ) {
-    this.usersService = this.createUsersService();
-    this.usersController = this.createUsersController();
+    this.shouldBuildFakeRepository = false;
     this.usersRepository = this.createUsersRepository();
-    this.shouldBuildFakeRepository = false
-
+    this.usersService = this.createUsersService(this.usersRepository);
+    this.usersController = this.createUsersController(this.usersService);
   }
 
   static build(dbConnection: Database, emailAPI: TransactionalEmailAPI) {
     return new UsersModule(dbConnection, emailAPI);
   }
 
-  private createUsersService() {
-    return new UsersService(this.usersRepository, this.emailAPI);
+  private createUsersService(repository: UsersRepository) {
+    return new UsersService(repository, this.emailAPI);
   }
 
-  private createUsersController() {
-    return new UsersController(this.usersService, userErrorHandler);
+  private createUsersController(userService: IUsersService) {
+    return new UsersController(userService, userErrorHandler);
   }
 
   public getController() {

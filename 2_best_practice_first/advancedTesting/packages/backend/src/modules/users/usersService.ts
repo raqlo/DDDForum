@@ -1,16 +1,19 @@
-import { Database } from "@dddforum/backend/src/shared/database";
-import { CreateUserCommand } from "./usersCommand";
-import {
-  EmailAlreadyInUseException,
-  UserNotFoundException,
-  UsernameAlreadyTakenException,
-} from "./usersExceptions";
+import {CreateUserCommand} from "./usersCommand";
+import {EmailAlreadyInUseException, UsernameAlreadyTakenException, UserNotFoundException,} from "./usersExceptions";
 import {User, ValidatedUser} from "@dddforum/shared/src/api/users";
 import {UsersRepository} from "./ports/usersRepo";
 import {TextUtil} from "@dddforum/shared/src/utils/textUtil";
 import {TransactionalEmailApi} from "../notifications/ports/transactionalEmailApi";
 
-export class UsersService {
+export interface IUsersService {
+
+
+  createUser(userData: CreateUserCommand): Promise<User>;
+
+  getUserByEmail(email: string): Promise<any>;
+}
+
+export class UsersService implements IUsersService {
   constructor(
     private repository: UsersRepository, // This should be done
     private emailAPI:  TransactionalEmailApi,

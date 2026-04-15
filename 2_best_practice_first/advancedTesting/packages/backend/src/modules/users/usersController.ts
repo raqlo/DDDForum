@@ -1,5 +1,5 @@
 import express from "express";
-import { UsersService } from "./usersService";
+import {IUsersService} from "./usersService";
 import { CreateUserCommand } from "./usersCommand";
 import {
   CreateUserResponse,
@@ -11,7 +11,7 @@ export class UsersController {
   private router: express.Router;
 
   constructor(
-    private usersService: UsersService,
+    private usersService: IUsersService,
     private errorHandler: ErrorHandler,
   ) {
     this.router = express.Router();
