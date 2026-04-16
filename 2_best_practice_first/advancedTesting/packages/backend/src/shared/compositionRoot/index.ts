@@ -22,6 +22,7 @@ export class CompositionRoot {
   private postsModule: PostsModule;
   private notificationsModule: NotificationsModule;
 
+
   public static createCompositionRoot(config: Config) {
     if (!CompositionRoot.instance) {
       CompositionRoot.instance = new this(config);
