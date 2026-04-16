@@ -1,13 +1,13 @@
 import { UsersController } from "./usersController";
 import type { Database } from "../../shared/database";
 import { TransactionalEmailAPI } from "../notifications/transactionalEmailAPI";
-import { WebServer } from "../../shared/http/webServer";
+import { WebServer } from "../../shared/http";
 import {IUsersService, UsersService} from "./usersService";
 import { userErrorHandler } from "./usersErrors";
 import {ProductionUserRepository} from "./adapters/productionUserRepository";
-import {InMemoryUserRepository} from "./adapters/inMemoryUserRepositorySpy";
 import {UsersRepository} from "./ports/usersRepo";
 import {Config} from "../../shared/config";
+import {InMemoryUserRepositorySpy} from "./adapters/inMemoryUserRepositorySpy";
 
 export class UsersModule {
   private usersService: UsersService;
@@ -47,7 +47,7 @@ export class UsersModule {
   private createUsersRepository() {
     if (this.usersRepository) return this.usersRepository;
     if (this.shouldBuildFakeRepository) {
-      return new InMemoryUserRepository();
+      return new InMemoryUserRepositorySpy();
     }
 
     return new ProductionUserRepository(this.dbConnection.getConnection());

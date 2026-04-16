@@ -1,17 +1,23 @@
-import { ValidatedUser } from "@dddforum/shared/src/api/users";
-import { CreateUserCommand } from "../usersCommand";
-import { User } from "@prisma/client";
 import {UsersRepository} from "../ports/usersRepo";
 
-export class InMemoryUserRepository implements UsersRepository
+import { Spy } from "../../../shared/testDoubles/spy";
+import {ValidatedUser} from "@dddforum/shared/src/api/users";
+import {User} from "@prisma/client";
+import {CreateUserCommand} from "../usersCommand";
+
+export class InMemoryUserRepositorySpy
+  extends Spy<UsersRepository>
+  implements UsersRepository
 {
   private users: User[];
 
   constructor() {
+    super();
     this.users = [];
   }
 
   save(user: ValidatedUser): Promise<User> {
+    this.addCall("save", [user]);
     const newUser = {
       ...user,
       id: this.users.length > 0 ? this.users[this.users.length - 1].id + 1 : 1,
@@ -59,6 +65,7 @@ export class InMemoryUserRepository implements UsersRepository
   }
 
   async reset() {
+    this.calls = [];
     this.users = [];
   }
 }

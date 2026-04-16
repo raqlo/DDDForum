@@ -1,4 +1,6 @@
-import {InMemoryUserRepository} from "@dddforum/backend/src/modules/users/adapters/inMemoryUserRepositorySpy";
+import {
+  InMemoryUserRepositorySpy
+} from "@dddforum/backend/src/modules/users/adapters/inMemoryUserRepositorySpy";
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from "path";
 import {sharedTestRoot} from "@dddforum/shared/src/paths";
@@ -15,7 +17,7 @@ const feature = loadFeature(
 
 defineFeature(feature, (test) => {
   let composition: CompositionRoot;
-  let fakeUserRepo: InMemoryUserRepository;
+  let userRepoSpy: InMemoryUserRepositorySpy;
   let application: Application;
   let createUserParams: CreateUserParams;
   let createUserResponse: User;
@@ -23,12 +25,12 @@ defineFeature(feature, (test) => {
 
   beforeAll(async () => {
     composition = CompositionRoot.createCompositionRoot(new Config('test:unit'));
-    fakeUserRepo = composition.getRepositories().users as InMemoryUserRepository;
+    userRepoSpy = composition.getRepositories().users as InMemoryUserRepositorySpy;
     application = composition.getApplication();
   })
 
   afterEach(async () => {
-    await fakeUserRepo.reset();
+    userRepoSpy.reset();
   });
 
   test('Successful registration with marketing emails accepted', ({given, when, then, and}) => {
