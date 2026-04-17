@@ -4,7 +4,7 @@
   "description": "The backend for dddforum",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -b tsconfig.json && npm run generate",
+    "build": "npm run generate && tsc -b tsconfig.json",
     "generate": "ts-node prepareEnv.ts prisma generate --schema=./src/shared/database/prisma/schema.prisma",
     "migrate": "ts-node prepareEnv.ts prisma migrate dev --schema=./src/shared/database/prisma/schema.prisma",
     "db:seed": "ts-node prepareEnv.ts prisma db seed --schema=./src/shared/database/prisma/schema.prisma",
@@ -37,12 +37,16 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.17",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.6.0",
     "@types/nodemailer": "^6.4.15",
     "@types/supertest": "^6.0.2",
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.3.0",
     "nodemon": "^2.0.19",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@dddforum/shared": "file:../shared",
