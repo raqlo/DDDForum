@@ -29,6 +29,11 @@
     "prettier-watch:darwin:linux": "onchange 'src/**/*.ts' -- prettier --write {{changed}}",
     "prettier-watch:default": "onchange 'src/**/*.ts' -- prettier --write {{changed}}"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test:unit && npm run lint"
+    }
+  },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^18.16.19",
