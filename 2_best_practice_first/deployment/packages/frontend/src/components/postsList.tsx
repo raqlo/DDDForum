@@ -23,7 +23,7 @@ function computeVoteCount(votes: Vote[]) {
 
 export const PostsList = ({ posts }: { posts: Post[] }) => (
   <div className="posts-list">
-    {posts.map((post, key) => (
+    {(posts || []).map((post, key) => (
       <div className="post-item" key={key}>
         <div className="post-item-votes">
           <div className="post-item-upvote">
