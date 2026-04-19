@@ -6,7 +6,7 @@
 
 const replacements = [
   ["@dddforum/shared/src", "@dddforum/shared/dist"],
-  ["@dddforum/backend/src", "@dddforum/backend/dist"],
+  ["@dddforum/backend/src", "@dddforum/backend/build"],
   ["@dddforum/frontend/src", "@dddforum/frontend/dist"],
 ];
 

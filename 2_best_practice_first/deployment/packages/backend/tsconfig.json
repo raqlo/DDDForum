@@ -5,12 +5,19 @@
     "lib": ["ES2020"],
     "allowJs": true,
     "outDir": "build",
-    "rootDir": "src",
+    "rootDir": "../../packages",
+    "baseUrl": "../../",
     "strict": true,
     "esModuleInterop": true,
     "types": ["node","jest"],
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@dddforum/backend/*": ["./packages/backend/*"],
+      "@dddforum/frontend/*": ["./packages/frontend/*"],
+      "@dddforum/shared/*": ["./packages/shared/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.spec.ts"]
