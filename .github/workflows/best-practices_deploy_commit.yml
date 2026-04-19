@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "ThePhasesOfCraftship/2_best_practice_first/deployment/**"
+      - "2_best_practice_first/deployment/**"
     branches:
       - main # or specify your desired branch
 
 env:
-  PROJECT_PATH: "ThePhasesOfCraftship/2_best_practice_first/deployment/"
+  PROJECT_PATH: "2_best_practice_first/deployment/"
 
 jobs:
   lint-build-test:
