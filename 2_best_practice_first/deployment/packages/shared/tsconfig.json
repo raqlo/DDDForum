@@ -1,6 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "outDir": "dist",
+    "rootDir": "src"
   },
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts", "**/*.unit.ts", "**/*.test.ts", "**/*.infra.ts", "**/*.e2e.ts", "tests/**/*"]
 }
